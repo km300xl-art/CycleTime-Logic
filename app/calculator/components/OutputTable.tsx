@@ -1,12 +1,17 @@
-import { Outputs } from '../../../src/lib/ct/types';
+import type { Outputs } from '../../../src/lib/ct/types';
 import styles from '../Calculator.module.css';
+
+// Outputs 중에서 숫자 값만 가지는 키만 추출
+type NumericOutputKey = {
+  [K in keyof Outputs]-?: Outputs[K] extends number ? K : never
+}[keyof Outputs];
 
 type OutputTableProps = {
   outputs: Outputs;
 };
 
 export function OutputTable({ outputs }: OutputTableProps) {
-  const rows: { key: keyof Outputs; label: string }[] = [
+  const rows: { key: NumericOutputKey; label: string }[] = [
     { key: 'fill', label: 'FILL' },
     { key: 'pack', label: 'PACK' },
     { key: 'cool', label: 'COOL' },
