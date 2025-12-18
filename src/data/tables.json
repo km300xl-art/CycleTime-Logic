@@ -1,0 +1,88 @@
+{
+  "defaults": {
+    "safetyFactor": 0.1,
+    "rounding": 2
+  },
+  "stages": {
+    "fill": {
+      "base": { "default": 0.6 },
+      "multipliers": {
+        "cavity": { "1": 1, "2": 1.05, "4": 1.1, "6": 1.12, "8": 1.15 }
+      },
+      "linear": {
+        "weight_g_1cav": 0.03,
+        "thickness_mm": 0.05
+      },
+      "offsets": {
+        "plateType": { "2P": 0.05, "3P": 0.08, "HOT": 0.04, "default": 0 }
+      }
+    },
+    "pack": {
+      "base": { "default": 1.2 },
+      "multipliers": {
+        "cavity": { "1": 1, "2": 1.03, "4": 1.06, "6": 1.08, "8": 1.1 }
+      },
+      "linear": {
+        "cushionDistance_mm": 0.01,
+        "weight_g_1cav": 0.01
+      },
+      "offsets": {
+        "clampControl": { "Toggle": 0.1, "Hydraulic": 0.05, "Electric": 0, "default": 0 }
+      }
+    },
+    "cool": {
+      "base": { "default": 4 },
+      "multipliers": {
+        "cavity": { "1": 1, "2": 1.02, "4": 1.04, "6": 1.06, "8": 1.08 }
+      },
+      "linear": {
+        "thickness_mm": 0.6
+      },
+      "optionMultipliers": {
+        "coolingOption": { "BASE": 1, "LOGIC": 0.92, "default": 1 }
+      }
+    },
+    "open": {
+      "base": { "default": 1 },
+      "linear": {
+        "moldProtection_mm": 0.02,
+        "thickness_mm": 0.02
+      },
+      "offsets": {
+        "plateType": { "2P": 0.15, "3P": 0.2, "HOT": 0.18, "default": 0 }
+      }
+    },
+    "eject": {
+      "base": { "default": 0.8 },
+      "linear": {
+        "height_mm_eject": 0.02,
+        "ejectStroke_mm": 0.015
+      },
+      "offsets": {
+        "plateType": { "2P": 0.1, "3P": 0.12, "HOT": 0.1, "default": 0 }
+      }
+    },
+    "robot": {
+      "base": { "default": 1.5 },
+      "linear": {
+        "robotStroke_mm": 0.01
+      },
+      "multipliers": {
+        "cavity": { "1": 1, "2": 1.02, "4": 1.04, "6": 1.06, "8": 1.08 }
+      }
+    },
+    "close": {
+      "base": { "default": 1.1 },
+      "linear": {
+        "clampForce_ton": 0.005,
+        "vpPosition_mm": 0.01
+      },
+      "multipliers": {
+        "cavity": { "1": 1, "2": 1.03, "4": 1.06, "6": 1.08, "8": 1.1 }
+      },
+      "offsets": {
+        "plateType": { "2P": 0.1, "3P": 0.12, "HOT": 0.09, "default": 0 }
+      }
+    }
+  }
+}
