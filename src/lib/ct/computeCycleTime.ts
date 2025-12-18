@@ -1,129 +1,106 @@
-import { InputData, Options, Outputs } from './types';
+import moldTypeRules from '../../data/moldTypeRules.json';
 
-type StageName = keyof Omit<Outputs, 'total' | 'debug'>;
+export interface StageInput {
+  fill?: number;
+  pack?: number;
+  cool?: number;
+  open?: number;
+  eject?: number;
+  robot?: number;
+  close?: number;
+}
 
-type StageDefinition = {
-  base: { default: number };
-  multipliers?: Record<string, Record<string, number>>;
-  optionMultipliers?: Record<string, Record<string, number>>;
-  linear?: Record<string, number>;
-  offsets?: Record<string, Record<string, number>>;
+export interface CycleTimeInput extends StageInput {
+  moldType?: string;
+}
+
+export interface CycleTimeOptions {
+  /** Optional safety factor applied to the summed total (e.g. 0.1 = +10%). */
+  safetyFactor?: number;
+}
+
+export interface MoldTypeRule {
+  moldType: string;
+  timeAdd_s: number;
+  packZero: boolean;
+  coolPlus: boolean;
+  openPlus: boolean;
+  closePlus: boolean;
+  packPlus: boolean;
+}
+
+export interface CycleTimeTables {
+  moldTypeRules?: MoldTypeRule[];
+}
+
+export interface CycleTimeBreakdown extends Required<StageInput> {
+  total: number;
+  totalWithSafety: number;
+}
+
+const defaultStage: Required<StageInput> = {
+  fill: 0,
+  pack: 0,
+  cool: 0,
+  open: 0,
+  eject: 0,
+  robot: 0,
+  close: 0,
 };
 
-type TablesSchema = {
-  defaults?: { safetyFactor?: number; rounding?: number };
-  stages?: Record<StageName, StageDefinition>;
-};
+function lookupRule(moldType: string | undefined, rules: MoldTypeRule[]): MoldTypeRule | undefined {
+  if (!moldType) return undefined;
+  return rules.find((rule) => rule.moldType === moldType);
+}
 
-const safeNumber = (value: unknown, fallback = 0): number => {
-  const num = typeof value === 'number' && Number.isFinite(value) ? value : Number(value);
-  return Number.isFinite(num) ? num : fallback;
-};
-
-const getFieldValue = (field: string, input: InputData, options: Options): unknown => {
-  if (field in input) return (input as any)[field];
-  if (field in options) return (options as any)[field];
-  return undefined;
-};
-
-const pickMultiplier = (map: Record<string, number> | undefined, key: unknown): number => {
-  if (!map) return 1;
-  const lookupKey = key === undefined || key === null ? 'default' : String(key);
-  if (lookupKey in map) return map[lookupKey];
-  if ('default' in map) return map['default'];
-  return 1;
-};
-
-const applyLinear = (
-  linear: Record<string, number> | undefined,
-  input: InputData,
-  options: Options,
-): number => {
-  if (!linear) return 0;
-  return Object.entries(linear).reduce((sum, [field, coefficient]) => {
-    const value = safeNumber(getFieldValue(field, input, options), 0);
-    const bounded = value < 0 ? 0 : value;
-    return sum + bounded * coefficient;
-  }, 0);
-};
-
-const applyOffsets = (
-  offsets: Record<string, Record<string, number>> | undefined,
-  input: InputData,
-  options: Options,
-): number => {
-  if (!offsets) return 0;
-  return Object.entries(offsets).reduce((sum, [field, map]) => {
-    const value = getFieldValue(field, input, options);
-    const delta = pickMultiplier(map, value === undefined ? 'default' : value);
-    return sum + delta;
-  }, 0);
-};
-
-const computeStageBase = (
-  name: StageName,
-  stage: StageDefinition | undefined,
-  input: InputData,
-  options: Options,
-): number => {
-  const baseDefault = stage?.base?.default ?? 0;
-  let value = baseDefault;
-
-  if (stage?.multipliers) {
-    Object.entries(stage.multipliers).forEach(([field, map]) => {
-      const fieldValue = getFieldValue(field, input, options);
-      value *= pickMultiplier(map, fieldValue);
-    });
+function applyMoldTypeAdjustments(base: Required<StageInput>, rule?: MoldTypeRule): Required<StageInput> {
+  if (!rule) return base;
+  const updated = { ...base };
+  const add = rule.timeAdd_s;
+  if (rule.packZero) {
+    updated.pack = 0;
   }
-
-  value += applyLinear(stage?.linear, input, options);
-  value += applyOffsets(stage?.offsets, input, options);
-
-  if (stage?.optionMultipliers) {
-    Object.entries(stage.optionMultipliers).forEach(([field, map]) => {
-      const fieldValue = getFieldValue(field, input, options);
-      value *= pickMultiplier(map, fieldValue);
-    });
+  if (rule.packPlus) {
+    updated.pack += add;
   }
-
-  if (!Number.isFinite(value) || Number.isNaN(value)) {
-    return 0;
+  if (rule.coolPlus) {
+    updated.cool += add;
   }
-
-  return value < 0 ? 0 : value;
-};
-
-const applySafety = (value: number, safetyFactor: number, rounding = 2) => {
-  const boundedSafety = safetyFactor < 0 ? 0 : safetyFactor;
-  const adjusted = value * (1 + boundedSafety);
-  const factor = 10 ** rounding;
-  return Math.round(adjusted * factor) / factor;
-};
+  if (rule.openPlus) {
+    updated.open += add;
+  }
+  if (rule.closePlus) {
+    updated.close += add;
+  }
+  // Generic time adder applied to fill stage as in Excel's Time add column
+  updated.fill += add;
+  return updated;
+}
 
 export function computeCycleTime(
-  input: InputData,
-  options: Options,
-  tables: TablesSchema,
-): Outputs {
-  const stageNames: StageName[] = ['fill', 'pack', 'cool', 'open', 'eject', 'robot', 'close'];
-  const safety = tables?.defaults?.safetyFactor ?? 0;
-  const rounding = tables?.defaults?.rounding ?? 2;
-  const outputs: Partial<Outputs> = {};
+  input: CycleTimeInput,
+  options: CycleTimeOptions = {},
+  tables: CycleTimeTables = {}
+): CycleTimeBreakdown {
+  const rules = tables.moldTypeRules ?? (moldTypeRules as MoldTypeRule[]);
+  const rule = lookupRule(input.moldType, rules);
 
-  for (const stage of stageNames) {
-    const rawValue = computeStageBase(stage, tables?.stages?.[stage], input, options);
-    outputs[stage] = applySafety(rawValue, options.safetyFactor ?? safety, rounding);
-  }
+  const base: Required<StageInput> = { ...defaultStage, ...input };
+  const adjusted = applyMoldTypeAdjustments(base, rule);
 
-  const total = stageNames.reduce((sum, name) => sum + (outputs[name] ?? 0), 0);
-  return {
-    fill: outputs.fill ?? 0,
-    pack: outputs.pack ?? 0,
-    cool: outputs.cool ?? 0,
-    open: outputs.open ?? 0,
-    eject: outputs.eject ?? 0,
-    robot: outputs.robot ?? 0,
-    close: outputs.close ?? 0,
-    total: Math.round(total * (10 ** rounding)) / (10 ** rounding),
-  };
+  const total =
+    adjusted.fill +
+    adjusted.pack +
+    adjusted.cool +
+    adjusted.open +
+    adjusted.eject +
+    adjusted.robot +
+    adjusted.close;
+
+  const safetyFactor = options.safetyFactor ?? 0;
+  const totalWithSafety = total * (1 + safetyFactor);
+
+  return { ...adjusted, total, totalWithSafety };
 }
+
+export default computeCycleTime;

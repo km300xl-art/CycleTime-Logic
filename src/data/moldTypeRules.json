@@ -1,0 +1,74 @@
+[
+  {
+    "moldType": "General INJ.",
+    "timeAdd_s": 0.0,
+    "packZero": false,
+    "coolPlus": false,
+    "openPlus": false,
+    "closePlus": false,
+    "packPlus": false
+  },
+  {
+    "moldType": "Gas INJ.",
+    "timeAdd_s": 0.4,
+    "packZero": false,
+    "coolPlus": true,
+    "openPlus": false,
+    "closePlus": false,
+    "packPlus": false
+  },
+  {
+    "moldType": "High TEMP. INJ.",
+    "timeAdd_s": 5.0,
+    "packZero": false,
+    "coolPlus": true,
+    "openPlus": false,
+    "closePlus": false,
+    "packPlus": false
+  },
+  {
+    "moldType": "GEAR Tool",
+    "timeAdd_s": 1.0,
+    "packZero": false,
+    "coolPlus": true,
+    "openPlus": false,
+    "closePlus": false,
+    "packPlus": false
+  },
+  {
+    "moldType": "Double shot",
+    "timeAdd_s": 1.5,
+    "packZero": false,
+    "coolPlus": false,
+    "openPlus": false,
+    "closePlus": true,
+    "packPlus": false
+  },
+  {
+    "moldType": "Insert INJ.",
+    "timeAdd_s": 10.0,
+    "packZero": false,
+    "coolPlus": false,
+    "openPlus": true,
+    "closePlus": false,
+    "packPlus": false
+  },
+  {
+    "moldType": "IMR INJ.",
+    "timeAdd_s": 10.0,
+    "packZero": false,
+    "coolPlus": false,
+    "openPlus": true,
+    "closePlus": false,
+    "packPlus": false
+  },
+  {
+    "moldType": "Lens INJ.",
+    "timeAdd_s": 3.0,
+    "packZero": false,
+    "coolPlus": false,
+    "openPlus": false,
+    "closePlus": false,
+    "packPlus": true
+  }
+]
