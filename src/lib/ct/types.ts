@@ -1,27 +1,27 @@
-export interface InputData {
+export type InputData = {
   moldType: string;
   resin: string;
   grade: string;
-  cavity: number;
-  weight_g_1cav?: number;
-  clampForce_ton?: number;
-  thickness_mm?: number;
-  height_mm_eject?: number;
+  cavity: 1 | 2 | 4 | 6 | 8;
+  weight_g_1cav: number; // >=0
+  clampForce_ton: number; // >=0
+  thickness_mm: number; // >=0
+  height_mm_eject: number; // >=0
   plateType: '2P' | '3P' | 'HOT';
-}
+};
 
-export interface Options {
+export type Options = {
   clampControl: string;
-  moldProtection_mm: number;
-  ejectStroke_mm: number;
-  cushionDistance_mm: number;
-  robotStroke_mm: number;
-  vpPosition_mm: number;
+  moldProtection_mm: number; // >=0
+  ejectStroke_mm: number; // >=0
+  cushionDistance_mm: number; // >=0
+  robotStroke_mm: number; // >=0
+  vpPosition_mm: number; // >=0
   coolingOption: 'BASE' | 'LOGIC';
-  safetyFactor: number;
-}
+  safetyFactor: number; // >=0; e.g. 0.10
+};
 
-export interface Outputs {
+export type Outputs = {
   fill: number;
   pack: number;
   cool: number;
@@ -30,4 +30,5 @@ export interface Outputs {
   robot: number;
   close: number;
   total: number;
-}
+  debug?: unknown;
+};

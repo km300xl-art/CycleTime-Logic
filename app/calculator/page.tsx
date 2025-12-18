@@ -1,7 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { computeDummy } from '../../src/lib/ct/computeDummy';
+import tables from '../../src/data/tables.json';
+import { computeCycleTime } from '../../src/lib/ct/computeCycleTime';
 import { InputSection } from './components/InputSection';
 import { OptionsSection } from './components/OptionsSection';
 import { OutputTable } from './components/OutputTable';
@@ -36,28 +37,50 @@ const moldTypeOptions = ['Prototype', 'Production', 'Family'];
 const resinOptions = ['PP', 'ABS', 'PC'];
 const clampControlOptions = ['Toggle', 'Hydraulic', 'Electric'];
 
-const toInputData = (values: InputFormState): InputData => ({
-  moldType: values.moldType,
-  resin: values.resin,
-  grade: values.grade,
-  cavity: Number(values.cavity) || 0,
-  weight_g_1cav: values.weight_g_1cav === '' ? undefined : Number(values.weight_g_1cav),
-  clampForce_ton: values.clampForce_ton === '' ? undefined : Number(values.clampForce_ton),
-  thickness_mm: values.thickness_mm === '' ? undefined : Number(values.thickness_mm),
-  height_mm_eject: values.height_mm_eject === '' ? undefined : Number(values.height_mm_eject),
-  plateType: values.plateType as InputData['plateType'],
-});
+const toInputData = (values: InputFormState): InputData => {
+  const allowedCavities: InputData['cavity'][] = [1, 2, 4, 6, 8];
+  const numericCavity = Number(values.cavity);
+  const cavity = allowedCavities.includes(numericCavity as InputData['cavity'])
+    ? (numericCavity as InputData['cavity'])
+    : 1;
 
-const toOptions = (values: OptionFormState): Options => ({
-  clampControl: values.clampControl,
-  moldProtection_mm: Number(values.moldProtection_mm) || 0,
-  ejectStroke_mm: Number(values.ejectStroke_mm) || 0,
-  cushionDistance_mm: Number(values.cushionDistance_mm) || 0,
-  robotStroke_mm: Number(values.robotStroke_mm) || 0,
-  vpPosition_mm: Number(values.vpPosition_mm) || 0,
-  coolingOption: values.coolingOption as Options['coolingOption'],
-  safetyFactor: values.safetyFactor === '' ? 0 : Math.max(0, Number(values.safetyFactor)),
-});
+  const numberOrZero = (value: string) => {
+    if (value === '') return 0;
+    const num = Number(value);
+    return Number.isFinite(num) && num >= 0 ? num : 0;
+  };
+
+  return {
+    moldType: values.moldType,
+    resin: values.resin,
+    grade: values.grade,
+    cavity,
+    weight_g_1cav: numberOrZero(values.weight_g_1cav),
+    clampForce_ton: numberOrZero(values.clampForce_ton),
+    thickness_mm: numberOrZero(values.thickness_mm),
+    height_mm_eject: numberOrZero(values.height_mm_eject),
+    plateType: values.plateType as InputData['plateType'],
+  };
+};
+
+const toOptions = (values: OptionFormState): Options => {
+  const numberOrZero = (value: string) => {
+    if (value === '') return 0;
+    const num = Number(value);
+    return Number.isFinite(num) && num >= 0 ? num : 0;
+  };
+
+  return {
+    clampControl: values.clampControl,
+    moldProtection_mm: numberOrZero(values.moldProtection_mm),
+    ejectStroke_mm: numberOrZero(values.ejectStroke_mm),
+    cushionDistance_mm: numberOrZero(values.cushionDistance_mm),
+    robotStroke_mm: numberOrZero(values.robotStroke_mm),
+    vpPosition_mm: numberOrZero(values.vpPosition_mm),
+    coolingOption: values.coolingOption as Options['coolingOption'],
+    safetyFactor: values.safetyFactor === '' ? 0 : Math.max(0, Number(values.safetyFactor)),
+  };
+};
 
 export default function CalculatorPage() {
   const [inputValues, setInputValues] = useState<InputFormState>(initialInputValues);
@@ -72,7 +95,7 @@ export default function CalculatorPage() {
   const parsedInput = useMemo(() => toInputData(inputValues), [inputValues]);
   const parsedOptions = useMemo(() => toOptions(optionValues), [optionValues]);
 
-  const [outputs, setOutputs] = useState(() => computeDummy(parsedInput, parsedOptions));
+  const [outputs, setOutputs] = useState(() => computeCycleTime(parsedInput, parsedOptions, tables));
 
   const handleTextChange = (field: keyof InputFormState, value: string) => {
     setInputValues((prev) => {
@@ -128,7 +151,7 @@ export default function CalculatorPage() {
     setErrors(validation);
     if (Object.keys(validation).length > 0) return;
 
-    const result = computeDummy(toInputData(inputValues), toOptions(optionValues));
+    const result = computeCycleTime(toInputData(inputValues), toOptions(optionValues), tables);
     setOutputs(result);
   };
 
@@ -136,7 +159,7 @@ export default function CalculatorPage() {
     setInputValues(initialInputValues);
     setOptionValues(initialOptionValues);
     setErrors({});
-    setOutputs(computeDummy(toInputData(initialInputValues), toOptions(initialOptionValues)));
+    setOutputs(computeCycleTime(toInputData(initialInputValues), toOptions(initialOptionValues), tables));
   };
 
   return (

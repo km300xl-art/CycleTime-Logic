@@ -1,1023 +1,512 @@
 [
   {
-    "name": "tc-0001-General INJ.-PET_GF30-LV2550GN30-c1-3P",
+    "name": "Prototype PP single 2P",
     "input": {
-      "moldType": "General INJ.",
-      "resin": "PET_GF30",
-      "grade": "LV2550GN30",
+      "moldType": "Prototype",
+      "resin": "PP",
+      "grade": "P1",
       "cavity": 1,
-      "weight_g_1cav": 27.0,
-      "clampForce_ton": 220.0,
-      "thickness_mm": 7.2,
-      "height_mm_eject": 65.0,
-      "plateType": "3P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 4.9,
-      "pack": 4.95,
-      "cool": 39.41,
-      "open": 6.35,
-      "eject": 3.2,
-      "robot": 3.5,
-      "close": 6.27,
-      "total": 68.58
-    }
-  },
-  {
-    "name": "tc-0002-General INJ.-ABS-HF-0660I-c1-HOT",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "ABS",
-      "grade": "HF-0660I",
-      "cavity": 1,
-      "weight_g_1cav": 80.0,
-      "clampForce_ton": 470.0,
-      "thickness_mm": 3.0,
-      "height_mm_eject": 75.0,
-      "plateType": "HOT"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 5.91,
-      "pack": 5.06,
-      "cool": 31.97,
-      "open": 5.17,
-      "eject": 3.31,
-      "robot": 3.0,
-      "close": 5.61,
-      "total": 60.03
-    }
-  },
-  {
-    "name": "tc-0003-General INJ.-POM-F20-02-c4-2P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "POM",
-      "grade": "F20-02",
-      "cavity": 4,
-      "weight_g_1cav": 3.0,
-      "clampForce_ton": 50.0,
-      "thickness_mm": 2.0,
-      "height_mm_eject": 20.0,
+      "weight_g_1cav": 12,
+      "clampForce_ton": 120,
+      "thickness_mm": 2,
+      "height_mm_eject": 40,
       "plateType": "2P"
     },
     "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
+      "clampControl": "Toggle",
+      "moldProtection_mm": 1,
+      "ejectStroke_mm": 10,
+      "cushionDistance_mm": 5,
+      "robotStroke_mm": 300,
+      "vpPosition_mm": 20,
       "coolingOption": "BASE",
       "safetyFactor": 0.1
     },
     "expected": {
-      "fill": 2.14,
-      "pack": 2.31,
-      "cool": 13.75,
-      "open": 2.07,
-      "eject": 1.88,
-      "robot": 2.0,
-      "close": 2.41,
-      "total": 26.56
+      "fill": 1.22,
+      "pack": 1.62,
+      "cool": 5.72,
+      "open": 1.33,
+      "eject": 2.04,
+      "robot": 4.95,
+      "close": 2.2,
+      "total": 19.08
     }
   },
   {
-    "name": "tc-0004-General INJ.-ABS-HF-0660I-c2-HOT",
+    "name": "Production ABS double HOT",
     "input": {
-      "moldType": "General INJ.",
+      "moldType": "Production",
       "resin": "ABS",
-      "grade": "HF-0660I",
+      "grade": "A1",
       "cavity": 2,
-      "weight_g_1cav": 23.0,
-      "clampForce_ton": 220.0,
-      "thickness_mm": 3.0,
-      "height_mm_eject": 65.0,
-      "plateType": "HOT"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 4.83,
-      "pack": 4.66,
-      "cool": 27.95,
-      "open": 4.95,
-      "eject": 3.31,
-      "robot": 3.0,
-      "close": 5.41,
-      "total": 54.11
-    }
-  },
-  {
-    "name": "tc-0005-General INJ.-POM-F20-02-c1-3P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "POM",
-      "grade": "F20-02",
-      "cavity": 1,
-      "weight_g_1cav": 13.0,
-      "clampForce_ton": 100.0,
-      "thickness_mm": 4.0,
-      "height_mm_eject": 35.0,
-      "plateType": "3P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 3.83,
-      "pack": 3.73,
-      "cool": 20.22,
-      "open": 3.19,
-      "eject": 2.16,
-      "robot": 2.5,
-      "close": 3.23,
-      "total": 38.86
-    }
-  },
-  {
-    "name": "tc-0006-General INJ.-PP-TS-L1500-c4-2P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "PP",
-      "grade": "TS-L1500",
-      "cavity": 4,
-      "weight_g_1cav": 8.0,
-      "clampForce_ton": 180.0,
+      "weight_g_1cav": 18,
+      "clampForce_ton": 180,
       "thickness_mm": 2.5,
-      "height_mm_eject": 55.0,
-      "plateType": "2P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 4.09,
-      "pack": 3.71,
-      "cool": 27.23,
-      "open": 3.74,
-      "eject": 2.16,
-      "robot": 2.5,
-      "close": 4.62,
-      "total": 48.05
-    }
-  },
-  {
-    "name": "tc-0007-GEAR Tool-POM-M90-44-c4-3P",
-    "input": {
-      "moldType": "GEAR Tool",
-      "resin": "POM",
-      "grade": "M90-44",
-      "cavity": 4,
-      "weight_g_1cav": 2.078,
-      "clampForce_ton": 50.0,
-      "thickness_mm": 1.5,
-      "height_mm_eject": 19.0,
-      "plateType": "3P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 1.64,
-      "pack": 2.2,
-      "cool": 13.75,
-      "open": 2.04,
-      "eject": 1.88,
-      "robot": 2.0,
-      "close": 2.38,
-      "total": 25.89
-    }
-  },
-  {
-    "name": "tc-0008-General INJ.-PA66_GF30-NY66GF30-c1-3P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "PA66_GF30",
-      "grade": "NY66GF30",
-      "cavity": 1,
-      "weight_g_1cav": 35.0,
-      "clampForce_ton": 320.0,
-      "thickness_mm": 2.2,
-      "height_mm_eject": 70.0,
-      "plateType": "3P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 5.35,
-      "pack": 4.94,
-      "cool": 29.67,
-      "open": 5.16,
-      "eject": 3.2,
-      "robot": 3.5,
-      "close": 5.98,
-      "total": 57.8
-    }
-  },
-  {
-    "name": "tc-0009-General INJ.-PBT-2000-215-c2-2P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "PBT",
-      "grade": "2000-215",
-      "cavity": 2,
-      "weight_g_1cav": 12.0,
-      "clampForce_ton": 180.0,
-      "thickness_mm": 2.0,
-      "height_mm_eject": 55.0,
-      "plateType": "2P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 4.39,
-      "pack": 3.85,
-      "cool": 22.93,
-      "open": 3.88,
-      "eject": 2.16,
-      "robot": 2.5,
-      "close": 4.77,
-      "total": 44.48
-    }
-  },
-  {
-    "name": "tc-0010-General INJ.-PP-HJ700-c8-HOT",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "PP",
-      "grade": "HJ700",
-      "cavity": 8,
-      "weight_g_1cav": 2.0,
-      "clampForce_ton": 160.0,
-      "thickness_mm": 1.2,
-      "height_mm_eject": 55.0,
+      "height_mm_eject": 50,
       "plateType": "HOT"
     },
     "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
+      "clampControl": "Hydraulic",
+      "moldProtection_mm": 2,
+      "ejectStroke_mm": 12,
+      "cushionDistance_mm": 8,
+      "robotStroke_mm": 250,
+      "vpPosition_mm": 18,
+      "coolingOption": "LOGIC",
+      "safetyFactor": 0.08
     },
     "expected": {
-      "fill": 3.51,
-      "pack": 3.97,
-      "cool": 14.45,
-      "open": 4.01,
-      "eject": 2.21,
-      "robot": 2.5,
-      "close": 4.35,
-      "total": 35.0
+      "fill": 1.44,
+      "pack": 1.67,
+      "cool": 5.54,
+      "open": 1.37,
+      "eject": 2.25,
+      "robot": 4.35,
+      "close": 2.49,
+      "total": 19.11
     }
   },
   {
-    "name": "tc-0011-General INJ.-PC-SH1010R-c1-3P",
+    "name": "Family PC quad 3P",
     "input": {
-      "moldType": "General INJ.",
+      "moldType": "Family",
       "resin": "PC",
-      "grade": "SH1010R",
-      "cavity": 1,
-      "weight_g_1cav": 30.0,
-      "clampForce_ton": 280.0,
-      "thickness_mm": 2.5,
-      "height_mm_eject": 65.0,
-      "plateType": "3P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 5.17,
-      "pack": 4.87,
-      "cool": 26.93,
-      "open": 5.03,
-      "eject": 3.2,
-      "robot": 3.5,
-      "close": 5.78,
-      "total": 54.48
-    }
-  },
-  {
-    "name": "tc-0012-General INJ.-PP-RP344R-c1-2P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "PP",
-      "grade": "RP344R",
-      "cavity": 1,
-      "weight_g_1cav": 55.0,
-      "clampForce_ton": 360.0,
-      "thickness_mm": 2.5,
-      "height_mm_eject": 70.0,
-      "plateType": "2P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 6.1,
-      "pack": 5.54,
-      "cool": 31.97,
-      "open": 5.25,
-      "eject": 3.31,
-      "robot": 3.0,
-      "close": 5.72,
-      "total": 60.89
-    }
-  },
-  {
-    "name": "tc-0013-General INJ.-POM-F20-02-c2-3P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "POM",
-      "grade": "F20-02",
-      "cavity": 2,
-      "weight_g_1cav": 10.0,
-      "clampForce_ton": 100.0,
-      "thickness_mm": 3.0,
-      "height_mm_eject": 35.0,
-      "plateType": "3P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 3.91,
-      "pack": 3.83,
-      "cool": 20.22,
-      "open": 3.23,
-      "eject": 2.16,
-      "robot": 2.5,
-      "close": 3.27,
-      "total": 39.12
-    }
-  },
-  {
-    "name": "tc-0014-General INJ.-PA6_GF30-NY6GF30-c1-3P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "PA6_GF30",
-      "grade": "NY6GF30",
-      "cavity": 1,
-      "weight_g_1cav": 18.0,
-      "clampForce_ton": 180.0,
-      "thickness_mm": 2.0,
-      "height_mm_eject": 55.0,
-      "plateType": "3P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 4.67,
-      "pack": 4.37,
-      "cool": 24.47,
-      "open": 4.06,
-      "eject": 2.55,
-      "robot": 3.0,
-      "close": 4.71,
-      "total": 47.83
-    }
-  },
-  {
-    "name": "tc-0015-General INJ.-ABS-HF-0660I-c1-2P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "ABS",
-      "grade": "HF-0660I",
-      "cavity": 1,
-      "weight_g_1cav": 55.0,
-      "clampForce_ton": 360.0,
-      "thickness_mm": 2.0,
-      "height_mm_eject": 65.0,
-      "plateType": "2P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 5.61,
-      "pack": 5.1,
-      "cool": 29.33,
-      "open": 5.26,
-      "eject": 3.31,
-      "robot": 3.0,
-      "close": 5.74,
-      "total": 57.35
-    }
-  },
-  {
-    "name": "tc-0016-General INJ.-POM-F20-02-c4-3P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "POM",
-      "grade": "F20-02",
+      "grade": "PC-10",
       "cavity": 4,
-      "weight_g_1cav": 2.0,
-      "clampForce_ton": 50.0,
+      "weight_g_1cav": 30,
+      "clampForce_ton": 220,
+      "thickness_mm": 3,
+      "height_mm_eject": 60,
+      "plateType": "3P"
+    },
+    "options": {
+      "clampControl": "Electric",
+      "moldProtection_mm": 1.5,
+      "ejectStroke_mm": 14,
+      "cushionDistance_mm": 10,
+      "robotStroke_mm": 200,
+      "vpPosition_mm": 25,
+      "coolingOption": "BASE",
+      "safetyFactor": 0.12
+    },
+    "expected": {
+      "fill": 2,
+      "pack": 1.87,
+      "cool": 6.68,
+      "open": 1.44,
+      "eject": 2.61,
+      "robot": 3.99,
+      "close": 2.95,
+      "total": 21.54
+    }
+  },
+  {
+    "name": "Gear POM six 2P",
+    "input": {
+      "moldType": "Gear",
+      "resin": "POM",
+      "grade": "POM-G",
+      "cavity": 6,
+      "weight_g_1cav": 8,
+      "clampForce_ton": 160,
+      "thickness_mm": 1.8,
+      "height_mm_eject": 25,
+      "plateType": "2P"
+    },
+    "options": {
+      "clampControl": "Toggle",
+      "moldProtection_mm": 0.5,
+      "ejectStroke_mm": 8,
+      "cushionDistance_mm": 6,
+      "robotStroke_mm": 150,
+      "vpPosition_mm": 22,
+      "coolingOption": "LOGIC",
+      "safetyFactor": 0.05
+    },
+    "expected": {
+      "fill": 1.1,
+      "pack": 1.61,
+      "cool": 5.14,
+      "open": 1.26,
+      "eject": 1.6,
+      "robot": 3.24,
+      "close": 2.42,
+      "total": 16.37
+    }
+  },
+  {
+    "name": "Large PA single HOT",
+    "input": {
+      "moldType": "General",
+      "resin": "PA66",
+      "grade": "PA-GF",
+      "cavity": 1,
+      "weight_g_1cav": 45,
+      "clampForce_ton": 300,
+      "thickness_mm": 3.5,
+      "height_mm_eject": 70,
+      "plateType": "HOT"
+    },
+    "options": {
+      "clampControl": "Hydraulic",
+      "moldProtection_mm": 2.5,
+      "ejectStroke_mm": 16,
+      "cushionDistance_mm": 12,
+      "robotStroke_mm": 220,
+      "vpPosition_mm": 28,
+      "coolingOption": "BASE",
+      "safetyFactor": 0.15
+    },
+    "expected": {
+      "fill": 2.49,
+      "pack": 2.09,
+      "cool": 7.01,
+      "open": 1.5,
+      "eject": 2.92,
+      "robot": 4.26,
+      "close": 3.42,
+      "total": 23.69
+    }
+  },
+  {
+    "name": "Thin PP eight 3P",
+    "input": {
+      "moldType": "General",
+      "resin": "PP",
+      "grade": "PP-T",
+      "cavity": 8,
+      "weight_g_1cav": 3,
+      "clampForce_ton": 140,
       "thickness_mm": 1.2,
-      "height_mm_eject": 19.0,
+      "height_mm_eject": 30,
       "plateType": "3P"
     },
     "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
+      "clampControl": "Electric",
+      "moldProtection_mm": 0.5,
+      "ejectStroke_mm": 10,
+      "cushionDistance_mm": 4,
+      "robotStroke_mm": 180,
+      "vpPosition_mm": 15,
+      "coolingOption": "LOGIC",
+      "safetyFactor": 0
     },
     "expected": {
-      "fill": 1.65,
-      "pack": 2.2,
-      "cool": 13.75,
-      "open": 2.04,
-      "eject": 1.88,
-      "robot": 2.0,
-      "close": 2.38,
-      "total": 25.9
+      "fill": 0.92,
+      "pack": 1.39,
+      "cool": 4.64,
+      "open": 1.23,
+      "eject": 1.67,
+      "robot": 3.42,
+      "close": 2.18,
+      "total": 15.45
     }
   },
   {
-    "name": "tc-0017-General INJ.-PP-RP344R-c2-3P",
+    "name": "High clamp PET two 2P",
     "input": {
-      "moldType": "General INJ.",
-      "resin": "PP",
-      "grade": "RP344R",
-      "cavity": 2,
-      "weight_g_1cav": 8.0,
-      "clampForce_ton": 180.0,
-      "thickness_mm": 2.5,
-      "height_mm_eject": 55.0,
-      "plateType": "3P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 4.01,
-      "pack": 3.73,
-      "cool": 24.47,
-      "open": 3.66,
-      "eject": 2.16,
-      "robot": 2.5,
-      "close": 4.47,
-      "total": 45.0
-    }
-  },
-  {
-    "name": "tc-0018-General INJ.-PBT-2000-215-c1-2P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "PBT",
-      "grade": "2000-215",
-      "cavity": 1,
-      "weight_g_1cav": 20.0,
-      "clampForce_ton": 180.0,
-      "thickness_mm": 2.0,
-      "height_mm_eject": 55.0,
-      "plateType": "2P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 5.06,
-      "pack": 4.28,
-      "cool": 24.47,
-      "open": 3.89,
-      "eject": 2.55,
-      "robot": 3.0,
-      "close": 4.48,
-      "total": 47.73
-    }
-  },
-  {
-    "name": "tc-0019-General INJ.-POM-F20-02-c2-2P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "POM",
-      "grade": "F20-02",
-      "cavity": 2,
-      "weight_g_1cav": 7.0,
-      "clampForce_ton": 50.0,
-      "thickness_mm": 2.0,
-      "height_mm_eject": 20.0,
-      "plateType": "2P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 2.56,
-      "pack": 2.46,
-      "cool": 13.75,
-      "open": 2.07,
-      "eject": 1.88,
-      "robot": 2.0,
-      "close": 2.41,
-      "total": 27.13
-    }
-  },
-  {
-    "name": "tc-0020-General INJ.-PP-HP500-c4-3P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "PP",
-      "grade": "HP500",
-      "cavity": 4,
-      "weight_g_1cav": 3.0,
-      "clampForce_ton": 100.0,
-      "thickness_mm": 1.5,
-      "height_mm_eject": 45.0,
-      "plateType": "3P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 3.44,
-      "pack": 3.19,
-      "cool": 20.22,
-      "open": 3.09,
-      "eject": 2.16,
-      "robot": 2.5,
-      "close": 3.55,
-      "total": 38.15
-    }
-  },
-  {
-    "name": "tc-0021-General INJ.-ABS-HF-0660I-c2-3P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "ABS",
-      "grade": "HF-0660I",
-      "cavity": 2,
-      "weight_g_1cav": 18.0,
-      "clampForce_ton": 180.0,
-      "thickness_mm": 2.0,
-      "height_mm_eject": 55.0,
-      "plateType": "3P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 4.44,
-      "pack": 4.02,
-      "cool": 24.47,
-      "open": 3.95,
-      "eject": 2.55,
-      "robot": 3.0,
-      "close": 4.64,
-      "total": 47.07
-    }
-  },
-  {
-    "name": "tc-0022-General INJ.-POM-F20-02-c1-2P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "POM",
-      "grade": "F20-02",
-      "cavity": 1,
-      "weight_g_1cav": 8.0,
-      "clampForce_ton": 50.0,
-      "thickness_mm": 2.0,
-      "height_mm_eject": 20.0,
-      "plateType": "2P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 2.31,
-      "pack": 2.34,
-      "cool": 13.75,
-      "open": 2.05,
-      "eject": 1.88,
-      "robot": 2.0,
-      "close": 2.38,
-      "total": 26.71
-    }
-  },
-  {
-    "name": "tc-0023-General INJ.-PET-LV2550GN-c2-3P",
-    "input": {
-      "moldType": "General INJ.",
+      "moldType": "Production",
       "resin": "PET",
-      "grade": "LV2550GN",
+      "grade": "PET-X",
       "cavity": 2,
-      "weight_g_1cav": 10.0,
-      "clampForce_ton": 180.0,
-      "thickness_mm": 2.0,
-      "height_mm_eject": 55.0,
-      "plateType": "3P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 4.17,
-      "pack": 4.19,
-      "cool": 27.23,
-      "open": 4.06,
-      "eject": 2.55,
-      "robot": 3.0,
-      "close": 4.71,
-      "total": 49.91
-    }
-  },
-  {
-    "name": "tc-0024-General INJ.-PP-HJ700-c2-2P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "PP",
-      "grade": "HJ700",
-      "cavity": 2,
-      "weight_g_1cav": 10.0,
-      "clampForce_ton": 180.0,
-      "thickness_mm": 2.0,
-      "height_mm_eject": 55.0,
+      "weight_g_1cav": 20,
+      "clampForce_ton": 400,
+      "thickness_mm": 2.2,
+      "height_mm_eject": 55,
       "plateType": "2P"
     },
     "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
+      "clampControl": "Hydraulic",
+      "moldProtection_mm": 1.2,
+      "ejectStroke_mm": 11,
+      "cushionDistance_mm": 7,
+      "robotStroke_mm": 160,
+      "vpPosition_mm": 30,
       "coolingOption": "BASE",
       "safetyFactor": 0.1
     },
     "expected": {
-      "fill": 4.17,
-      "pack": 3.98,
-      "cool": 22.93,
-      "open": 3.88,
-      "eject": 2.16,
-      "robot": 2.5,
-      "close": 4.77,
-      "total": 44.39
+      "fill": 1.53,
+      "pack": 1.71,
+      "cool": 5.94,
+      "open": 1.34,
+      "eject": 2.38,
+      "robot": 3.44,
+      "close": 3.89,
+      "total": 20.23
     }
   },
   {
-    "name": "tc-0025-General INJ.-POM-F20-02-c8-3P",
+    "name": "Robot heavy ABS quad HOT",
     "input": {
-      "moldType": "General INJ.",
-      "resin": "POM",
-      "grade": "F20-02",
-      "cavity": 8,
-      "weight_g_1cav": 1.0,
-      "clampForce_ton": 50.0,
-      "thickness_mm": 1.0,
-      "height_mm_eject": 19.0,
-      "plateType": "3P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 1.21,
-      "pack": 2.11,
-      "cool": 13.75,
-      "open": 2.05,
-      "eject": 1.88,
-      "robot": 2.0,
-      "close": 2.38,
-      "total": 25.38
-    }
-  },
-  {
-    "name": "tc-0026-General INJ.-PA6-NY6-c1-3P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "PA6",
-      "grade": "NY6",
-      "cavity": 1,
-      "weight_g_1cav": 10.0,
-      "clampForce_ton": 100.0,
-      "thickness_mm": 2.0,
-      "height_mm_eject": 45.0,
-      "plateType": "3P"
-    },
-    "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
-    },
-    "expected": {
-      "fill": 4.11,
-      "pack": 3.87,
-      "cool": 20.22,
-      "open": 3.2,
-      "eject": 2.16,
-      "robot": 2.5,
-      "close": 3.24,
-      "total": 39.3
-    }
-  },
-  {
-    "name": "tc-0027-General INJ.-PBT-2000-215-c4-2P",
-    "input": {
-      "moldType": "General INJ.",
-      "resin": "PBT",
-      "grade": "2000-215",
+      "moldType": "Production",
+      "resin": "ABS",
+      "grade": "ABS-H",
       "cavity": 4,
-      "weight_g_1cav": 4.0,
-      "clampForce_ton": 100.0,
-      "thickness_mm": 2.0,
-      "height_mm_eject": 45.0,
-      "plateType": "2P"
+      "weight_g_1cav": 22,
+      "clampForce_ton": 250,
+      "thickness_mm": 2.8,
+      "height_mm_eject": 65,
+      "plateType": "HOT"
     },
     "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
+      "clampControl": "Toggle",
+      "moldProtection_mm": 2,
+      "ejectStroke_mm": 15,
+      "cushionDistance_mm": 9,
+      "robotStroke_mm": 350,
+      "vpPosition_mm": 26,
       "coolingOption": "BASE",
-      "safetyFactor": 0.1
+      "safetyFactor": 0.07
     },
     "expected": {
-      "fill": 3.47,
-      "pack": 3.28,
-      "cool": 20.22,
-      "open": 3.11,
-      "eject": 2.16,
-      "robot": 2.5,
-      "close": 3.57,
-      "total": 38.31
+      "fill": 1.61,
+      "pack": 1.8,
+      "cool": 6.25,
+      "open": 1.37,
+      "eject": 2.59,
+      "robot": 5.41,
+      "close": 2.96,
+      "total": 21.99
     }
   },
   {
-    "name": "tc-0028-General INJ.-PP-RP344R-c8-2P",
+    "name": "Short stroke PC single 2P",
     "input": {
-      "moldType": "General INJ.",
-      "resin": "PP",
-      "grade": "RP344R",
-      "cavity": 8,
-      "weight_g_1cav": 1.5,
-      "clampForce_ton": 100.0,
-      "thickness_mm": 1.2,
-      "height_mm_eject": 45.0,
+      "moldType": "Prototype",
+      "resin": "PC",
+      "grade": "PC-S",
+      "cavity": 1,
+      "weight_g_1cav": 15,
+      "clampForce_ton": 150,
+      "thickness_mm": 2.1,
+      "height_mm_eject": 35,
       "plateType": "2P"
     },
     "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
+      "clampControl": "Electric",
+      "moldProtection_mm": 0.8,
+      "ejectStroke_mm": 6,
+      "cushionDistance_mm": 3,
+      "robotStroke_mm": 80,
+      "vpPosition_mm": 12,
       "coolingOption": "BASE",
-      "safetyFactor": 0.1
+      "safetyFactor": 0.05
     },
     "expected": {
-      "fill": 2.5,
-      "pack": 2.93,
-      "cool": 16.95,
-      "open": 3.11,
-      "eject": 2.16,
-      "robot": 2.5,
-      "close": 3.57,
-      "total": 33.72
+      "fill": 1.27,
+      "pack": 1.45,
+      "cool": 5.52,
+      "open": 1.27,
+      "eject": 1.77,
+      "robot": 2.42,
+      "close": 2.17,
+      "total": 15.87
     }
   },
   {
-    "name": "tc-0029-General INJ.-POM-F20-02-c2-HOT",
+    "name": "Tall eject POM four 3P",
     "input": {
-      "moldType": "General INJ.",
+      "moldType": "Gear",
       "resin": "POM",
-      "grade": "F20-02",
-      "cavity": 2,
-      "weight_g_1cav": 10.0,
-      "clampForce_ton": 100.0,
-      "thickness_mm": 2.0,
-      "height_mm_eject": 55.0,
-      "plateType": "HOT"
+      "grade": "POM-T",
+      "cavity": 4,
+      "weight_g_1cav": 6,
+      "clampForce_ton": 130,
+      "thickness_mm": 1.6,
+      "height_mm_eject": 90,
+      "plateType": "3P"
     },
     "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
-      "coolingOption": "BASE",
-      "safetyFactor": 0.1
+      "clampControl": "Hydraulic",
+      "moldProtection_mm": 1,
+      "ejectStroke_mm": 30,
+      "cushionDistance_mm": 5,
+      "robotStroke_mm": 140,
+      "vpPosition_mm": 18,
+      "coolingOption": "LOGIC",
+      "safetyFactor": 0.09
     },
     "expected": {
-      "fill": 4.3,
-      "pack": 4.14,
-      "cool": 23.05,
-      "open": 4.47,
-      "eject": 3.31,
-      "robot": 3.0,
-      "close": 4.82,
-      "total": 47.09
+      "fill": 1.09,
+      "pack": 1.56,
+      "cool": 5.13,
+      "open": 1.36,
+      "eject": 3.46,
+      "robot": 3.23,
+      "close": 2.31,
+      "total": 18.14
     }
   },
   {
-    "name": "tc-0030-General INJ.-PP-HJ500-c8-HOT",
+    "name": "Low safety nylon two HOT",
     "input": {
-      "moldType": "General INJ.",
-      "resin": "PP",
-      "grade": "HJ500",
-      "cavity": 8,
-      "weight_g_1cav": 2.0,
-      "clampForce_ton": 160.0,
-      "thickness_mm": 1.2,
-      "height_mm_eject": 55.0,
+      "moldType": "General",
+      "resin": "PA",
+      "grade": "PA-L",
+      "cavity": 2,
+      "weight_g_1cav": 10,
+      "clampForce_ton": 190,
+      "thickness_mm": 2.4,
+      "height_mm_eject": 45,
       "plateType": "HOT"
     },
     "options": {
-      "clampControl": "DEFAULT",
-      "moldProtection_mm": 0,
-      "ejectStroke_mm": 0,
-      "cushionDistance_mm": 0,
-      "robotStroke_mm": 0,
-      "vpPosition_mm": 0,
+      "clampControl": "Electric",
+      "moldProtection_mm": 0.7,
+      "ejectStroke_mm": 9,
+      "cushionDistance_mm": 5,
+      "robotStroke_mm": 90,
+      "vpPosition_mm": 16,
       "coolingOption": "BASE",
-      "safetyFactor": 0.1
+      "safetyFactor": 0
     },
     "expected": {
-      "fill": 3.58,
-      "pack": 4.06,
-      "cool": 14.45,
-      "open": 4.01,
-      "eject": 2.21,
+      "fill": 1.09,
+      "pack": 1.39,
+      "cool": 5.52,
+      "open": 1.24,
+      "eject": 1.94,
+      "robot": 2.43,
+      "close": 2.33,
+      "total": 15.94
+    }
+  },
+  {
+    "name": "Max cavity PP eight 2P",
+    "input": {
+      "moldType": "General",
+      "resin": "PP",
+      "grade": "PP-Max",
+      "cavity": 8,
+      "weight_g_1cav": 5,
+      "clampForce_ton": 160,
+      "thickness_mm": 1.5,
+      "height_mm_eject": 25,
+      "plateType": "2P"
+    },
+    "options": {
+      "clampControl": "Toggle",
+      "moldProtection_mm": 1,
+      "ejectStroke_mm": 10,
+      "cushionDistance_mm": 6,
+      "robotStroke_mm": 120,
+      "vpPosition_mm": 14,
+      "coolingOption": "BASE",
+      "safetyFactor": 0.12
+    },
+    "expected": {
+      "fill": 1.08,
+      "pack": 1.71,
+      "cool": 5.85,
+      "open": 1.34,
+      "eject": 1.74,
+      "robot": 3.16,
+      "close": 2.52,
+      "total": 17.4
+    }
+  },
+  {
+    "name": "Zero safety PET single 3P",
+    "input": {
+      "moldType": "Prototype",
+      "resin": "PET",
+      "grade": "PET-0",
+      "cavity": 1,
+      "weight_g_1cav": 18,
+      "clampForce_ton": 210,
+      "thickness_mm": 2.6,
+      "height_mm_eject": 48,
+      "plateType": "3P"
+    },
+    "options": {
+      "clampControl": "Hydraulic",
+      "moldProtection_mm": 1.3,
+      "ejectStroke_mm": 9,
+      "cushionDistance_mm": 4,
+      "robotStroke_mm": 100,
+      "vpPosition_mm": 16,
+      "coolingOption": "LOGIC",
+      "safetyFactor": 0
+    },
+    "expected": {
+      "fill": 1.35,
+      "pack": 1.47,
+      "cool": 5.12,
+      "open": 1.28,
+      "eject": 2.02,
       "robot": 2.5,
-      "close": 4.35,
-      "total": 32.21
+      "close": 2.43,
+      "total": 16.17
+    }
+  },
+  {
+    "name": "Cushion heavy PC six HOT",
+    "input": {
+      "moldType": "Family",
+      "resin": "PC",
+      "grade": "PC-C",
+      "cavity": 6,
+      "weight_g_1cav": 12,
+      "clampForce_ton": 240,
+      "thickness_mm": 2.9,
+      "height_mm_eject": 40,
+      "plateType": "HOT"
+    },
+    "options": {
+      "clampControl": "Hydraulic",
+      "moldProtection_mm": 1.4,
+      "ejectStroke_mm": 12,
+      "cushionDistance_mm": 20,
+      "robotStroke_mm": 210,
+      "vpPosition_mm": 24,
+      "coolingOption": "BASE",
+      "safetyFactor": 0.05
+    },
+    "expected": {
+      "fill": 1.28,
+      "pack": 1.75,
+      "cool": 6.28,
+      "open": 1.33,
+      "eject": 1.97,
+      "robot": 3.87,
+      "close": 2.85,
+      "total": 19.33
+    }
+  },
+  {
+    "name": "Robot stroke resin mix quad 2P",
+    "input": {
+      "moldType": "Production",
+      "resin": "Mix",
+      "grade": "MX",
+      "cavity": 4,
+      "weight_g_1cav": 14,
+      "clampForce_ton": 200,
+      "thickness_mm": 2.3,
+      "height_mm_eject": 38,
+      "plateType": "2P"
+    },
+    "options": {
+      "clampControl": "Electric",
+      "moldProtection_mm": 0.9,
+      "ejectStroke_mm": 7,
+      "cushionDistance_mm": 6,
+      "robotStroke_mm": 400,
+      "vpPosition_mm": 19,
+      "coolingOption": "LOGIC",
+      "safetyFactor": 0.11
+    },
+    "expected": {
+      "fill": 1.38,
+      "pack": 1.63,
+      "cool": 5.66,
+      "open": 1.35,
+      "eject": 1.96,
+      "robot": 6.17,
+      "close": 2.73,
+      "total": 20.88
     }
   }
 ]
-
