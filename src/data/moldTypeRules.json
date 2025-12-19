@@ -29,6 +29,7 @@
   {
     "moldType": "GEAR Tool",
     "timeAdd_s": 1.0,
+    "fillAdd_s": 0.642,
     "packZero": false,
     "coolPlus": true,
     "openPlus": false,

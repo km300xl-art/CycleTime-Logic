@@ -96,6 +96,7 @@ function applyMoldTypeAdjustments(
   if (!rule) return base;
 
   const add = toNumberSafe(rule.timeAdd_s);
+  const fillAdd = toNumberSafe(rule.fillAdd_s ?? add);
   const updated = { ...base };
 
   if (rule.packZero) updated.pack = 0;
@@ -105,7 +106,7 @@ function applyMoldTypeAdjustments(
   if (rule.closePlus) updated.close += add;
 
   // 기존 로직 유지: timeAdd를 fill에도 더함(엑셀 Time add 열 대응)
-  updated.fill += add;
+  updated.fill += fillAdd;
 
   return updated;
 }
@@ -132,14 +133,19 @@ export function computeCycleTime(input: InputData, options: Options, tables: Cyc
   // 2) moldType 반영
   const afterMold = applyMoldTypeAdjustments(base, getString(input.moldType), rules);
 
-  // 3) safetyFactor stage별 적용 + rounding
-  const final: Record<StageName, number> = { ...afterMold };
+  // 3) safetyFactor stage별 적용 + rounding (stage 표시는 반올림하지만 total은 원시합으로 계산)
+  const afterSafety: Record<StageName, number> = { ...afterMold };
   for (const stage of STAGES) {
-    final[stage] = round(afterMold[stage] * (1 + safetyFactor), rounding);
+    afterSafety[stage] = afterMold[stage] * (1 + safetyFactor);
   }
 
-  // 4) total
-  const total = round(STAGES.reduce((sum, s) => sum + final[s], 0), rounding);
+  const final: Record<StageName, number> = { ...afterSafety };
+  for (const stage of STAGES) {
+    final[stage] = round(afterSafety[stage], rounding);
+  }
+
+  // 4) total은 반올림 전 stage 합계를 사용
+  const total = round(STAGES.reduce((sum, s) => sum + afterSafety[s], 0), rounding);
 
   return {
     fill: final.fill,

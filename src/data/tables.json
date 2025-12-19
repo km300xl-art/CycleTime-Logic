@@ -5,99 +5,103 @@
   },
   "stages": {
     "fill": {
-      "base": { "default": 0.6 },
+      "base": { "default": 0.65 },
       "multipliers": {
-        "cavity": { "1": 1, "2": 1.05, "4": 1.1, "6": 1.12, "8": 1.15 }
+        "cavity": { "1": 1.05, "2": 0.89, "4": 0.97, "6": 0.93, "8": 1.01 }
       },
       "linear": {
-        "weight_g_1cav": 0.03,
+        "weight_g_1cav": 0.0495,
         "thickness_mm": 0.05,
         "sprueLength_mm": 0.004,
         "pinRunner3p_mm": 0.003,
         "injectionSpeed_mm_s": -0.005
       },
       "offsets": {
-        "plateType": { "2P": 0.05, "3P": 0.08, "HOT": 0.04, "default": 0 }
+        "plateType": { "2P": 0.05, "3P": 0.08, "HOT": 0.05, "default": 0 }
       }
     },
     "pack": {
-      "base": { "default": 1.2 },
+      "base": { "default": 1.46 },
       "multipliers": {
-        "cavity": { "1": 1, "2": 1.03, "4": 1.06, "6": 1.08, "8": 1.1 }
+        "cavity": { "1": 1.16, "2": 1.14, "4": 1.08, "6": 1.04, "8": 1 }
       },
       "linear": {
-        "cushionDistance_mm": 0.01,
-        "weight_g_1cav": 0.01
+        "cushionDistance_mm": 0.066,
+        "weight_g_1cav": 0.0209
       },
       "offsets": {
         "clampControl": { "Toggle": 0.1, "Hydraulic": 0.05, "Electric": 0, "Logic valve": 0.04, "default": 0 }
       }
     },
     "cool": {
-      "base": { "default": 4 },
+      "base": { "default": 9.24 },
       "multipliers": {
-        "cavity": { "1": 1, "2": 1.02, "4": 1.04, "6": 1.06, "8": 1.08 }
+        "cavity": { "1": 1, "2": 1, "4": 1, "6": 1, "8": 1 }
       },
       "linear": {
-        "thickness_mm": 0.6
+        "thickness_mm": 1.64,
+        "weight_g_1cav": 0.254
       },
       "optionMultipliers": {
         "coolingOption": { "BASE": 1, "LOGIC": 0.92, "default": 1 }
       }
     },
     "open": {
-      "base": { "default": 1 },
+      "base": { "default": 0.88 },
       "linear": {
-        "moldProtection_mm": 0.02,
-        "thickness_mm": 0.02,
-        "openCloseStroke_mm": 0.008,
-        "pinRunner3p_mm": 0.0015
+        "moldProtection_mm": 0.005,
+        "thickness_mm": 0,
+        "openCloseStroke_mm": 0,
+        "pinRunner3p_mm": 0.0034
       },
       "offsets": {
-        "plateType": { "2P": 0.15, "3P": 0.2, "HOT": 0.18, "default": 0 }
+        "plateType": { "2P": 0.15, "3P": 0.2, "HOT": 1.05, "default": 0 }
       },
       "optionMultipliers": {
-        "openCloseSpeedMode": { "Base speed": 1, "3 Phase": 0.85, "default": 1 }
+        "openCloseSpeedMode": { "Low speed": 1.12, "Mid speed": 1.02, "Base speed": 1, "default": 1 }
       }
     },
     "eject": {
-      "base": { "default": 0.8 },
+      "base": { "default": 1.66 },
       "linear": {
-        "height_mm_eject": 0.02,
-        "ejectStroke_mm": 0.015,
-        "sprueLength_mm": 0.002
+        "height_mm_eject": 0,
+        "ejectStroke_mm": 0.01,
+        "sprueLength_mm": -0.0047
       },
       "offsets": {
-        "plateType": { "2P": 0.1, "3P": 0.12, "HOT": 0.1, "default": 0 }
+        "plateType": { "2P": 0.1, "3P": 0.1, "HOT": 0.1, "default": 0 }
       },
       "optionMultipliers": {
-        "ejectingSpeedMode": { "Base speed": 1, "2 Phase": 0.9, "default": 1 }
+        "ejectingSpeedMode": { "Low speed": 1.08, "Base speed": 1, "default": 1 }
       }
     },
     "robot": {
-      "base": { "default": 1.5 },
+      "base": { "default": 1 },
       "linear": {
         "robotStroke_mm": 0.01
       },
       "multipliers": {
-        "cavity": { "1": 1, "2": 1.02, "4": 1.04, "6": 1.06, "8": 1.08 }
+        "cavity": { "1": 1, "2": 1, "4": 1, "6": 1, "8": 1 }
+      },
+      "offsets": {
+        "plateType": { "2P": 0, "3P": 0, "HOT": 0.5, "default": 0 }
       }
     },
     "close": {
-      "base": { "default": 1.1 },
+      "base": { "default": 1.572 },
       "linear": {
-        "clampForce_ton": 0.005,
+        "clampForce_ton": 0.00216,
         "vpPosition_mm": 0.01,
-        "openCloseStroke_mm": 0.006
+        "openCloseStroke_mm": 0
       },
       "multipliers": {
-        "cavity": { "1": 1, "2": 1.03, "4": 1.06, "6": 1.08, "8": 1.1 }
+        "cavity": { "1": 1.32, "2": 1.29, "4": 1.18, "6": 1.09, "8": 1 }
       },
       "offsets": {
         "plateType": { "2P": 0.1, "3P": 0.12, "HOT": 0.09, "default": 0 }
       },
       "optionMultipliers": {
-        "openCloseSpeedMode": { "Base speed": 1, "3 Phase": 0.85, "default": 1 }
+        "openCloseSpeedMode": { "Low speed": 1.12, "Mid speed": 1.02, "Base speed": 1, "default": 1 }
       }
     }
   }

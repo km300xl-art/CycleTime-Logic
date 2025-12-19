@@ -21,8 +21,8 @@ export type OptionFormState = {
   pinRunner3p_mm: string;
   injectionSpeed_mm_s: string;
   openCloseStroke_mm: string;
-  openCloseSpeedMode: 'Base speed' | '3 Phase';
-  ejectingSpeedMode: 'Base speed' | '2 Phase';
+  openCloseSpeedMode: 'Low speed' | 'Mid speed' | 'Base speed';
+  ejectingSpeedMode: 'Low speed' | 'Base speed';
   coolingOption: string;
   safetyFactor: string;
 };

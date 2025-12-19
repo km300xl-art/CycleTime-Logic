@@ -5,23 +5,32 @@ import examples from '../../data/examples.json';
 import { computeCycleTime } from './computeCycleTime';
 import { InputData, Options, Outputs } from './types';
 
+type Example = {
+  id?: string;
+  name?: string;
+  input: InputData;
+  options: Options;
+  expected: Outputs;
+};
+
 type NumericOutputKey = Exclude<keyof Outputs, 'debug'>;
 
-const tolerance = 0.01;
 const outputKeys: NumericOutputKey[] = ['fill', 'pack', 'cool', 'open', 'eject', 'robot', 'close', 'total'];
 
 const compareOutputs = (actual: Outputs, expected: Outputs, label: string) => {
   outputKeys.forEach((key) => {
-    const delta = Math.abs(actual[key] - expected[key]);
-    assert.ok(delta <= tolerance, `${label} -> ${key} expected ${expected[key]} got ${actual[key]}`);
+    const actualFixed = actual[key].toFixed(2);
+    const expectedFixed = Number(expected[key]).toFixed(2);
+    assert.equal(actualFixed, expectedFixed, `${label} -> ${key} expected ${expectedFixed} got ${actualFixed}`);
   });
 };
 
 describe('computeCycleTime examples', () => {
-  examples.forEach((example) => {
-    test(example.name, () => {
+  (examples as Example[]).forEach((example) => {
+    const label = example.name ?? example.id ?? 'example';
+    test(label, () => {
       const result = computeCycleTime(example.input as InputData, example.options as Options, tables);
-      compareOutputs(result, example.expected as Outputs, example.name);
+      compareOutputs(result, example.expected as Outputs, label);
     });
   });
 });
