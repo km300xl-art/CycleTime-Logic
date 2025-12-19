@@ -1,0 +1,17 @@
+[
+  {
+    "clampControl": "Logic valve",
+    "value": 70.0,
+    "note": "normal"
+  },
+  {
+    "clampControl": "Proportional valve",
+    "value": 80.0,
+    "note": null
+  },
+  {
+    "clampControl": "ServoValve",
+    "value": 90.0,
+    "note": null
+  }
+]
