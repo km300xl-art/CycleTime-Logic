@@ -36,17 +36,23 @@ const initialInputValues: InputFormState = {
 
 const initialOptionValues: OptionFormState = {
   clampControl: '',
-  moldProtection_mm: '0',
-  ejectStroke_mm: '0',
-  cushionDistance_mm: '0',
-  robotStroke_mm: '0',
-  vpPosition_mm: '0',
+  moldProtection_mm: '120',
+  ejectStroke_mm: '45',
+  cushionDistance_mm: '8',
+  robotStroke_mm: '100',
+  vpPosition_mm: '10',
+  sprueLength_mm: '0',
+  pinRunner3p_mm: '0',
+  injectionSpeed_mm_s: '20',
+  openCloseStroke_mm: '0',
+  openCloseSpeedMode: 'Base speed',
+  ejectingSpeedMode: 'Base speed',
   coolingOption: 'BASE',
   safetyFactor: '0.10',
 };
 
 
-const clampControlOptions = ['Toggle', 'Hydraulic', 'Electric'];
+const clampControlOptions = ['Toggle', 'Hydraulic', 'Electric', 'Logic valve'];
 
 const toInputData = (values: InputFormState): InputData => {
   const allowedCavities: InputData['cavity'][] = [1, 2, 4, 6, 8];
@@ -88,8 +94,20 @@ const toOptions = (values: OptionFormState): Options => {
     cushionDistance_mm: numberOrZero(values.cushionDistance_mm),
     robotStroke_mm: numberOrZero(values.robotStroke_mm),
     vpPosition_mm: numberOrZero(values.vpPosition_mm),
+    sprueLength_mm: numberOrZero(values.sprueLength_mm),
+    pinRunner3p_mm: numberOrZero(values.pinRunner3p_mm),
+    injectionSpeed_mm_s: numberOrZero(values.injectionSpeed_mm_s),
+    openCloseStroke_mm: numberOrZero(values.openCloseStroke_mm),
+    openCloseSpeedMode: values.openCloseSpeedMode as Options['openCloseSpeedMode'],
+    ejectingSpeedMode: values.ejectingSpeedMode as Options['ejectingSpeedMode'],
     coolingOption: values.coolingOption as Options['coolingOption'],
-    safetyFactor: values.safetyFactor === '' ? 0 : Math.max(0, Number(values.safetyFactor)),
+    safetyFactor: (() => {
+      if (values.safetyFactor === '') return 0;
+      const numeric = Number(values.safetyFactor);
+      const clamped = Number.isFinite(numeric) ? Math.max(0, numeric) : 0;
+      if (clamped > 1) return clamped / 100;
+      return clamped;
+    })(),
   };
 };
 

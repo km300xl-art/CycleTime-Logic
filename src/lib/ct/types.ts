@@ -17,6 +17,12 @@ export type Options = {
   cushionDistance_mm: number; // >=0
   robotStroke_mm: number; // >=0
   vpPosition_mm: number; // >=0
+  sprueLength_mm: number; // >=0
+  pinRunner3p_mm: number; // >=0
+  injectionSpeed_mm_s: number; // >=0
+  openCloseStroke_mm: number; // >=0
+  openCloseSpeedMode: 'Base speed' | '3 Phase';
+  ejectingSpeedMode: 'Base speed' | '2 Phase';
   coolingOption: 'BASE' | 'LOGIC';
   safetyFactor: number; // >=0; e.g. 0.10
 };

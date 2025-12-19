@@ -128,6 +128,108 @@ export function OptionsSection({
         </div>
 
         <div className={styles.field}>
+          <label htmlFor="sprueLength_mm">Sprue Length</label>
+          <div className={styles.inputWithUnit}>
+            <input
+              id="sprueLength_mm"
+              name="sprueLength_mm"
+              type="number"
+              min={0}
+              inputMode="decimal"
+              value={values.sprueLength_mm}
+              onChange={(e) => onNumberChange('sprueLength_mm', e.target.value)}
+            />
+            <span className={styles.unit}>mm</span>
+          </div>
+          {errors.sprueLength_mm && <p className={styles.error}>{errors.sprueLength_mm}</p>}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="pinRunner3p_mm">3P PIN Runner L.</label>
+          <div className={styles.inputWithUnit}>
+            <input
+              id="pinRunner3p_mm"
+              name="pinRunner3p_mm"
+              type="number"
+              min={0}
+              inputMode="decimal"
+              value={values.pinRunner3p_mm}
+              onChange={(e) => onNumberChange('pinRunner3p_mm', e.target.value)}
+            />
+            <span className={styles.unit}>mm</span>
+          </div>
+          {errors.pinRunner3p_mm && <p className={styles.error}>{errors.pinRunner3p_mm}</p>}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="injectionSpeed_mm_s">Injection Speed</label>
+          <div className={styles.inputWithUnit}>
+            <input
+              id="injectionSpeed_mm_s"
+              name="injectionSpeed_mm_s"
+              type="number"
+              min={0}
+              inputMode="decimal"
+              value={values.injectionSpeed_mm_s}
+              onChange={(e) => onNumberChange('injectionSpeed_mm_s', e.target.value)}
+            />
+            <span className={styles.unit}>mm/s</span>
+          </div>
+          {errors.injectionSpeed_mm_s && <p className={styles.error}>{errors.injectionSpeed_mm_s}</p>}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="openCloseStroke_mm">Open/Close Stroke</label>
+          <div className={styles.inputWithUnit}>
+            <input
+              id="openCloseStroke_mm"
+              name="openCloseStroke_mm"
+              type="number"
+              min={0}
+              inputMode="decimal"
+              value={values.openCloseStroke_mm}
+              onChange={(e) => onNumberChange('openCloseStroke_mm', e.target.value)}
+            />
+            <span className={styles.unit}>mm</span>
+          </div>
+          {errors.openCloseStroke_mm && <p className={styles.error}>{errors.openCloseStroke_mm}</p>}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="openCloseSpeedMode">Open/Close Speed mode</label>
+          <select
+            id="openCloseSpeedMode"
+            name="openCloseSpeedMode"
+            value={values.openCloseSpeedMode}
+            onChange={(e) => onChange('openCloseSpeedMode', e.target.value)}
+          >
+            {['Base speed', '3 Phase'].map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          {errors.openCloseSpeedMode && <p className={styles.error}>{errors.openCloseSpeedMode}</p>}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="ejectingSpeedMode">Ejecting Speed mode</label>
+          <select
+            id="ejectingSpeedMode"
+            name="ejectingSpeedMode"
+            value={values.ejectingSpeedMode}
+            onChange={(e) => onChange('ejectingSpeedMode', e.target.value)}
+          >
+            {['Base speed', '2 Phase'].map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          {errors.ejectingSpeedMode && <p className={styles.error}>{errors.ejectingSpeedMode}</p>}
+        </div>
+
+        <div className={styles.field}>
           <label htmlFor="coolingOption">Cooling option</label>
           <select
             id="coolingOption"

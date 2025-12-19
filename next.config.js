@@ -9,6 +9,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  eslint: {
+    // The static export pipeline runs without linting support in CI, so skip lint during builds.
+    ignoreDuringBuilds: true,
+  },
 };
 
 module.exports = nextConfig;
