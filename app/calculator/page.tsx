@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-import sprueTable from '../../src/data/sprueLengthByWeight.json';
+import sprueTable from '../../src/data/excel/sprueLengthByWeight.json';
 import rawTables from '../../src/data/tables.json';
 import { computeCycleTime } from '../../src/lib/ct/computeCycleTime';
 import { InputSection } from './components/InputSection';
@@ -13,20 +13,27 @@ import { FieldErrors, InputFormState, OptionFormState } from './types';
 import type { InputData, Options, CycleTimeTables } from '../../src/lib/ct/types';
 
 import moldTypes from '../../src/data/moldTypes.json';
-import resins from '../../src/data/resins.json';
-import resinGrades from '../../src/data/resinGrades.json';
+import resinOptions from '../../src/data/excel/resinOptions.json';
+import resinGrades from '../../src/data/excel/resinGrades.json';
+import clampControlOptions from '../../src/data/excel/clampControlOptions.json';
+import openCloseSpeedOptions from '../../src/data/excel/openCloseSpeedOptions.json';
+import ejectingSpeedOptions from '../../src/data/excel/ejectingSpeedOptions.json';
 
 // 이 3줄이 반드시 필요
 const moldTypeOptions = moldTypes as string[];
-const resinOptions = resins as string[];
+const resinOptionsList = resinOptions as string[];
 const resinGradesMap = resinGrades as Record<string, string[]>;
+const clampControlOptionsList = clampControlOptions as string[];
+const openCloseSpeedOptionsList = openCloseSpeedOptions as string[];
+const ejectingSpeedOptionsList = ejectingSpeedOptions as string[];
 
 function sprueFromWeight(weight: number): number {
-  const table = sprueTable as { maxWeight: number; sprue: number }[];
+  const table = (sprueTable as { bins: { maxWeight: number; sprueLength_mm: number }[] }).bins ?? [];
   for (const row of table) {
-    if (weight <= row.maxWeight) return row.sprue;
+    if (weight <= row.maxWeight) return row.sprueLength_mm;
   }
-  return table[table.length - 1].sprue;
+  if (table.length === 0) return 0;
+  return table[table.length - 1].sprueLength_mm;
 }
 
 const tables = rawTables as CycleTimeTables;
@@ -59,8 +66,6 @@ const initialOptionValues: OptionFormState = {
   coolingOption: 'BASE',
   safetyFactor: '0',
 };
-
-const clampControlOptions = ['Logic valve', 'Proportional valve', 'ServoValve'] as const;
 
 const deriveSprueLength = (plateType: InputData['plateType'], weight: number) => {
   if (plateType === 'HOT') return 0;
@@ -241,7 +246,7 @@ export default function CalculatorPage() {
           onChange={handleTextChange}
           onNumberChange={(field, value) => handleNumberChange(field, value, setInputValues)}
           moldTypeOptions={moldTypeOptions}
-          resinOptions={resinOptions}
+          resinOptions={resinOptionsList}
           gradeOptions={gradeOptions}
           isGradeDisabled={!inputValues.resin}
         />
@@ -251,7 +256,9 @@ export default function CalculatorPage() {
           errors={errors}
           onChange={handleOptionTextChange}
           onNumberChange={(field, value) => handleNumberChange(field, value, setOptionValues)}
-          clampControlOptions={[...clampControlOptions]}
+          clampControlOptions={[...clampControlOptionsList]}
+          openCloseSpeedOptions={[...openCloseSpeedOptionsList]}
+          ejectingSpeedOptions={[...ejectingSpeedOptionsList]}
           isPinRunnerLocked={isPinRunnerLocked}
         />
       </div>
