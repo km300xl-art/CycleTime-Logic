@@ -31,22 +31,18 @@ function lookupNumber(map: Record<string, number> | undefined, key: string, fall
   return fallback;
 }
 
-function lookupTable2D(
-  table: Record<string, Record<string, number>> | undefined,
-  tableName: string,
-  key: string,
-  fallback = 0
-): number {
-  if (!table) return fallback;
-  const inner = table[tableName];
-  if (!inner) return fallback;
-  if (key in inner) return toNumberSafe(inner[key]);
-  if ("default" in inner) return toNumberSafe(inner["default"]);
-  return fallback;
-}
-
 function findMoldRule(moldType: string, rules: MoldTypeRule[]): MoldTypeRule | undefined {
   return rules.find((r) => r.moldType === moldType);
+}
+
+function getFieldValue(field: string, input: InputData, options: Options) {
+  if (field in input) return (input as any)[field];
+  return (options as any)[field];
+}
+
+function asLookupKey(raw: unknown): string {
+  if (typeof raw === "number") return String(raw);
+  return getString(raw);
 }
 
 function computeStageBase(stage: StageName, input: InputData, options: Options, tables: CycleTimeTables): number {
@@ -55,30 +51,37 @@ function computeStageBase(stage: StageName, input: InputData, options: Options, 
 
   let value = toNumberSafe(s.base?.default);
 
-  // multipliers.cavity
-  const cavityKey = String(input.cavity);
-  value *= lookupNumber(s.multipliers?.cavity, cavityKey, 1);
+  // multipliers: cavity + any keyed multipliers
+  if (s.multipliers) {
+    for (const [field, map] of Object.entries(s.multipliers)) {
+      const key = asLookupKey(getFieldValue(field, input, options));
+      value *= lookupNumber(map, key, 1);
+    }
+  }
 
   // linear: input/options의 숫자 필드명과 매칭되는 것들 모두 반영
   if (s.linear) {
     for (const [field, coef] of Object.entries(s.linear)) {
       const c = toNumberSafe(coef);
-      const raw = (input as any)[field] ?? (options as any)[field];
+      const raw = getFieldValue(field, input, options);
       value += c * toNumberSafe(raw);
     }
   }
 
   // offsets: plateType, clampControl 등
   if (s.offsets) {
-    value += lookupTable2D(s.offsets, "plateType", getString(input.plateType), 0);
-    value += lookupTable2D(s.offsets, "clampControl", getString(options.clampControl), 0);
+    for (const [field, map] of Object.entries(s.offsets)) {
+      const key = asLookupKey(getFieldValue(field, input, options));
+      value += lookupNumber(map, key, 0);
+    }
   }
 
   // optionMultipliers: coolingOption 등
   if (s.optionMultipliers) {
-    const cooling = getString(options.coolingOption);
-    const mul = lookupTable2D(s.optionMultipliers, "coolingOption", cooling, 1);
-    value *= mul;
+    for (const [field, map] of Object.entries(s.optionMultipliers)) {
+      const key = asLookupKey(getFieldValue(field, input, options));
+      value *= lookupNumber(map, key, 1);
+    }
   }
 
   return clampMin0(value);
@@ -109,7 +112,8 @@ function applyMoldTypeAdjustments(
 
 export function computeCycleTime(input: InputData, options: Options, tables: CycleTimeTables): Outputs {
   const rounding = toNumberSafe(tables.defaults?.rounding ?? 2);
-  const safetyFactor = toNumberSafe(options.safetyFactor ?? tables.defaults?.safetyFactor ?? 0);
+  const rawSafety = toNumberSafe(options.safetyFactor ?? tables.defaults?.safetyFactor ?? 0);
+  const safetyFactor = rawSafety > 1 ? rawSafety / 100 : clampMin0(rawSafety);
 
   // moldType rules: tables에 있으면 우선, 없으면 JSON 사용
   const rules = (tables.moldTypeRules ?? (moldTypeRulesJson as unknown as MoldTypeRule[])) ?? [];

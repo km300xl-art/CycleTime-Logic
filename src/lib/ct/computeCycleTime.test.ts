@@ -5,10 +5,13 @@ import examples from '../../data/examples.json';
 import { computeCycleTime } from './computeCycleTime';
 import { InputData, Options, Outputs } from './types';
 
+type NumericOutputKey = Exclude<keyof Outputs, 'debug'>;
+
 const tolerance = 0.01;
+const outputKeys: NumericOutputKey[] = ['fill', 'pack', 'cool', 'open', 'eject', 'robot', 'close', 'total'];
 
 const compareOutputs = (actual: Outputs, expected: Outputs, label: string) => {
-  (Object.keys(expected) as (keyof Outputs)[]).forEach((key) => {
+  outputKeys.forEach((key) => {
     const delta = Math.abs(actual[key] - expected[key]);
     assert.ok(delta <= tolerance, `${label} -> ${key} expected ${expected[key]} got ${actual[key]}`);
   });
@@ -44,6 +47,12 @@ describe('computeCycleTime edge cases', () => {
       cushionDistance_mm: 5,
       robotStroke_mm: 100,
       vpPosition_mm: 10,
+      sprueLength_mm: 0,
+      pinRunner3p_mm: 0,
+      injectionSpeed_mm_s: 20,
+      openCloseStroke_mm: 0,
+      openCloseSpeedMode: 'Base speed',
+      ejectingSpeedMode: 'Base speed',
       coolingOption: 'BASE',
       safetyFactor: 0,
     };

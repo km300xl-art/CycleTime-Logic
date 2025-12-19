@@ -22,13 +22,32 @@ The JSON file intentionally mirrors the Excel logic in a structured, extendable 
   - `multipliers`: object keyed by field name, where each map defines per-value multipliers (e.g., by cavity count). A `default` key can be used as a fallback.
   - `linear`: map of numeric fields to coefficients that are multiplied and added (e.g., `weight_g_1cav` or `robotStroke_mm`). Negative inputs are clamped to zero.
   - `offsets`: object keyed by field name, where each map defines additive offsets per value (e.g., by `plateType`).
-  - `optionMultipliers`: like `multipliers` but intended for option flags such as `coolingOption`.
+- `optionMultipliers`: like `multipliers` but intended for option flags such as `coolingOption`.
 
 Updating the cycle-time logic usually means editing the numeric values or adding new maps inside this file.
 
+### Option mapping to stages
+
+The Excel OPTION panel is mirrored in `src/data/tables.json`, keeping the UI and the compute engine aligned. Each option feeds specific stage adjustments:
+
+- `clampControl` → pack offsets (includes **Logic valve**).
+- `moldProtection_mm` → open linear adders.
+- `ejectStroke_mm` → eject linear adders.
+- `cushionDistance_mm` → pack linear adders.
+- `robotStroke_mm` → robot linear adders.
+- `vpPosition_mm` → close linear adders.
+- `sprueLength_mm` → fill and eject linear adders.
+- `pinRunner3p_mm` → fill and open linear adders.
+- `injectionSpeed_mm_s` → fill linear reducer (higher speed shortens fill).
+- `openCloseStroke_mm` → open/close linear adders.
+- `openCloseSpeedMode` → open/close multipliers (`Base speed`, `3 Phase`).
+- `ejectingSpeedMode` → eject multipliers (`Base speed`, `2 Phase`).
+- `coolingOption` → cool option multipliers.
+- `safetyFactor` → normalized as a fraction; values > 1 are treated as percentages.
+
 ### Example cases (`src/data/examples.json`)
 
-`examples.json` contains at least 15 regression scenarios. Each entry includes:
+`examples.json` contains regression scenarios. Each entry includes:
 
 - `name`: human-readable label.
 - `input`: values matching `InputData` (see `src/lib/ct/types.ts`).

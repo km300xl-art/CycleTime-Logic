@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "npm run build:test && node --test .test-dist/src/lib/ct/computeCycleTime.test.js",
+    "test": "npm run build:test && node --test .test-dist/lib/ct/computeCycleTime.test.js",
     "build:test": "tsc -p tsconfig.test.json"
   },
   "dependencies": {

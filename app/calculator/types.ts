@@ -17,6 +17,12 @@ export type OptionFormState = {
   cushionDistance_mm: string;
   robotStroke_mm: string;
   vpPosition_mm: string;
+  sprueLength_mm: string;
+  pinRunner3p_mm: string;
+  injectionSpeed_mm_s: string;
+  openCloseStroke_mm: string;
+  openCloseSpeedMode: 'Base speed' | '3 Phase';
+  ejectingSpeedMode: 'Base speed' | '2 Phase';
   coolingOption: string;
   safetyFactor: string;
 };
