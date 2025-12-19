@@ -25,7 +25,7 @@ export function OptionsSection({
 
       <div className={styles.fieldGrid}>
         <div className={styles.field}>
-          <label htmlFor="clampControl">Clamp control</label>
+          <label htmlFor="clampControl">Clamp Control</label>
           <select
             id="clampControl"
             name="clampControl"
@@ -43,7 +43,7 @@ export function OptionsSection({
         </div>
 
         <div className={styles.field}>
-          <label htmlFor="moldProtection_mm">Mold protection</label>
+          <label htmlFor="moldProtection_mm">Mold Protection</label>
           <div className={styles.inputWithUnit}>
             <input
               id="moldProtection_mm"
@@ -60,7 +60,7 @@ export function OptionsSection({
         </div>
 
         <div className={styles.field}>
-          <label htmlFor="ejectStroke_mm">Eject stroke</label>
+          <label htmlFor="ejectStroke_mm">Ejecting stroke</label>
           <div className={styles.inputWithUnit}>
             <input
               id="ejectStroke_mm"
@@ -77,24 +77,7 @@ export function OptionsSection({
         </div>
 
         <div className={styles.field}>
-          <label htmlFor="cushionDistance_mm">Cushion distance</label>
-          <div className={styles.inputWithUnit}>
-            <input
-              id="cushionDistance_mm"
-              name="cushionDistance_mm"
-              type="number"
-              min={0}
-              inputMode="decimal"
-              value={values.cushionDistance_mm}
-              onChange={(e) => onNumberChange('cushionDistance_mm', e.target.value)}
-            />
-            <span className={styles.unit}>mm</span>
-          </div>
-          {errors.cushionDistance_mm && <p className={styles.error}>{errors.cushionDistance_mm}</p>}
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="robotStroke_mm">Robot stroke</label>
+          <label htmlFor="robotStroke_mm">Robot Stroke</label>
           <div className={styles.inputWithUnit}>
             <input
               id="robotStroke_mm"
@@ -111,20 +94,71 @@ export function OptionsSection({
         </div>
 
         <div className={styles.field}>
-          <label htmlFor="vpPosition_mm">V/P position</label>
+          <label htmlFor="openCloseSpeedMode">Open/Close Stroke</label>
+          <select
+            id="openCloseSpeedMode"
+            name="openCloseSpeedMode"
+            value={values.openCloseSpeedMode}
+            onChange={(e) => onChange('openCloseSpeedMode', e.target.value)}
+          >
+            {['Low speed', 'Mid speed', 'Base speed'].map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          {errors.openCloseSpeedMode && <p className={styles.error}>{errors.openCloseSpeedMode}</p>}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="ejectingSpeedMode">Ejecting Speed</label>
+          <select
+            id="ejectingSpeedMode"
+            name="ejectingSpeedMode"
+            value={values.ejectingSpeedMode}
+            onChange={(e) => onChange('ejectingSpeedMode', e.target.value)}
+          >
+            {['Low speed', 'Base speed'].map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          {errors.ejectingSpeedMode && <p className={styles.error}>{errors.ejectingSpeedMode}</p>}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="injectionSpeed_mm_s">Injection Speed</label>
           <div className={styles.inputWithUnit}>
             <input
-              id="vpPosition_mm"
-              name="vpPosition_mm"
+              id="injectionSpeed_mm_s"
+              name="injectionSpeed_mm_s"
               type="number"
               min={0}
               inputMode="decimal"
-              value={values.vpPosition_mm}
-              onChange={(e) => onNumberChange('vpPosition_mm', e.target.value)}
+              value={values.injectionSpeed_mm_s}
+              onChange={(e) => onNumberChange('injectionSpeed_mm_s', e.target.value)}
             />
-            <span className={styles.unit}>mm</span>
+            <span className={styles.unit}>mm/s</span>
           </div>
-          {errors.vpPosition_mm && <p className={styles.error}>{errors.vpPosition_mm}</p>}
+          {errors.injectionSpeed_mm_s && <p className={styles.error}>{errors.injectionSpeed_mm_s}</p>}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="coolingOption">Cooling Option</label>
+          <select
+            id="coolingOption"
+            name="coolingOption"
+            value={values.coolingOption}
+            onChange={(e) => onChange('coolingOption', e.target.value)}
+          >
+            {['BASE', 'LOGIC'].map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          {errors.coolingOption && <p className={styles.error}>{errors.coolingOption}</p>}
         </div>
 
         <div className={styles.field}>
@@ -162,106 +196,37 @@ export function OptionsSection({
         </div>
 
         <div className={styles.field}>
-          <label htmlFor="injectionSpeed_mm_s">Injection Speed</label>
+          <label htmlFor="cushionDistance_mm">Cushion Distance</label>
           <div className={styles.inputWithUnit}>
             <input
-              id="injectionSpeed_mm_s"
-              name="injectionSpeed_mm_s"
+              id="cushionDistance_mm"
+              name="cushionDistance_mm"
               type="number"
               min={0}
               inputMode="decimal"
-              value={values.injectionSpeed_mm_s}
-              onChange={(e) => onNumberChange('injectionSpeed_mm_s', e.target.value)}
-            />
-            <span className={styles.unit}>mm/s</span>
-          </div>
-          {errors.injectionSpeed_mm_s && <p className={styles.error}>{errors.injectionSpeed_mm_s}</p>}
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="openCloseStroke_mm">Open/Close Stroke</label>
-          <div className={styles.inputWithUnit}>
-            <input
-              id="openCloseStroke_mm"
-              name="openCloseStroke_mm"
-              type="number"
-              min={0}
-              inputMode="decimal"
-              value={values.openCloseStroke_mm}
-              onChange={(e) => onNumberChange('openCloseStroke_mm', e.target.value)}
+              value={values.cushionDistance_mm}
+              onChange={(e) => onNumberChange('cushionDistance_mm', e.target.value)}
             />
             <span className={styles.unit}>mm</span>
           </div>
-          {errors.openCloseStroke_mm && <p className={styles.error}>{errors.openCloseStroke_mm}</p>}
+          {errors.cushionDistance_mm && <p className={styles.error}>{errors.cushionDistance_mm}</p>}
         </div>
 
         <div className={styles.field}>
-          <label htmlFor="openCloseSpeedMode">Open/Close Speed mode</label>
-          <select
-            id="openCloseSpeedMode"
-            name="openCloseSpeedMode"
-            value={values.openCloseSpeedMode}
-            onChange={(e) => onChange('openCloseSpeedMode', e.target.value)}
-          >
-            {['Base speed', '3 Phase'].map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-          {errors.openCloseSpeedMode && <p className={styles.error}>{errors.openCloseSpeedMode}</p>}
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="ejectingSpeedMode">Ejecting Speed mode</label>
-          <select
-            id="ejectingSpeedMode"
-            name="ejectingSpeedMode"
-            value={values.ejectingSpeedMode}
-            onChange={(e) => onChange('ejectingSpeedMode', e.target.value)}
-          >
-            {['Base speed', '2 Phase'].map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-          {errors.ejectingSpeedMode && <p className={styles.error}>{errors.ejectingSpeedMode}</p>}
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="coolingOption">Cooling option</label>
-          <select
-            id="coolingOption"
-            name="coolingOption"
-            value={values.coolingOption}
-            onChange={(e) => onChange('coolingOption', e.target.value)}
-          >
-            {['BASE', 'LOGIC'].map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-          {errors.coolingOption && <p className={styles.error}>{errors.coolingOption}</p>}
-        </div>
-
-        <div className={styles.field}>
-          <label htmlFor="safetyFactor">Safety factor</label>
+          <label htmlFor="vpPosition_mm">V/P Position</label>
           <div className={styles.inputWithUnit}>
             <input
-              id="safetyFactor"
-              name="safetyFactor"
+              id="vpPosition_mm"
+              name="vpPosition_mm"
               type="number"
               min={0}
-              step="0.01"
               inputMode="decimal"
-              value={values.safetyFactor}
-              onChange={(e) => onNumberChange('safetyFactor', e.target.value)}
+              value={values.vpPosition_mm}
+              onChange={(e) => onNumberChange('vpPosition_mm', e.target.value)}
             />
-            <span className={styles.unit}>%</span>
+            <span className={styles.unit}>mm</span>
           </div>
-          {errors.safetyFactor && <p className={styles.error}>{errors.safetyFactor}</p>}
+          {errors.vpPosition_mm && <p className={styles.error}>{errors.vpPosition_mm}</p>}
         </div>
       </div>
     </section>

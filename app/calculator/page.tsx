@@ -41,14 +41,14 @@ const initialOptionValues: OptionFormState = {
   cushionDistance_mm: '8',
   robotStroke_mm: '100',
   vpPosition_mm: '10',
-  sprueLength_mm: '0',
+  sprueLength_mm: '70',
   pinRunner3p_mm: '0',
   injectionSpeed_mm_s: '20',
   openCloseStroke_mm: '0',
   openCloseSpeedMode: 'Base speed',
   ejectingSpeedMode: 'Base speed',
   coolingOption: 'BASE',
-  safetyFactor: '0.10',
+  safetyFactor: '0',
 };
 
 
@@ -173,9 +173,6 @@ if (field === 'resin') {
     if (!inputValues.moldType) newErrors.moldType = 'Required';
     if (!inputValues.resin) newErrors.resin = 'Required';
     if (!inputValues.cavity) newErrors.cavity = 'Required';
-    if (optionValues.safetyFactor !== '' && Number(optionValues.safetyFactor) < 0) {
-      newErrors.safetyFactor = 'Must be ≥ 0';
-    }
     return newErrors;
   };
 

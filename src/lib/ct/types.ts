@@ -21,8 +21,8 @@ export type Options = {
   pinRunner3p_mm: number; // >=0
   injectionSpeed_mm_s: number; // >=0
   openCloseStroke_mm: number; // >=0
-  openCloseSpeedMode: 'Base speed' | '3 Phase';
-  ejectingSpeedMode: 'Base speed' | '2 Phase';
+  openCloseSpeedMode: 'Low speed' | 'Mid speed' | 'Base speed';
+  ejectingSpeedMode: 'Low speed' | 'Base speed';
   coolingOption: 'BASE' | 'LOGIC';
   safetyFactor: number; // >=0; e.g. 0.10
 };
@@ -60,6 +60,7 @@ export type StageTable = {
 export type MoldTypeRule = {
   moldType: string;
   timeAdd_s: number;
+  fillAdd_s?: number;
   packZero: boolean;
   coolPlus: boolean;
   openPlus: boolean;

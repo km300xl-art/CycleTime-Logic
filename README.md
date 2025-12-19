@@ -40,8 +40,8 @@ The Excel OPTION panel is mirrored in `src/data/tables.json`, keeping the UI and
 - `pinRunner3p_mm` → fill and open linear adders.
 - `injectionSpeed_mm_s` → fill linear reducer (higher speed shortens fill).
 - `openCloseStroke_mm` → open/close linear adders.
-- `openCloseSpeedMode` → open/close multipliers (`Base speed`, `3 Phase`).
-- `ejectingSpeedMode` → eject multipliers (`Base speed`, `2 Phase`).
+- `openCloseSpeedMode` → open/close multipliers (`Low speed`, `Mid speed`, `Base speed`).
+- `ejectingSpeedMode` → eject multipliers (`Low speed`, `Base speed`).
 - `coolingOption` → cool option multipliers.
 - `safetyFactor` → normalized as a fraction; values > 1 are treated as percentages.
 

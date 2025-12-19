@@ -1,6 +1,7 @@
 [
   {
     "id": "excel_case_01",
+    "name": "Excel case 01",
     "input": {
       "moldType": "General INJ.",
       "resin": "PP",
@@ -25,7 +26,8 @@
       "injectionSpeed_mm_s": 20,
       "openCloseSpeedMode": "Base speed",
       "ejectingSpeedMode": "Base speed",
-      "safetyFactor": 0
+      "safetyFactor": 0,
+      "openCloseStroke_mm": 0
     },
     "expected": {
       "fill": 1.01,
@@ -33,13 +35,14 @@
       "cool": 12.65,
       "open": 1.63,
       "eject": 1.88,
-      "robot": 2.00,
+      "robot": 2,
       "close": 1.97,
       "total": 23.18
     }
   },
   {
     "id": "excel_case_02",
+    "name": "Excel case 02",
     "input": {
       "moldType": "GEAR Tool",
       "resin": "POM",
@@ -64,21 +67,23 @@
       "injectionSpeed_mm_s": 20,
       "openCloseSpeedMode": "Base speed",
       "ejectingSpeedMode": "Base speed",
-      "safetyFactor": 0
+      "safetyFactor": 0,
+      "openCloseStroke_mm": 0
     },
     "expected": {
-      "fill": 2.20,
+      "fill": 2.2,
       "pack": 2.39,
       "cool": 13.75,
       "open": 2.02,
       "eject": 1.88,
-      "robot": 2.00,
+      "robot": 2,
       "close": 2.36,
       "total": 26.59
     }
   },
   {
     "id": "excel_case_03",
+    "name": "Excel case 03",
     "input": {
       "moldType": "General INJ.",
       "resin": "ABS",
@@ -103,7 +108,8 @@
       "injectionSpeed_mm_s": 20,
       "openCloseSpeedMode": "Base speed",
       "ejectingSpeedMode": "Base speed",
-      "safetyFactor": 0
+      "safetyFactor": 0,
+      "openCloseStroke_mm": 0
     },
     "expected": {
       "fill": 2.63,
@@ -111,9 +117,132 @@
       "cool": 23.49,
       "open": 2.53,
       "eject": 2.21,
-      "robot": 2.50,
+      "robot": 2.5,
       "close": 2.87,
       "total": 39.29
+    }
+  },
+  {
+    "id": "excel_case_04",
+    "name": "Excel case 04",
+    "input": {
+      "moldType": "General INJ.",
+      "resin": "ABS",
+      "grade": "HF-0660I",
+      "cavity": 4,
+      "weight_g_1cav": 5.55,
+      "clampForce_ton": 120,
+      "thickness_mm": 2.3,
+      "height_mm_eject": 12,
+      "plateType": "3P"
+    },
+    "options": {
+      "clampControl": "Hydraulic",
+      "moldProtection_mm": 90,
+      "ejectStroke_mm": 30,
+      "robotStroke_mm": 80,
+      "cushionDistance_mm": 6,
+      "vpPosition_mm": 12,
+      "coolingOption": "LOGIC",
+      "sprueLength_mm": 70,
+      "pinRunner3p_mm": 20,
+      "injectionSpeed_mm_s": 22,
+      "openCloseSpeedMode": "Low speed",
+      "ejectingSpeedMode": "Low speed",
+      "safetyFactor": 0,
+      "openCloseStroke_mm": 0
+    },
+    "expected": {
+      "fill": 1.33,
+      "pack": 2.14,
+      "cool": 13.27,
+      "open": 1.79,
+      "eject": 1.87,
+      "robot": 1.8,
+      "close": 2.64,
+      "total": 24.83
+    }
+  },
+  {
+    "id": "excel_case_05",
+    "name": "Excel case 05",
+    "input": {
+      "moldType": "GEAR Tool",
+      "resin": "POM",
+      "grade": "M90-44",
+      "cavity": 6,
+      "weight_g_1cav": 3.2,
+      "clampForce_ton": 180,
+      "thickness_mm": 1.8,
+      "height_mm_eject": 25,
+      "plateType": "2P"
+    },
+    "options": {
+      "clampControl": "Electric",
+      "moldProtection_mm": 140,
+      "ejectStroke_mm": 55,
+      "robotStroke_mm": 120,
+      "cushionDistance_mm": 10,
+      "vpPosition_mm": 18,
+      "coolingOption": "BASE",
+      "sprueLength_mm": 80,
+      "pinRunner3p_mm": 60,
+      "injectionSpeed_mm_s": 24,
+      "openCloseSpeedMode": "Mid speed",
+      "ejectingSpeedMode": "Base speed",
+      "safetyFactor": 0,
+      "openCloseStroke_mm": 0
+    },
+    "expected": {
+      "fill": 1.92,
+      "pack": 2.25,
+      "cool": 14,
+      "open": 1.97,
+      "eject": 1.93,
+      "robot": 2.2,
+      "close": 2.43,
+      "total": 26.71
+    }
+  },
+  {
+    "id": "excel_case_06",
+    "name": "Excel case 06",
+    "input": {
+      "moldType": "General INJ.",
+      "resin": "PP",
+      "grade": "HJ500",
+      "cavity": 1,
+      "weight_g_1cav": 15.75,
+      "clampForce_ton": 220,
+      "thickness_mm": 3.7,
+      "height_mm_eject": 18.5,
+      "plateType": "HOT"
+    },
+    "options": {
+      "clampControl": "Logic valve",
+      "moldProtection_mm": 110,
+      "ejectStroke_mm": 52,
+      "robotStroke_mm": 150,
+      "cushionDistance_mm": 9,
+      "vpPosition_mm": 14,
+      "coolingOption": "BASE",
+      "sprueLength_mm": 90,
+      "pinRunner3p_mm": 35,
+      "injectionSpeed_mm_s": 17,
+      "openCloseSpeedMode": "Base speed",
+      "ejectingSpeedMode": "Base speed",
+      "safetyFactor": 0,
+      "openCloseStroke_mm": 0
+    },
+    "expected": {
+      "fill": 2.08,
+      "pack": 2.66,
+      "cool": 19.31,
+      "open": 2.6,
+      "eject": 1.86,
+      "robot": 3,
+      "close": 2.78,
+      "total": 34.28
     }
   }
 ]
