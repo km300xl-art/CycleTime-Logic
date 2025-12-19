@@ -1,14 +1,16 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import tables from '../../src/data/tables.json';
+import rawTables from '../../src/data/tables.json';
 import { computeCycleTime } from '../../src/lib/ct/computeCycleTime';
 import { InputSection } from './components/InputSection';
 import { OptionsSection } from './components/OptionsSection';
 import { OutputTable } from './components/OutputTable';
 import styles from './Calculator.module.css';
 import { FieldErrors, InputFormState, OptionFormState } from './types';
-import { InputData, Options } from '../../src/lib/ct/types';
+import type { InputData, Options, CycleTimeTables } from '../../src/lib/ct/types';
+
+const tables = rawTables as CycleTimeTables;
 
 const initialInputValues: InputFormState = {
   moldType: '',
