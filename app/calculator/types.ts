@@ -11,7 +11,7 @@ export type InputFormState = {
 };
 
 export type OptionFormState = {
-  clampControl: string;
+  clampControl: '' | 'Logic valve' | 'Proportional valve' | 'ServoValve';
   moldProtection_mm: string;
   ejectStroke_mm: string;
   cushionDistance_mm: string;

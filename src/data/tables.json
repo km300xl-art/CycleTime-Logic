@@ -30,7 +30,12 @@
         "weight_g_1cav": 0.0209
       },
       "offsets": {
-        "clampControl": { "Toggle": 0.1, "Hydraulic": 0.05, "Electric": 0, "Logic valve": 0.04, "default": 0 }
+        "clampControl": {
+          "Logic valve": 0.04,
+          "Proportional valve": 0.05,
+          "ServoValve": 0,
+          "default": 0
+        }
       }
     },
     "cool": {

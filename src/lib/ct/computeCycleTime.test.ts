@@ -35,6 +35,19 @@ describe('computeCycleTime examples', () => {
   });
 });
 
+describe('excel-derived open/close/eject linkage', () => {
+  const excelIds = new Set(['excel_case_01', 'excel_case_02', 'excel_case_03']);
+  (examples as Example[])
+    .filter((example) => (example.id ? excelIds.has(example.id) : false))
+    .forEach((example) => {
+      const label = `${example.name ?? example.id} (open/close/eject regression)`;
+      test(label, () => {
+        const result = computeCycleTime(example.input as InputData, example.options as Options, tables);
+        compareOutputs(result, example.expected as Outputs, label);
+      });
+    });
+});
+
 describe('computeCycleTime edge cases', () => {
   test('handles zero safety factor explicitly', () => {
     const input: InputData = {
@@ -50,7 +63,7 @@ describe('computeCycleTime edge cases', () => {
     };
 
     const options: Options = {
-      clampControl: 'Electric',
+      clampControl: 'ServoValve',
       moldProtection_mm: 1,
       ejectStroke_mm: 5,
       cushionDistance_mm: 5,
@@ -93,5 +106,17 @@ describe('computeCycleTime edge cases', () => {
     const options: Options = { ...base.options } as Options;
     const result = computeCycleTime(input, options, tables);
     assert.ok(result.total >= 0);
+  });
+
+  test('omits robot stage when stroke is zero', () => {
+    const base = examples[0];
+    const options: Options = {
+      ...(base.options as Options),
+      robotStroke_mm: 0,
+    };
+    const result = computeCycleTime(base.input as InputData, options, tables);
+    assert.equal(result.robot.toFixed(2), '0.00', 'robot stage should be disabled when stroke is 0');
+    const debug = result.debug as any;
+    assert.equal(debug?.openCloseEject?.robotEnabled, false, 'debug flag should reflect robot toggle');
   });
 });

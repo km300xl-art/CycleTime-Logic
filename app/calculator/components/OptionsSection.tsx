@@ -7,6 +7,7 @@ type OptionsSectionProps = {
   onChange: (field: keyof OptionFormState, value: string) => void;
   onNumberChange: (field: keyof OptionFormState, value: string) => void;
   clampControlOptions: string[];
+  isPinRunnerLocked: boolean;
 };
 
 export function OptionsSection({
@@ -15,6 +16,7 @@ export function OptionsSection({
   onChange,
   onNumberChange,
   clampControlOptions,
+  isPinRunnerLocked,
 }: OptionsSectionProps) {
   return (
     <section className={styles.formSection} aria-labelledby="options-title">
@@ -188,11 +190,13 @@ export function OptionsSection({
               min={0}
               inputMode="decimal"
               value={values.pinRunner3p_mm}
+              disabled={isPinRunnerLocked}
               onChange={(e) => onNumberChange('pinRunner3p_mm', e.target.value)}
             />
             <span className={styles.unit}>mm</span>
           </div>
           {errors.pinRunner3p_mm && <p className={styles.error}>{errors.pinRunner3p_mm}</p>}
+          {isPinRunnerLocked && <p className={styles.muted}>Value is fixed by plate type (Excel rule).</p>}
         </div>
 
         <div className={styles.field}>
