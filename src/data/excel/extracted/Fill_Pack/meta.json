@@ -1,0 +1,40 @@
+{
+  "sheet": "Fill_Pack",
+  "dimensions": "A1:Z336",
+  "min_row": 1,
+  "min_col": 1,
+  "max_row": 336,
+  "max_col": 26,
+  "columns": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z"
+  ],
+  "merged_cells": [
+    "C6:D6"
+  ],
+  "data_validations": []
+}

@@ -1,0 +1,762 @@
+{
+  "sprueLengthByWeight": [
+    {
+      "maxWeight": 100.0,
+      "sprue": 70.0
+    },
+    {
+      "maxWeight": 300.0,
+      "sprue": 75.0
+    },
+    {
+      "maxWeight": 700.0,
+      "sprue": 80.0
+    },
+    {
+      "maxWeight": 1500.0,
+      "sprue": 90.0
+    }
+  ],
+  "moldTypeOptions": [
+    "General INJ.",
+    "Gas INJ.",
+    "High TEMP. INJ.",
+    "GEAR Tool",
+    "Double shot",
+    "Insert INJ.",
+    "IMR INJ.",
+    "Lens INJ."
+  ],
+  "moldTypeRules": [
+    {
+      "moldType": "General INJ.",
+      "timeAdd_raw": 0,
+      "timeAdd_s": 0.0,
+      "description": "None"
+    },
+    {
+      "moldType": "Gas INJ.",
+      "timeAdd_raw": "NO",
+      "timeAdd_s": 0.0,
+      "description": "Pack=0, Cool+"
+    },
+    {
+      "moldType": "High TEMP. INJ.",
+      "timeAdd_raw": 5,
+      "timeAdd_s": 5.0,
+      "description": "Cooling +"
+    },
+    {
+      "moldType": "GEAR Tool",
+      "timeAdd_raw": 1,
+      "timeAdd_s": 1.0,
+      "description": "Cooling +"
+    },
+    {
+      "moldType": "Double shot",
+      "timeAdd_raw": 1.5,
+      "timeAdd_s": 1.5,
+      "description": "Close +"
+    },
+    {
+      "moldType": "Insert INJ.",
+      "timeAdd_raw": 10,
+      "timeAdd_s": 10.0,
+      "description": "Open +"
+    },
+    {
+      "moldType": "IMR INJ.",
+      "timeAdd_raw": 10,
+      "timeAdd_s": 10.0,
+      "description": "Open +"
+    },
+    {
+      "moldType": "Lens INJ.",
+      "timeAdd_raw": 3,
+      "timeAdd_s": 3.0,
+      "description": "Pack +"
+    }
+  ],
+  "clampControlTable": [
+    {
+      "clampControl": "Logic valve",
+      "closingSpeed_percent": 70.0
+    },
+    {
+      "clampControl": "Proportional valve",
+      "closingSpeed_percent": 80.0
+    },
+    {
+      "clampControl": "ServoValve",
+      "closingSpeed_percent": 90.0
+    }
+  ],
+  "openCloseSpeedControl": [
+    {
+      "openCloseSpeedMode": "Low speed",
+      "speedFactor": 30.0
+    },
+    {
+      "openCloseSpeedMode": "Mid speed",
+      "speedFactor": 40.0
+    },
+    {
+      "openCloseSpeedMode": "Base speed",
+      "speedFactor": 1.0
+    }
+  ],
+  "ejectingSpeedControl": [
+    {
+      "ejectingSpeedMode": "Low speed",
+      "speedFactor": 15.0
+    },
+    {
+      "ejectingSpeedMode": "Base speed",
+      "speedFactor": 1.0
+    }
+  ],
+  "clampForceStageAdders": [
+    {
+      "clampForce_threshold": 100.0,
+      "open_add_s": 0.2,
+      "close_add_s": 0.1,
+      "eject_add_s": 1.0
+    },
+    {
+      "clampForce_threshold": 150.0,
+      "open_add_s": 0.6,
+      "close_add_s": 0.8,
+      "eject_add_s": 1.3
+    },
+    {
+      "clampForce_threshold": 250.0,
+      "open_add_s": 1.2,
+      "close_add_s": 1.1,
+      "eject_add_s": 1.3
+    },
+    {
+      "clampForce_threshold": 350.0,
+      "open_add_s": 1.5,
+      "close_add_s": 1.5,
+      "eject_add_s": 1.6
+    },
+    {
+      "clampForce_threshold": 450.0,
+      "open_add_s": 1.5,
+      "close_add_s": 1.5,
+      "eject_add_s": 1.8
+    },
+    {
+      "clampForce_threshold": 550.0,
+      "open_add_s": 2.4,
+      "close_add_s": 2.4,
+      "eject_add_s": 2.3
+    }
+  ],
+  "robotTimeByClampForce": [
+    {
+      "idx": 1,
+      "minClampForce": 0.0,
+      "robotTime_s": 2.0
+    },
+    {
+      "idx": 2,
+      "minClampForce": 151.0,
+      "robotTime_s": 2.5
+    },
+    {
+      "idx": 3,
+      "minClampForce": 351.0,
+      "robotTime_s": 3.0
+    },
+    {
+      "idx": 4,
+      "minClampForce": 551.0,
+      "robotTime_s": 4.0
+    },
+    {
+      "idx": 5,
+      "minClampForce": 1051.0,
+      "robotTime_s": 5.0
+    },
+    {
+      "idx": 6,
+      "minClampForce": 50000.0,
+      "robotTime_s": 5.0
+    }
+  ],
+  "resinOptions": [
+    "ABS",
+    "ABS GF20",
+    "PC",
+    "PC GF20",
+    "PC GF40",
+    "PC+ABS",
+    "POM",
+    "HIPS",
+    "PET",
+    "PMMA",
+    "PP",
+    "PPS",
+    "COC",
+    "LCP",
+    "PA",
+    "PEEK",
+    "MPPO"
+  ],
+  "resinGrades": {
+    "ABS": [
+      "HF-0660I",
+      "VE-0812",
+      "SR-0320",
+      "VE-0860P",
+      "CM-0140",
+      "U-780"
+    ],
+    "ABS GF20": [
+      "GR-4020L"
+    ],
+    "PC": [
+      "141R",
+      "3022U",
+      "3022R",
+      "D2000",
+      "LF-1025",
+      "NH-1035"
+    ],
+    "PC GF20": [
+      "NH-3204G",
+      "UWR-21G20"
+    ],
+    "PC GF40": [
+      "NH-3402F"
+    ],
+    "PC+ABS": [
+      "HA-1011",
+      "NH-1000T",
+      "230NH"
+    ],
+    "POM": [
+      "DE-500P",
+      "F25-03HT",
+      "DE-8903",
+      "M90-44",
+      "F20-02",
+      "NW-02"
+    ],
+    "HIPS": [
+      "HR-1360T",
+      "HIPS-5197",
+      "S-834"
+    ],
+    "PET": [
+      "3401NX",
+      "8300SE",
+      "LV2550GN30"
+    ],
+    "PMMA": [
+      "DELPET 80NH",
+      "DELPET 80NR ",
+      "HI-855M"
+    ],
+    "PP": [
+      "HJ500"
+    ],
+    "PPS": [
+      "1305DTFE15",
+      "1399X115554",
+      "RBA-313N",
+      "RBA-514"
+    ],
+    "COC": [
+      "Topas5013L-10"
+    ],
+    "LCP": [
+      "KB40BM",
+      "T130"
+    ],
+    "PA": [
+      "299X119249C",
+      "Rhodia 2413GW",
+      "FR-50",
+      "Rhodia A50HI",
+      "FR-7025V0F",
+      "299X117946"
+    ],
+    "PEEK": [
+      "150CA-30"
+    ],
+    "MPPO": [
+      "NorylN300X"
+    ]
+  },
+  "coolingGradeParams": [
+    {
+      "resin": "ABS",
+      "grade": "HF-0660I",
+      "Tm": 205.0,
+      "Tw": 60.0,
+      "Te": 82.0,
+      "alpha": 0.06991632095626757,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "ABS",
+      "grade": "VE-0812",
+      "Tm": 220.0,
+      "Tw": 60.0,
+      "Te": 85.0,
+      "alpha": 0.09393517950751872,
+      "extra_s": 3.0
+    },
+    {
+      "resin": "ABS",
+      "grade": "SR-0320",
+      "Tm": 230.0,
+      "Tw": 50.0,
+      "Te": 104.0,
+      "alpha": 0.15729952747221948,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "ABS",
+      "grade": "VE-0860P",
+      "Tm": 210.0,
+      "Tw": 60.0,
+      "Te": 85.0,
+      "alpha": 0.07617513061541072,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "ABS",
+      "grade": "CM-0140",
+      "Tm": 230.0,
+      "Tw": 60.0,
+      "Te": 103.0,
+      "alpha": 0.11044717550075316,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "ABS",
+      "grade": "U-780",
+      "Tm": 230.0,
+      "Tw": 40.0,
+      "Te": 98.0,
+      "alpha": 0.09407183315380474,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "ABS GF20",
+      "grade": "GR-4020L",
+      "Tm": 250.0,
+      "Tw": 60.0,
+      "Te": 92.0,
+      "alpha": 0.0773871018917277,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "PC",
+      "grade": "141R",
+      "Tm": 320.0,
+      "Tw": 100.0,
+      "Te": 125.0,
+      "alpha": 0.12466566934131192,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "PC",
+      "grade": "3022U",
+      "Tm": 295.0,
+      "Tw": 80.0,
+      "Te": 133.0,
+      "alpha": 0.10131712259371833,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "PC",
+      "grade": "3022R",
+      "Tm": 295.0,
+      "Tw": 80.0,
+      "Te": 133.0,
+      "alpha": 0.10102846982279605,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "PC",
+      "grade": "D2000",
+      "Tm": 307.0,
+      "Tw": 92.0,
+      "Te": 120.0,
+      "alpha": 0.15188479538270222,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "PC",
+      "grade": "LF-1025",
+      "Tm": 290.0,
+      "Tw": 100.0,
+      "Te": 138.0,
+      "alpha": 0.17143384631615038,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "PC",
+      "grade": "NH-1035",
+      "Tm": 300.0,
+      "Tw": 100.0,
+      "Te": 117.0,
+      "alpha": 0.11841378810148655,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "PC GF20",
+      "grade": "NH-3204G",
+      "Tm": 295.0,
+      "Tw": 70.0,
+      "Te": 104.0,
+      "alpha": 0.10051551387091555,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "PC GF40",
+      "grade": "NH-3402F",
+      "Tm": 290.0,
+      "Tw": 80.0,
+      "Te": 102.0,
+      "alpha": 0.0644042970546995,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "PC GF20",
+      "grade": "UWR-21G20",
+      "Tm": 265.0,
+      "Tw": 75.0,
+      "Te": 133.0,
+      "alpha": 0.10752619248310188,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "PC+ABS",
+      "grade": "HA-1011",
+      "Tm": 280.0,
+      "Tw": 80.0,
+      "Te": 95.0,
+      "alpha": 0.1454469293244281,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "PC+ABS",
+      "grade": "NH-1000T",
+      "Tm": 235.0,
+      "Tw": 70.0,
+      "Te": 81.0,
+      "alpha": 0.09321740669174582,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "PC+ABS",
+      "grade": "230NH",
+      "Tm": 260.0,
+      "Tw": 80.0,
+      "Te": 121.9,
+      "alpha": 0.11500708465972975,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "POM",
+      "grade": "DE-500P",
+      "Tm": 215.0,
+      "Tw": 89.0,
+      "Te": 118.0,
+      "alpha": 0.08389261744966445,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "POM",
+      "grade": "F25-03HT",
+      "Tm": 200.0,
+      "Tw": 80.0,
+      "Te": 120.0,
+      "alpha": 0.08553248554348258,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "POM",
+      "grade": "DE-8903",
+      "Tm": 215.0,
+      "Tw": 90.0,
+      "Te": 130.0,
+      "alpha": 0.2024619371558147,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "POM",
+      "grade": "M90-44",
+      "Tm": 181.5,
+      "Tw": 90.0,
+      "Te": 130.0,
+      "alpha": 0.061452778806867954,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "POM",
+      "grade": "F20-02",
+      "Tm": 200.0,
+      "Tw": 80.0,
+      "Te": 115.0,
+      "alpha": 0.0601455058584036,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "POM",
+      "grade": "NW-02",
+      "Tm": 200.0,
+      "Tw": 80.0,
+      "Te": 144.0,
+      "alpha": 0.10247214038683233,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "HIPS",
+      "grade": "HR-1360T",
+      "Tm": 210.0,
+      "Tw": 60.0,
+      "Te": 87.0,
+      "alpha": 0.10393599499150781,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "HIPS",
+      "grade": "HIPS-5197",
+      "Tm": 230.0,
+      "Tw": 65.0,
+      "Te": 85.0,
+      "alpha": 0.10534863814937558,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "HIPS",
+      "grade": "S-834",
+      "Tm": 205.0,
+      "Tw": 45.0,
+      "Te": 65.0,
+      "alpha": 0.07895796680585879,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "PET",
+      "grade": "3401NX",
+      "Tm": 280.0,
+      "Tw": 80.0,
+      "Te": 206.0,
+      "alpha": 0.2679139042775406,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "PET",
+      "grade": "8300SE",
+      "Tm": 280.0,
+      "Tw": 120.0,
+      "Te": 176.0,
+      "alpha": 0.11118758934717002,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "PET",
+      "grade": "LV2550GN30",
+      "Tm": 280.0,
+      "Tw": 120.0,
+      "Te": 170.0,
+      "alpha": 0.1496278008453971,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "PMMA",
+      "grade": "DELPET 80NH",
+      "Tm": 240.0,
+      "Tw": 70.0,
+      "Te": 95.0,
+      "alpha": 0.08291048983517396,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "PMMA",
+      "grade": "DELPET 80NR ",
+      "Tm": 240.0,
+      "Tw": 70.0,
+      "Te": 98.0,
+      "alpha": 0.08335695113615524,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "PMMA",
+      "grade": "HI-855M",
+      "Tm": 230.0,
+      "Tw": 65.0,
+      "Te": 79.0,
+      "alpha": 0.08394994568438514,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "PP",
+      "grade": "HJ500",
+      "Tm": 200.0,
+      "Tw": 40.0,
+      "Te": 100.0,
+      "alpha": 0.05091165057784724,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "PPS",
+      "grade": "1305DTFE15",
+      "Tm": 320.0,
+      "Tw": 155.0,
+      "Te": 220.0,
+      "alpha": 0.10092661898425372,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "PPS",
+      "grade": "1399X115554",
+      "Tm": 315.0,
+      "Tw": 155.0,
+      "Te": 205.0,
+      "alpha": 0.15093781535998885,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "PPS",
+      "grade": "RBA-313N",
+      "Tm": 300.0,
+      "Tw": 140.0,
+      "Te": 165.0,
+      "alpha": 0.8997900700609553,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "PPS",
+      "grade": "RBA-514",
+      "Tm": 300.0,
+      "Tw": 140.0,
+      "Te": 165.0,
+      "alpha": 0.14248283001851741,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "COC",
+      "grade": "Topas5013L-10",
+      "Tm": 270.0,
+      "Tw": 102.0,
+      "Te": 116.0,
+      "alpha": 0.08211413395395976,
+      "extra_s": 0.0
+    },
+    {
+      "resin": "LCP",
+      "grade": "KB40BM",
+      "Tm": 380.0,
+      "Tw": 130.0,
+      "Te": 335.0,
+      "alpha": 0.18032964258664838,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "LCP",
+      "grade": "T130",
+      "Tm": 380.0,
+      "Tw": 80.0,
+      "Te": 279.0,
+      "alpha": 0.22976983682836621,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "PA",
+      "grade": "299X119249C",
+      "Tm": 285.0,
+      "Tw": 85.0,
+      "Te": 225.0,
+      "alpha": 0.08267922553636838,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "PA",
+      "grade": "Rhodia 2413GW",
+      "Tm": 285.0,
+      "Tw": 80.0,
+      "Te": 210.0,
+      "alpha": 0.09206561767659859,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "PA",
+      "grade": "FR-50",
+      "Tm": 290.0,
+      "Tw": 100.0,
+      "Te": 175.0,
+      "alpha": 0.09534541041865303,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "PA",
+      "grade": "Rhodia A50HI",
+      "Tm": 270.0,
+      "Tw": 70.0,
+      "Te": 224.0,
+      "alpha": 0.1387340196561471,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "PA",
+      "grade": "FR-7025V0F",
+      "Tm": 280.0,
+      "Tw": 70.0,
+      "Te": 190.0,
+      "alpha": 0.06372530644375306,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "PA",
+      "grade": "299X117946",
+      "Tm": 290.0,
+      "Tw": 85.0,
+      "Te": 221.0,
+      "alpha": 0.10651616559034431,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "PEEK",
+      "grade": "150CA-30",
+      "Tm": 385.0,
+      "Tw": 190.0,
+      "Te": 296.0,
+      "alpha": 0.2509950927461133,
+      "extra_s": 9.0
+    },
+    {
+      "resin": "MPPO",
+      "grade": "NorylN300X",
+      "Tm": 312.0,
+      "Tw": 120.0,
+      "Te": 145.0,
+      "alpha": 0.1052548723853317,
+      "extra_s": 3.0
+    }
+  ],
+  "coolingMinTime_s": 11.5,
+  "cavityOptions": [
+    "1",
+    "2",
+    "4",
+    "6",
+    "8"
+  ],
+  "plateTypeOptions": [
+    "2P",
+    "3P",
+    "HOT"
+  ],
+  "coolingOptionOptions": [
+    "BASE",
+    "LOGIC"
+  ]
+}

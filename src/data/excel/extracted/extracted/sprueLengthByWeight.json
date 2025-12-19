@@ -1,0 +1,18 @@
+[
+  {
+    "maxWeight": 100.0,
+    "sprue": 70.0
+  },
+  {
+    "maxWeight": 300.0,
+    "sprue": 75.0
+  },
+  {
+    "maxWeight": 700.0,
+    "sprue": 80.0
+  },
+  {
+    "maxWeight": 1500.0,
+    "sprue": 90.0
+  }
+]

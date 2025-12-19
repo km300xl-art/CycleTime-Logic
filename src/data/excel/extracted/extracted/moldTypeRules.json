@@ -1,0 +1,50 @@
+[
+  {
+    "moldType": "General INJ.",
+    "timeAdd_raw": 0,
+    "timeAdd_s": 0.0,
+    "description": "None"
+  },
+  {
+    "moldType": "Gas INJ.",
+    "timeAdd_raw": "NO",
+    "timeAdd_s": 0.0,
+    "description": "Pack=0, Cool+"
+  },
+  {
+    "moldType": "High TEMP. INJ.",
+    "timeAdd_raw": 5,
+    "timeAdd_s": 5.0,
+    "description": "Cooling +"
+  },
+  {
+    "moldType": "GEAR Tool",
+    "timeAdd_raw": 1,
+    "timeAdd_s": 1.0,
+    "description": "Cooling +"
+  },
+  {
+    "moldType": "Double shot",
+    "timeAdd_raw": 1.5,
+    "timeAdd_s": 1.5,
+    "description": "Close +"
+  },
+  {
+    "moldType": "Insert INJ.",
+    "timeAdd_raw": 10,
+    "timeAdd_s": 10.0,
+    "description": "Open +"
+  },
+  {
+    "moldType": "IMR INJ.",
+    "timeAdd_raw": 10,
+    "timeAdd_s": 10.0,
+    "description": "Open +"
+  },
+  {
+    "moldType": "Lens INJ.",
+    "timeAdd_raw": 3,
+    "timeAdd_s": 3.0,
+    "description": "Pack +"
+  }
+]
