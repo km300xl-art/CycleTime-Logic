@@ -1,0 +1,62 @@
+[
+  {
+    "cell": "E12",
+    "formula": "=CT_FINAL!T8",
+    "ct_final_cell": "T8"
+  },
+  {
+    "cell": "G14",
+    "formula": "=CT_FINAL!T10",
+    "ct_final_cell": "T10"
+  },
+  {
+    "cell": "G16",
+    "formula": "=CT_FINAL!F22",
+    "ct_final_cell": "F22"
+  },
+  {
+    "cell": "G18",
+    "formula": "=CT_FINAL!Y8",
+    "ct_final_cell": "Y8"
+  },
+  {
+    "cell": "G20",
+    "formula": "=CT_FINAL!Y10",
+    "ct_final_cell": "Y10"
+  },
+  {
+    "cell": "G22",
+    "formula": "=CT_FINAL!T12",
+    "ct_final_cell": "T12"
+  },
+  {
+    "cell": "G24",
+    "formula": "=CT_FINAL!T14",
+    "ct_final_cell": "T14"
+  },
+  {
+    "cell": "E28",
+    "formula": "=CT_FINAL!T16",
+    "ct_final_cell": "T16"
+  },
+  {
+    "cell": "E30",
+    "formula": "=CT_FINAL!T18",
+    "ct_final_cell": "T18"
+  },
+  {
+    "cell": "Q31",
+    "formula": "=MATCH(CT_FINAL!F18,Q25:Q31,1)",
+    "ct_final_cell": "F18"
+  },
+  {
+    "cell": "E49",
+    "formula": "=CT_FINAL!F18",
+    "ct_final_cell": "F18"
+  },
+  {
+    "cell": "E83",
+    "formula": "=MATCH(CT_FINAL!F18,E68:E82,1)",
+    "ct_final_cell": "F18"
+  }
+]
