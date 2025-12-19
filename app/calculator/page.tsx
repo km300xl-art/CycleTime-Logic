@@ -12,20 +12,20 @@ import styles from './Calculator.module.css';
 import { FieldErrors, InputFormState, OptionFormState } from './types';
 import type { InputData, Options, CycleTimeTables } from '../../src/lib/ct/types';
 
-import moldTypes from '../../src/data/moldTypes.json';
+import moldTypes from '../../src/data/excel/moldTypeOptions.json';
 import resinOptions from '../../src/data/excel/resinOptions.json';
 import resinGrades from '../../src/data/excel/resinGrades.json';
-import clampControlOptions from '../../src/data/excel/clampControlOptions.json';
-import openCloseSpeedOptions from '../../src/data/excel/openCloseSpeedOptions.json';
-import ejectingSpeedOptions from '../../src/data/excel/ejectingSpeedOptions.json';
+import clampControlTable from '../../src/data/excel/open_close_eject/clampControlTable.json';
+import openCloseSpeedControl from '../../src/data/excel/open_close_eject/openCloseSpeedControl.json';
+import ejectingSpeedControl from '../../src/data/excel/open_close_eject/ejectingSpeedControl.json';
 
 // 이 3줄이 반드시 필요
 const moldTypeOptions = moldTypes as string[];
 const resinOptionsList = resinOptions as string[];
 const resinGradesMap = resinGrades as Record<string, string[]>;
-const clampControlOptionsList = clampControlOptions as string[];
-const openCloseSpeedOptionsList = openCloseSpeedOptions as string[];
-const ejectingSpeedOptionsList = ejectingSpeedOptions as string[];
+const clampControlOptionsList = (clampControlTable as { label: string }[]).map((row) => row.label);
+const openCloseSpeedOptionsList = (openCloseSpeedControl as { label: string }[]).map((row) => row.label);
+const ejectingSpeedOptionsList = (ejectingSpeedControl as { label: string }[]).map((row) => row.label);
 
 function sprueFromWeight(weight: number): number {
   const table = (sprueTable as { bins: { maxWeight: number; sprueLength_mm: number }[] }).bins ?? [];

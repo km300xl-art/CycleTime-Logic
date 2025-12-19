@@ -16,6 +16,7 @@ type Example = {
 type NumericOutputKey = Exclude<keyof Outputs, 'debug'>;
 
 const outputKeys: NumericOutputKey[] = ['fill', 'pack', 'cool', 'open', 'eject', 'robot', 'close', 'total'];
+const stageKeys: NumericOutputKey[] = ['fill', 'pack', 'cool', 'open', 'eject', 'robot', 'close'];
 
 const compareOutputs = (actual: Outputs, expected: Outputs, label: string) => {
   outputKeys.forEach((key) => {
@@ -33,6 +34,31 @@ describe('computeCycleTime examples', () => {
       compareOutputs(result, example.expected as Outputs, label);
     });
   });
+});
+
+describe('excel regression totals', () => {
+  const excelIds = new Set(['excel_case_01', 'excel_case_02', 'excel_case_03']);
+  (examples as Example[])
+    .filter((example) => (example.id ? excelIds.has(example.id) : false))
+    .forEach((example) => {
+      const label = `${example.name ?? example.id} (stage sum)`;
+      test(label, () => {
+        const result = computeCycleTime(example.input as InputData, example.options as Options, tables);
+        compareOutputs(result, example.expected as Outputs, label);
+
+        const stageSum = stageKeys.reduce((sum, key) => sum + result[key], 0);
+        assert.equal(
+          stageSum.toFixed(2),
+          result.total.toFixed(2),
+          `${label} -> total should equal the sum of stage times`,
+        );
+        assert.equal(
+          stageSum.toFixed(2),
+          Number(example.expected.total).toFixed(2),
+          `${label} -> expected total should align with stage sum`,
+        );
+      });
+    });
 });
 
 describe('excel-derived open/close/eject linkage', () => {

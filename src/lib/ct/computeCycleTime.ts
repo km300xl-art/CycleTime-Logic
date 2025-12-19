@@ -1,8 +1,10 @@
 import type { InputData, Options, Outputs, CycleTimeTables, StageName, MoldTypeRule } from "./types";
 import moldTypeRulesJson from "../../data/moldTypeRules.json";
-import openCloseEjectBundle from "../../data/excel/open_close_eject/open_close_eject_bundle.json";
 import coolingGradeParamsJson from "../../data/excel/coolingGradeParams.json";
 import coolingClampForceReferenceJson from "../../data/excel/coolingClampForceReference.json";
+import clampForceStageAddersJson from "../../data/excel/open_close_eject/clampForceStageAdders.json";
+import ejectStrokeTimeMultiplierJson from "../../data/excel/open_close_eject/ejectStrokeTimeMultiplier.json";
+import robotTimeByClampForceJson from "../../data/excel/open_close_eject/robotTimeByClampForce.json";
 
 const STAGES: StageName[] = ["fill", "pack", "cool", "open", "eject", "robot", "close"];
 
@@ -49,26 +51,20 @@ function asLookupKey(raw: unknown): string {
 }
 
 type ClampForceAdderRow = { clampForce: number; openAdd_s: number; closeAdd_s: number; ejectAdd_s: number };
-type SpeedControlRow = { label: string; speed_percent: number };
 type EjectStrokeMultiplierRow = { ejectStroke_mm: number; multiplier: number };
 type RobotTimeRow = { clampForce: number; robotTime_s: number };
 type CoolingGradeParams = { alpha: number; extra_s?: number };
 type CoolingClampForceRow = { clampForce_ton: number; timeAdd_s: number };
-
-const openCloseEjectData = openCloseEjectBundle as {
-  clampForceStageAdders: ClampForceAdderRow[];
-  openCloseSpeedControl: SpeedControlRow[];
-  ejectingSpeedControl: SpeedControlRow[];
-  ejectStrokeTimeMultiplier: EjectStrokeMultiplierRow[];
-  robotTimeByClampForce: RobotTimeRow[];
-  constantsAndFormulas?: { ejectorMaxSpeed_mm_s?: number };
-};
 
 const coolingGradeParams = coolingGradeParamsJson as Record<string, CoolingGradeParams>;
 const coolingClampForceReference = coolingClampForceReferenceJson as {
   minCoolingTime_s?: number;
   clampForceReference?: CoolingClampForceRow[];
 };
+const coolingMinTime_s = toNumberSafe(coolingClampForceReference?.minCoolingTime_s) || 0;
+const clampForceStageAdders = clampForceStageAddersJson as ClampForceAdderRow[];
+const ejectStrokeTimeMultiplier = ejectStrokeTimeMultiplierJson as EjectStrokeMultiplierRow[];
+const robotTimeByClampForce = robotTimeByClampForceJson as RobotTimeRow[];
 
 function approximateLookup<T>(rows: readonly T[] | undefined, value: number, getter: (row: T) => number): T | undefined {
   if (!rows || rows.length === 0) return undefined;
@@ -129,19 +125,13 @@ function computeOpenCloseEject(
   tables: CycleTimeTables
 ): Record<"open" | "eject" | "close" | "robot", number> & { robotEnabled: boolean } {
   const robotEnabled = options.robotStroke_mm > 0;
-  const clampAddRow = approximateLookup(openCloseEjectData.clampForceStageAdders, toNumberSafe(input.clampForce_ton), (r) =>
-    toNumberSafe(r.clampForce)
-  );
+  const clampAddRow = approximateLookup(clampForceStageAdders, toNumberSafe(input.clampForce_ton), (r) => toNumberSafe(r.clampForce));
   const strokeMultiplierRow = approximateLookup(
-    openCloseEjectData.ejectStrokeTimeMultiplier,
+    ejectStrokeTimeMultiplier,
     toNumberSafe(options.ejectStroke_mm),
     (r) => toNumberSafe(r.ejectStroke_mm)
   );
-  const robotRow = approximateLookup(
-    openCloseEjectData.robotTimeByClampForce,
-    toNumberSafe(input.clampForce_ton),
-    (r) => toNumberSafe(r.clampForce)
-  );
+  const robotRow = approximateLookup(robotTimeByClampForce, toNumberSafe(input.clampForce_ton), (r) => toNumberSafe(r.clampForce));
 
   const strokeMultiplier = toNumberSafe(strokeMultiplierRow?.multiplier) || 1;
 
@@ -152,15 +142,16 @@ function computeOpenCloseEject(
   const openAdd = toNumberSafe(clampAddRow?.openAdd_s);
   const closeAdd = toNumberSafe(clampAddRow?.closeAdd_s);
   const ejectAdd = toNumberSafe(clampAddRow?.ejectAdd_s);
-  const open = clampMin0(openStageTime - openAdd + openAdd);
-  const close = clampMin0(closeStageTime - closeAdd + closeAdd);
 
-  const ejectBasePre = strokeMultiplier !== 0 ? (ejectStageTime - ejectAdd) / strokeMultiplier : 0;
-  const eject = clampMin0(ejectBasePre * strokeMultiplier + ejectAdd);
+  const open = clampMin0(openStageTime + openAdd);
+  const close = clampMin0(closeStageTime + closeAdd);
+
+  const ejectBase = clampMin0(ejectStageTime * strokeMultiplier);
+  const eject = clampMin0(ejectBase + ejectAdd);
 
   const robotTable = toNumberSafe(robotRow?.robotTime_s);
   const robotStage = computeStageBase("robot", input, options, tables);
-  const robot = robotEnabled ? (robotStage > 0 ? robotStage : robotTable) : 0;
+  const robot = robotEnabled ? (robotTable > 0 ? robotTable : robotStage) : 0;
 
   return {
     open,
@@ -176,10 +167,9 @@ function computeCoolingStage(input: InputData, options: Options, tables: CycleTi
   const params = coolingGradeParams[gradeKey];
   const baseTableCooling = computeStageBase("cool", input, options, tables);
   const gradeExtra = toNumberSafe(params?.extra_s);
-  const minCooling = toNumberSafe(coolingClampForceReference.minCoolingTime_s) || 0;
 
   const cooling = clampMin0(baseTableCooling + gradeExtra);
-  return Math.max(cooling, minCooling);
+  return Math.max(cooling, coolingMinTime_s);
 }
 
 function applyMoldTypeAdjustments(
@@ -191,7 +181,6 @@ function applyMoldTypeAdjustments(
   if (!rule) return base;
 
   const add = toNumberSafe(rule.timeAdd_s);
-  const fillAdd = toNumberSafe(rule.fillAdd_s ?? add);
   const updated = { ...base };
 
   if (rule.packZero) updated.pack = 0;
@@ -199,9 +188,9 @@ function applyMoldTypeAdjustments(
   if (rule.coolPlus) updated.cool += add;
   if (rule.openPlus) updated.open += add;
   if (rule.closePlus) updated.close += add;
-
-  // 기존 로직 유지: timeAdd를 fill에도 더함(엑셀 Time add 열 대응)
-  updated.fill += fillAdd;
+  if (isFiniteNumber(rule.fillAdd_s)) {
+    updated.fill += toNumberSafe(rule.fillAdd_s);
+  }
 
   return updated;
 }
@@ -211,8 +200,7 @@ export function computeCycleTime(input: InputData, options: Options, tables: Cyc
   const rawSafety = toNumberSafe(options.safetyFactor ?? tables.defaults?.safetyFactor ?? 0);
   const safetyFactor = rawSafety > 1 ? rawSafety / 100 : clampMin0(rawSafety);
 
-  // moldType rules: tables에 있으면 우선, 없으면 JSON 사용
-  const rules = (tables.moldTypeRules ?? (moldTypeRulesJson as unknown as MoldTypeRule[])) ?? [];
+  const rules = (moldTypeRulesJson as unknown as MoldTypeRule[]) ?? [];
   const openCloseEject = computeOpenCloseEject(input, options, tables);
 
   // 1) base 계산
@@ -240,8 +228,8 @@ export function computeCycleTime(input: InputData, options: Options, tables: Cyc
     final[stage] = round(afterSafety[stage], rounding);
   }
 
-  // 4) total은 반올림 전 stage 합계를 사용
-  const total = round(STAGES.reduce((sum, s) => sum + afterSafety[s], 0), rounding);
+  // 4) total은 표기되는 stage 합계와 일치하게 반올림된 stage 합산으로 계산
+  const total = round(STAGES.reduce((sum, s) => sum + final[s], 0), rounding);
 
   return {
     fill: final.fill,
