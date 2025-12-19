@@ -1,0 +1,14 @@
+[
+  {
+    "mode": "Low speed",
+    "speedPercent": 30
+  },
+  {
+    "mode": "Mid speed",
+    "speedPercent": 40
+  },
+  {
+    "mode": "Base speed",
+    "speedPercent": 1
+  }
+]
