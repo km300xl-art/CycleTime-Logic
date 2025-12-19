@@ -1,10 +1,8 @@
 'use client';
 
+import { useEffect, useMemo, useState } from 'react';
 
 import sprueTable from '../../src/data/sprueLengthByWeight.json';
-import { useEffect } from 'react';
-
-import { useMemo, useState } from 'react';
 import rawTables from '../../src/data/tables.json';
 import { computeCycleTime } from '../../src/lib/ct/computeCycleTime';
 import { InputSection } from './components/InputSection';
@@ -30,30 +28,6 @@ function sprueFromWeight(weight: number): number {
   }
   return table[table.length - 1].sprue;
 }
-
-useEffect(() => {
-  const w = Number(inputValues.weight_g_1cav);
-  const weight = Number.isFinite(w) ? w : 0;
-
-  // HOT일 때 sprue를 0으로 해야 엑셀과 같다면 아래 유지.
-  // 만약 엑셀에서 HOT도 구간 적용이면 이 줄만 제거하세요.
-  const nextSprue = inputValues.plateType === 'HOT' ? 0 : sprueFromWeight(weight);
-
-  setOptionValues((prev) => {
-    const s = String(nextSprue);
-    return prev.sprueLength_mm === s ? prev : { ...prev, sprueLength_mm: s };
-  });
-}, [inputValues.weight_g_1cav, inputValues.plateType]);
-
-useEffect(() => {
-  const pt = inputValues.plateType;
-  if (pt === '2P' || pt === 'HOT') {
-    setOptionValues((prev) =>
-      prev.pinRunner3p_mm === '0' ? prev : { ...prev, pinRunner3p_mm: '0' }
-    );
-  }
-}, [inputValues.plateType]);
-
 
 const tables = rawTables as CycleTimeTables;
 
@@ -86,8 +60,17 @@ const initialOptionValues: OptionFormState = {
   safetyFactor: '0',
 };
 
+const clampControlOptions = ['Logic valve', 'Proportional valve', 'ServoValve'] as const;
 
-const clampControlOptions = ['Toggle', 'Hydraulic', 'Electric', 'Logic valve'];
+const deriveSprueLength = (plateType: InputData['plateType'], weight: number) => {
+  if (plateType === 'HOT') return 0;
+  return sprueFromWeight(weight);
+};
+
+const derivePinRunner = (plateType: InputData['plateType'], sprueLength: number) => {
+  if (plateType === '3P') return sprueLength + 30;
+  return 0;
+};
 
 const toInputData = (values: InputFormState): InputData => {
   const allowedCavities: InputData['cavity'][] = [1, 2, 4, 6, 8];
@@ -151,26 +134,43 @@ export default function CalculatorPage() {
   const [optionValues, setOptionValues] = useState<OptionFormState>(initialOptionValues);
   const [errors, setErrors] = useState<FieldErrors>({});
 
-const gradeOptions = useMemo(() => {
-  if (!inputValues.resin) return [];
-  return resinGradesMap[inputValues.resin] ?? [];
-}, [inputValues.resin]);
-
+  const gradeOptions = useMemo(() => {
+    if (!inputValues.resin) return [];
+    return resinGradesMap[inputValues.resin] ?? [];
+  }, [inputValues.resin]);
 
   const parsedInput = useMemo(() => toInputData(inputValues), [inputValues]);
   const parsedOptions = useMemo(() => toOptions(optionValues), [optionValues]);
+
+  useEffect(() => {
+    const weight = Number.isFinite(Number(inputValues.weight_g_1cav))
+      ? Number(inputValues.weight_g_1cav)
+      : 0;
+    const nextSprue = deriveSprueLength(inputValues.plateType as InputData['plateType'], weight);
+    setOptionValues((prev) => {
+      const sprueAsString = String(nextSprue);
+      return prev.sprueLength_mm === sprueAsString ? prev : { ...prev, sprueLength_mm: sprueAsString };
+    });
+  }, [inputValues.weight_g_1cav, inputValues.plateType]);
+
+  useEffect(() => {
+    const sprueLength = Number(optionValues.sprueLength_mm) || 0;
+    const targetPinRunner = derivePinRunner(inputValues.plateType as InputData['plateType'], sprueLength);
+    setOptionValues((prev) => {
+      const pinAsString = String(targetPinRunner);
+      return prev.pinRunner3p_mm === pinAsString ? prev : { ...prev, pinRunner3p_mm: pinAsString };
+    });
+  }, [inputValues.plateType, optionValues.sprueLength_mm]);
 
   const [outputs, setOutputs] = useState(() => computeCycleTime(parsedInput, parsedOptions, tables));
 
   const handleTextChange = (field: keyof InputFormState, value: string) => {
     setInputValues((prev) => {
       const next = { ...prev, [field]: value };
-
-      
-if (field === 'resin') {
-  const nextGrades = resinGradesMap[value] ?? [];
-  next.grade = nextGrades[0] ?? '';
-}
+      if (field === 'resin') {
+        const nextGrades = resinGradesMap[value] ?? [];
+        next.grade = nextGrades[0] ?? '';
+      }
       return next;
     });
     setErrors((prev) => ({ ...prev, [field]: undefined }));
@@ -227,6 +227,8 @@ if (field === 'resin') {
     setOutputs(computeCycleTime(toInputData(initialInputValues), toOptions(initialOptionValues), tables));
   };
 
+  const isPinRunnerLocked = true;
+
   return (
     <section className="section">
       <h1 className={styles.pageTitle}>Cycle Time Calculator</h1>
@@ -249,7 +251,8 @@ if (field === 'resin') {
           errors={errors}
           onChange={handleOptionTextChange}
           onNumberChange={(field, value) => handleNumberChange(field, value, setOptionValues)}
-          clampControlOptions={clampControlOptions}
+          clampControlOptions={[...clampControlOptions]}
+          isPinRunnerLocked={isPinRunnerLocked}
         />
       </div>
 

@@ -11,7 +11,7 @@ export type InputData = {
 };
 
 export type Options = {
-  clampControl: string;
+  clampControl: '' | 'Logic valve' | 'Proportional valve' | 'ServoValve';
   moldProtection_mm: number; // >=0
   ejectStroke_mm: number; // >=0
   cushionDistance_mm: number; // >=0

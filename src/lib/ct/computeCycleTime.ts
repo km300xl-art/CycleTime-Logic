@@ -87,6 +87,20 @@ function computeStageBase(stage: StageName, input: InputData, options: Options, 
   return clampMin0(value);
 }
 
+function computeOpenCloseEject(
+  input: InputData,
+  options: Options,
+  tables: CycleTimeTables
+): Record<"open" | "eject" | "close" | "robot", number> & { robotEnabled: boolean } {
+  const robotEnabled = options.robotStroke_mm > 0;
+  const open = computeStageBase("open", input, options, tables);
+  const eject = computeStageBase("eject", input, options, tables);
+  const close = computeStageBase("close", input, options, tables);
+  const robot = robotEnabled ? computeStageBase("robot", input, options, tables) : 0;
+
+  return { open, eject, close, robot, robotEnabled };
+}
+
 function applyMoldTypeAdjustments(
   base: Record<StageName, number>,
   moldType: string,
@@ -118,16 +132,17 @@ export function computeCycleTime(input: InputData, options: Options, tables: Cyc
 
   // moldType rules: tables에 있으면 우선, 없으면 JSON 사용
   const rules = (tables.moldTypeRules ?? (moldTypeRulesJson as unknown as MoldTypeRule[])) ?? [];
+  const openCloseEject = computeOpenCloseEject(input, options, tables);
 
   // 1) base 계산
   const base: Record<StageName, number> = {
     fill: computeStageBase("fill", input, options, tables),
     pack: computeStageBase("pack", input, options, tables),
     cool: computeStageBase("cool", input, options, tables),
-    open: computeStageBase("open", input, options, tables),
-    eject: computeStageBase("eject", input, options, tables),
-    robot: computeStageBase("robot", input, options, tables),
-    close: computeStageBase("close", input, options, tables),
+    open: openCloseEject.open,
+    eject: openCloseEject.eject,
+    robot: openCloseEject.robot,
+    close: openCloseEject.close,
   };
 
   // 2) moldType 반영
@@ -162,6 +177,7 @@ export function computeCycleTime(input: InputData, options: Options, tables: Cyc
       safetyFactor,
       rounding,
       moldType: input.moldType,
+      openCloseEject,
     },
   };
 }
