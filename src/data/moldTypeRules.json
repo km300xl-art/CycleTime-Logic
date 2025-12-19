@@ -10,8 +10,8 @@
   },
   {
     "moldType": "Gas INJ.",
-    "timeAdd_s": 0.4,
-    "packZero": false,
+    "timeAdd_s": 0.0,
+    "packZero": true,
     "coolPlus": true,
     "openPlus": false,
     "closePlus": false,
@@ -29,7 +29,6 @@
   {
     "moldType": "GEAR Tool",
     "timeAdd_s": 1.0,
-    "fillAdd_s": 0.642,
     "packZero": false,
     "coolPlus": true,
     "openPlus": false,

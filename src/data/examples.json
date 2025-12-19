@@ -33,11 +33,11 @@
       "fill": 1.01,
       "pack": 2.04,
       "cool": 12.65,
-      "open": 1.63,
-      "eject": 1.88,
+      "open": 1.83,
+      "eject": 4.76,
       "robot": 2,
-      "close": 1.97,
-      "total": 23.18
+      "close": 2.07,
+      "total": 26.36
     }
   },
   {
@@ -71,14 +71,14 @@
       "openCloseStroke_mm": 0
     },
     "expected": {
-      "fill": 2.2,
+      "fill": 1.55,
       "pack": 2.39,
       "cool": 13.75,
-      "open": 2.02,
-      "eject": 1.88,
+      "open": 2.22,
+      "eject": 4.76,
       "robot": 2,
-      "close": 2.36,
-      "total": 26.59
+      "close": 2.46,
+      "total": 29.13
     }
   },
   {
@@ -115,11 +115,11 @@
       "fill": 2.63,
       "pack": 3.07,
       "cool": 23.49,
-      "open": 2.53,
-      "eject": 2.21,
+      "open": 3.73,
+      "eject": 5.72,
       "robot": 2.5,
-      "close": 2.87,
-      "total": 39.29
+      "close": 3.97,
+      "total": 45.11
     }
   },
   {
@@ -156,11 +156,11 @@
       "fill": 1.33,
       "pack": 2.14,
       "cool": 13.27,
-      "open": 1.79,
-      "eject": 1.87,
-      "robot": 1.8,
-      "close": 2.64,
-      "total": 24.83
+      "open": 1.99,
+      "eject": 4.74,
+      "robot": 2,
+      "close": 2.74,
+      "total": 28.21
     }
   },
   {
@@ -194,14 +194,14 @@
       "openCloseStroke_mm": 0
     },
     "expected": {
-      "fill": 1.92,
+      "fill": 1.28,
       "pack": 2.25,
       "cool": 14,
-      "open": 1.97,
-      "eject": 1.93,
-      "robot": 2.2,
-      "close": 2.43,
-      "total": 26.71
+      "open": 2.57,
+      "eject": 5.17,
+      "robot": 2.5,
+      "close": 3.23,
+      "total": 31
     }
   },
   {
@@ -238,11 +238,11 @@
       "fill": 2.08,
       "pack": 2.66,
       "cool": 19.31,
-      "open": 2.6,
-      "eject": 1.86,
-      "robot": 3,
-      "close": 2.78,
-      "total": 34.28
+      "open": 3.2,
+      "eject": 5.01,
+      "robot": 2.5,
+      "close": 3.58,
+      "total": 38.34
     }
   }
 ]
