@@ -7,6 +7,8 @@ type OptionsSectionProps = {
   onChange: (field: keyof OptionFormState, value: string) => void;
   onNumberChange: (field: keyof OptionFormState, value: string) => void;
   clampControlOptions: string[];
+  openCloseSpeedOptions: string[];
+  ejectingSpeedOptions: string[];
   isPinRunnerLocked: boolean;
 };
 
@@ -16,6 +18,8 @@ export function OptionsSection({
   onChange,
   onNumberChange,
   clampControlOptions,
+  openCloseSpeedOptions,
+  ejectingSpeedOptions,
   isPinRunnerLocked,
 }: OptionsSectionProps) {
   return (
@@ -103,7 +107,7 @@ export function OptionsSection({
             value={values.openCloseSpeedMode}
             onChange={(e) => onChange('openCloseSpeedMode', e.target.value)}
           >
-            {['Low speed', 'Mid speed', 'Base speed'].map((option) => (
+            {openCloseSpeedOptions.map((option) => (
               <option key={option} value={option}>
                 {option}
               </option>
@@ -120,7 +124,7 @@ export function OptionsSection({
             value={values.ejectingSpeedMode}
             onChange={(e) => onChange('ejectingSpeedMode', e.target.value)}
           >
-            {['Low speed', 'Base speed'].map((option) => (
+            {ejectingSpeedOptions.map((option) => (
               <option key={option} value={option}>
                 {option}
               </option>
