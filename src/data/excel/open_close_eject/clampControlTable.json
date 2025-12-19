@@ -1,0 +1,14 @@
+[
+  {
+    "label": "Logic valve",
+    "closingSpeed_percent": 70.0
+  },
+  {
+    "label": "Proportional valve",
+    "closingSpeed_percent": 80.0
+  },
+  {
+    "label": "ServoValve",
+    "closingSpeed_percent": 90.0
+  }
+]

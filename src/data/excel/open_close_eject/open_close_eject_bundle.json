@@ -1,0 +1,239 @@
+{
+  "clampControlTable": [
+    {
+      "label": "Logic valve",
+      "closingSpeed_percent": 70.0
+    },
+    {
+      "label": "Proportional valve",
+      "closingSpeed_percent": 80.0
+    },
+    {
+      "label": "ServoValve",
+      "closingSpeed_percent": 90.0
+    }
+  ],
+  "openCloseSpeedControl": [
+    {
+      "label": "Low speed",
+      "speed_percent": 30.0
+    },
+    {
+      "label": "Mid speed",
+      "speed_percent": 40.0
+    },
+    {
+      "label": "Base speed",
+      "speed_percent": 1.0
+    }
+  ],
+  "ejectingSpeedControl": [
+    {
+      "label": "Low speed",
+      "speed_percent": 15.0
+    },
+    {
+      "label": "Base speed",
+      "speed_percent": 1.0
+    }
+  ],
+  "clampForceStageAdders": [
+    {
+      "index": 1,
+      "clampForce": 0.0,
+      "openAdd_s": 0.2,
+      "closeAdd_s": 0.1,
+      "ejectAdd_s": 1.0
+    },
+    {
+      "index": 2,
+      "clampForce": 100.0,
+      "openAdd_s": 0.2,
+      "closeAdd_s": 0.1,
+      "ejectAdd_s": 1.0
+    },
+    {
+      "index": 3,
+      "clampForce": 150.0,
+      "openAdd_s": 0.6,
+      "closeAdd_s": 0.8,
+      "ejectAdd_s": 1.3
+    },
+    {
+      "index": 4,
+      "clampForce": 250.0,
+      "openAdd_s": 1.2,
+      "closeAdd_s": 1.1,
+      "ejectAdd_s": 1.3
+    },
+    {
+      "index": 5,
+      "clampForce": 350.0,
+      "openAdd_s": 1.5,
+      "closeAdd_s": 1.5,
+      "ejectAdd_s": 1.6
+    },
+    {
+      "index": 6,
+      "clampForce": 450.0,
+      "openAdd_s": 1.5,
+      "closeAdd_s": 1.5,
+      "ejectAdd_s": 1.8
+    },
+    {
+      "index": 7,
+      "clampForce": 550.0,
+      "openAdd_s": 2.4,
+      "closeAdd_s": 2.4,
+      "ejectAdd_s": 2.3
+    },
+    {
+      "index": 8,
+      "clampForce": 650.0,
+      "openAdd_s": 2.4,
+      "closeAdd_s": 2.4,
+      "ejectAdd_s": 2.3
+    },
+    {
+      "index": 9,
+      "clampForce": 850.0,
+      "openAdd_s": 2.4,
+      "closeAdd_s": 2.8,
+      "ejectAdd_s": 2.5
+    },
+    {
+      "index": 10,
+      "clampForce": 1000.0,
+      "openAdd_s": 3.0,
+      "closeAdd_s": 3.6,
+      "ejectAdd_s": 2.5
+    },
+    {
+      "index": 11,
+      "clampForce": 50000.0,
+      "openAdd_s": 3.0,
+      "closeAdd_s": 3.6,
+      "ejectAdd_s": 2.5
+    }
+  ],
+  "robotTimeByClampForce": [
+    {
+      "clampForce": 0.0,
+      "robotTime_s": 2.0
+    },
+    {
+      "clampForce": 151.0,
+      "robotTime_s": 2.5
+    },
+    {
+      "clampForce": 351.0,
+      "robotTime_s": 3.0
+    },
+    {
+      "clampForce": 551.0,
+      "robotTime_s": 4.0
+    },
+    {
+      "clampForce": 1051.0,
+      "robotTime_s": 5.0
+    }
+  ],
+  "ejectStrokeTimeMultiplier": [
+    {
+      "ejectStroke_mm": 0.0,
+      "multiplier": 2.0
+    },
+    {
+      "ejectStroke_mm": 100.0,
+      "multiplier": 1.7
+    },
+    {
+      "ejectStroke_mm": 150.0,
+      "multiplier": 1.4
+    },
+    {
+      "ejectStroke_mm": 200.0,
+      "multiplier": 1.0
+    },
+    {
+      "ejectStroke_mm": 250.0,
+      "multiplier": 0.7
+    }
+  ],
+  "constantsAndFormulas": {
+    "openCloseMaxSpeed_mm_s": 450.0,
+    "ejectorMaxSpeed_mm_s": 600.0,
+    "openTime_formula": "=N44 + F63",
+    "ejectTime_formula": "=N22+H63",
+    "closeTime_formula": "=N32 + G63",
+    "robotTime_formula": "=R31",
+    "openBaseTime_formula": "=SUM(N40:N43)",
+    "closeBaseTime_formula": "=SUM(N28:N31)",
+    "ejectBaseTime_formula": "=SUM(N16:N21)*P18",
+    "openAdder_formula": "=VLOOKUP(E63,D52:F63,3)",
+    "closeAdder_formula": "=VLOOKUP(E63,D52:G63,4)",
+    "ejectAdder_formula": "=VLOOKUP(E63,D52:H63,5)"
+  },
+  "ctFinalReferences": [
+    {
+      "cell": "E12",
+      "formula": "=CT_FINAL!T8",
+      "ct_final_cell": "T8"
+    },
+    {
+      "cell": "G14",
+      "formula": "=CT_FINAL!T10",
+      "ct_final_cell": "T10"
+    },
+    {
+      "cell": "G16",
+      "formula": "=CT_FINAL!F22",
+      "ct_final_cell": "F22"
+    },
+    {
+      "cell": "G18",
+      "formula": "=CT_FINAL!Y8",
+      "ct_final_cell": "Y8"
+    },
+    {
+      "cell": "G20",
+      "formula": "=CT_FINAL!Y10",
+      "ct_final_cell": "Y10"
+    },
+    {
+      "cell": "G22",
+      "formula": "=CT_FINAL!T12",
+      "ct_final_cell": "T12"
+    },
+    {
+      "cell": "G24",
+      "formula": "=CT_FINAL!T14",
+      "ct_final_cell": "T14"
+    },
+    {
+      "cell": "E28",
+      "formula": "=CT_FINAL!T16",
+      "ct_final_cell": "T16"
+    },
+    {
+      "cell": "E30",
+      "formula": "=CT_FINAL!T18",
+      "ct_final_cell": "T18"
+    },
+    {
+      "cell": "Q31",
+      "formula": "=MATCH(CT_FINAL!F18,Q25:Q31,1)",
+      "ct_final_cell": "F18"
+    },
+    {
+      "cell": "E49",
+      "formula": "=CT_FINAL!F18",
+      "ct_final_cell": "F18"
+    },
+    {
+      "cell": "E83",
+      "formula": "=MATCH(CT_FINAL!F18,E68:E82,1)",
+      "ct_final_cell": "F18"
+    }
+  ]
+}

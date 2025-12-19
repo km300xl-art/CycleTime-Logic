@@ -1,0 +1,22 @@
+[
+  {
+    "clampForce": 0.0,
+    "robotTime_s": 2.0
+  },
+  {
+    "clampForce": 151.0,
+    "robotTime_s": 2.5
+  },
+  {
+    "clampForce": 351.0,
+    "robotTime_s": 3.0
+  },
+  {
+    "clampForce": 551.0,
+    "robotTime_s": 4.0
+  },
+  {
+    "clampForce": 1051.0,
+    "robotTime_s": 5.0
+  }
+]
