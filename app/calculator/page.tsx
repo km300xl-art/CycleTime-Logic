@@ -1,5 +1,9 @@
 'use client';
 
+
+import sprueTable from '../../src/data/sprueLengthByWeight.json';
+import { useEffect } from 'react';
+
 import { useMemo, useState } from 'react';
 import rawTables from '../../src/data/tables.json';
 import { computeCycleTime } from '../../src/lib/ct/computeCycleTime';
@@ -18,6 +22,37 @@ import resinGrades from '../../src/data/resinGrades.json';
 const moldTypeOptions = moldTypes as string[];
 const resinOptions = resins as string[];
 const resinGradesMap = resinGrades as Record<string, string[]>;
+
+function sprueFromWeight(weight: number): number {
+  const table = sprueTable as { maxWeight: number; sprue: number }[];
+  for (const row of table) {
+    if (weight <= row.maxWeight) return row.sprue;
+  }
+  return table[table.length - 1].sprue;
+}
+
+useEffect(() => {
+  const w = Number(inputValues.weight_g_1cav);
+  const weight = Number.isFinite(w) ? w : 0;
+
+  // HOT일 때 sprue를 0으로 해야 엑셀과 같다면 아래 유지.
+  // 만약 엑셀에서 HOT도 구간 적용이면 이 줄만 제거하세요.
+  const nextSprue = inputValues.plateType === 'HOT' ? 0 : sprueFromWeight(weight);
+
+  setOptionValues((prev) => {
+    const s = String(nextSprue);
+    return prev.sprueLength_mm === s ? prev : { ...prev, sprueLength_mm: s };
+  });
+}, [inputValues.weight_g_1cav, inputValues.plateType]);
+
+useEffect(() => {
+  const pt = inputValues.plateType;
+  if (pt === '2P' || pt === 'HOT') {
+    setOptionValues((prev) =>
+      prev.pinRunner3p_mm === '0' ? prev : { ...prev, pinRunner3p_mm: '0' }
+    );
+  }
+}, [inputValues.plateType]);
 
 
 const tables = rawTables as CycleTimeTables;
