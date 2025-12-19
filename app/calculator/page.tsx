@@ -100,8 +100,7 @@ export default function CalculatorPage() {
 
 const gradeOptions = useMemo(() => {
   if (!inputValues.resin) return [];
-  const map = resinGrades as Record<string, string[]>;
-  return map[inputValues.resin] ?? [];
+  return resinGradesMap[inputValues.resin] ?? [];
 }, [inputValues.resin]);
 
 
@@ -113,12 +112,12 @@ const gradeOptions = useMemo(() => {
   const handleTextChange = (field: keyof InputFormState, value: string) => {
     setInputValues((prev) => {
       const next = { ...prev, [field]: value };
-      if (field === 'resin') { 
-        const map = resinGrades as Record<string, string[]>;
-        const nextGrades = map[value] ?? [];
-        // 1) resin 바뀌면 첫 grade 자동 선택 (없으면 '')
-        next.grade = nextGrades[0] ?? '';
-      }
+
+      
+if (field === 'resin') {
+  const nextGrades = resinGradesMap[value] ?? [];
+  next.grade = nextGrades[0] ?? '';
+}
       return next;
     });
     setErrors((prev) => ({ ...prev, [field]: undefined }));
