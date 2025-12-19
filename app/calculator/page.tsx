@@ -10,6 +10,12 @@ import styles from './Calculator.module.css';
 import { FieldErrors, InputFormState, OptionFormState } from './types';
 import type { InputData, Options, CycleTimeTables } from '../../src/lib/ct/types';
 
+import moldTypes from '../../src/data/moldTypes.json';
+import resins from '../../src/data/resins.json';
+import resinGrades from '../../src/data/resinGrades.json';
+
+
+
 const tables = rawTables as CycleTimeTables;
 
 const initialInputValues: InputFormState = {
@@ -35,8 +41,7 @@ const initialOptionValues: OptionFormState = {
   safetyFactor: '0.10',
 };
 
-const moldTypeOptions = ['Prototype', 'Production', 'Family'];
-const resinOptions = ['PP', 'ABS', 'PC'];
+
 const clampControlOptions = ['Toggle', 'Hydraulic', 'Electric'];
 
 const toInputData = (values: InputFormState): InputData => {
@@ -89,10 +94,12 @@ export default function CalculatorPage() {
   const [optionValues, setOptionValues] = useState<OptionFormState>(initialOptionValues);
   const [errors, setErrors] = useState<FieldErrors>({});
 
-  const gradeOptions = useMemo(() => {
-    if (!inputValues.resin) return [];
-    return [`${inputValues.resin}-G1`, `${inputValues.resin}-G2`, `${inputValues.resin}-G3`];
-  }, [inputValues.resin]);
+const gradeOptions = useMemo(() => {
+  if (!inputValues.resin) return [];
+  const map = resinGrades as Record<string, string[]>;
+  return map[inputValues.resin] ?? [];
+}, [inputValues.resin]);
+
 
   const parsedInput = useMemo(() => toInputData(inputValues), [inputValues]);
   const parsedOptions = useMemo(() => toOptions(optionValues), [optionValues]);
@@ -102,8 +109,11 @@ export default function CalculatorPage() {
   const handleTextChange = (field: keyof InputFormState, value: string) => {
     setInputValues((prev) => {
       const next = { ...prev, [field]: value };
-      if (field === 'resin') {
-        next.grade = '';
+      if (field === 'resin') { 
+        const map = resinGrades as Record<string, string[]>;
+        const nextGrades = map[value] ?? [];
+        // 1) resin 바뀌면 첫 grade 자동 선택 (없으면 '')
+        next.grade = nextGrades[0] ?? '';
       }
       return next;
     });
