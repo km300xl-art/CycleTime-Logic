@@ -14,6 +14,10 @@ import moldTypes from '../../src/data/moldTypes.json';
 import resins from '../../src/data/resins.json';
 import resinGrades from '../../src/data/resinGrades.json';
 
+// 이 3줄이 반드시 필요
+const moldTypeOptions = moldTypes as string[];
+const resinOptions = resins as string[];
+const resinGradesMap = resinGrades as Record<string, string[]>;
 
 
 const tables = rawTables as CycleTimeTables;
