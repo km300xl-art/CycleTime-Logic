@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 import './globals.css';
 import Link from 'next/link';
 import type { Metadata } from 'next';
@@ -43,7 +45,9 @@ export default function RootLayout({
         <footer className="site-footer">
           <div className="container">
             © {new Date().getFullYear()} CycleTime Logic
-            <FooterDebugToggle />
+            <Suspense fallback={null}> 
+              <FooterDebugToggle />
+            </Suspense>
           </div>
         </footer>
       </body>
