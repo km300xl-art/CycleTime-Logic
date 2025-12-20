@@ -1,5 +1,6 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 import rawTables from '../../src/data/tables.json';
@@ -24,10 +25,6 @@ import resinOptions from '../../src/data/excel/extracted/extracted/resinOptions.
 import sprueLengthByWeight from '../../src/data/excel/extracted/extracted/sprueLengthByWeight.json';
 
 import { derivePinRunner, deriveSprueLength, shouldLockPinRunner, SprueBin } from '../../src/lib/ct/uiRules';
-
-type CalculatorClientProps = {
-  debugFromQuery: boolean;
-};
 
 // 이 3줄이 반드시 필요
 const moldTypeOptions = moldTypes as string[];
@@ -186,18 +183,25 @@ const toOptions = (values: OptionFormState): Options => {
   };
 };
 
-export default function CalculatorClient({ debugFromQuery }: CalculatorClientProps) {
+export default function CalculatorClient() {
+  const searchParams = useSearchParams();
   const [inputValues, setInputValues] = useState<InputFormState>(initialInputValues);
   const [optionValues, setOptionValues] = useState<OptionFormState>(initialOptionValues);
   const [errors, setErrors] = useState<FieldErrors>({});
-  const [debugEnabled, setDebugEnabled] = useState(debugFromQuery);
-  const [debugPanelOpen, setDebugPanelOpen] = useState(debugFromQuery);
+  const [debugFromQuery, setDebugFromQuery] = useState(false);
+  const [debugEnabled, setDebugEnabled] = useState(false);
+  const [debugPanelOpen, setDebugPanelOpen] = useState(false);
   const [debugInfo, setDebugInfo] = useState<CycleTimeDebug | undefined>(undefined);
 
   const gradeOptions = useMemo(() => {
     if (!inputValues.resin) return [];
     return resinGradesMap[inputValues.resin] ?? [];
   }, [inputValues.resin]);
+
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    setDebugFromQuery(sp.get('debug') === '1');
+  }, [searchParams]);
 
   // query(debug=1) 값이 바뀌면(페이지 네비게이션으로 들어오면) 상태도 맞춰줌
   useEffect(() => {
