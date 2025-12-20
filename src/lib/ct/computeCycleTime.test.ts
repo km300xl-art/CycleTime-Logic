@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 import tables from '../../data/tables.json';
 import examples from '../../data/examples.json';
-import { computeCycleTime } from './computeCycleTime';
+import { computeCycleTime, computeCycleTimeWithDebug } from './computeCycleTime';
 import { applyCtFinalAssembly } from './excel/ctFinalAssemblyExcel';
 import { InputData, Options, Outputs } from './types';
 
@@ -193,5 +193,19 @@ describe('computeCycleTime edge cases', () => {
     assert.equal(stages.fill.toFixed(2), '0.01');
     assert.equal(total.toFixed(2), '0.04', 'raw total should be rounded after summing raw stages');
     assert.equal(stageSumRounded.toFixed(2), '0.07', 'stage rounding should not drive the total calculation');
+  });
+});
+
+describe('debug helpers', () => {
+  test('exposes raw vs display stages and bin metadata', () => {
+    const example = examples[0] as Example;
+    const result = computeCycleTimeWithDebug(example.input as InputData, example.options as Options, tables);
+    const debug = result.debug;
+
+    assert.ok(Number.isFinite(debug.stages.raw.fill), 'raw stage values should be present');
+    assert.equal(debug.totals.displayTotal, result.total, 'display total matches rounded total');
+    assert.equal(debug.stages.display.fill, result.fill, 'display stage matches output stage');
+    assert.ok(debug.cooling, 'cooling debug should be populated');
+    assert.ok(debug.openCloseEject, 'open/close/eject debug should be populated');
   });
 });

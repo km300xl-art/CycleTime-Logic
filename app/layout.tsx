@@ -1,6 +1,7 @@
 import './globals.css';
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import FooterDebugToggle from './FooterDebugToggle';
 
 export const metadata: Metadata = {
   title: 'CycleTime Logic',
@@ -42,6 +43,7 @@ export default function RootLayout({
         <footer className="site-footer">
           <div className="container">
             © {new Date().getFullYear()} CycleTime Logic
+            <FooterDebugToggle />
           </div>
         </footer>
       </body>

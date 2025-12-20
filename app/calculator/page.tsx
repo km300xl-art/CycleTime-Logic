@@ -1,15 +1,17 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 import rawTables from '../../src/data/tables.json';
-import { computeCycleTime } from '../../src/lib/ct/computeCycleTime';
+import { computeCycleTime, computeCycleTimeWithDebug } from '../../src/lib/ct/computeCycleTime';
 import { InputSection } from './components/InputSection';
 import { OptionsSection } from './components/OptionsSection';
 import { OutputTable } from './components/OutputTable';
+import { DebugPanel } from './components/DebugPanel';
 import styles from './Calculator.module.css';
 import { FieldErrors, InputFormState, OptionFormState } from './types';
-import type { InputData, Options, CycleTimeTables } from '../../src/lib/ct/types';
+import type { InputData, Options, CycleTimeTables, CycleTimeDebug } from '../../src/lib/ct/types';
 import cavityOptions from '../../src/data/excel/extracted/extracted/cavityOptions.json';
 import clampControlTable from '../../src/data/excel/extracted/extracted/clampControlTable.json';
 import coolingOptionOptions from '../../src/data/excel/extracted/extracted/coolingOptionOptions.json';
@@ -166,14 +168,28 @@ const toOptions = (values: OptionFormState): Options => {
 };
 
 export default function CalculatorPage() {
+  const searchParams = useSearchParams();
+  const debugFromQuery = searchParams.get('debug') === '1';
+
   const [inputValues, setInputValues] = useState<InputFormState>(initialInputValues);
   const [optionValues, setOptionValues] = useState<OptionFormState>(initialOptionValues);
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [debugEnabled, setDebugEnabled] = useState(debugFromQuery);
+  const [debugPanelOpen, setDebugPanelOpen] = useState(debugFromQuery);
+  const [debugInfo, setDebugInfo] = useState<CycleTimeDebug | undefined>(undefined);
 
   const gradeOptions = useMemo(() => {
     if (!inputValues.resin) return [];
     return resinGradesMap[inputValues.resin] ?? [];
   }, [inputValues.resin]);
+
+  useEffect(() => {
+    setDebugEnabled(debugFromQuery);
+    setDebugPanelOpen((open) => (debugFromQuery ? true : open && debugFromQuery));
+    if (!debugFromQuery) {
+      setDebugInfo(undefined);
+    }
+  }, [debugFromQuery]);
 
   const parsedInput = useMemo(() => toInputData(inputValues), [inputValues]);
   const parsedOptions = useMemo(() => toOptions(optionValues), [optionValues]);
@@ -198,8 +214,16 @@ export default function CalculatorPage() {
   const [outputs, setOutputs] = useState(() => computeCycleTime(parsedInput, parsedOptions, tables));
 
   useEffect(() => {
+    if (debugEnabled) {
+      const result = computeCycleTimeWithDebug(parsedInput, parsedOptions, tables);
+      setOutputs(result);
+      setDebugInfo(result.debug);
+      setDebugPanelOpen(true);
+      return;
+    }
     setOutputs(computeCycleTime(parsedInput, parsedOptions, tables));
-  }, [parsedInput, parsedOptions]);
+    setDebugInfo(undefined);
+  }, [parsedInput, parsedOptions, debugEnabled]);
 
   const handleTextChange = (field: keyof InputFormState, value: string) => {
     setInputValues((prev) => {
@@ -257,7 +281,17 @@ export default function CalculatorPage() {
     setInputValues(initialInputValues);
     setOptionValues(initialOptionValues);
     setErrors({});
-    setOutputs(computeCycleTime(toInputData(initialInputValues), toOptions(initialOptionValues), tables));
+    const baseInput = toInputData(initialInputValues);
+    const baseOptions = toOptions(initialOptionValues);
+    if (debugEnabled) {
+      const result = computeCycleTimeWithDebug(baseInput, baseOptions, tables);
+      setOutputs(result);
+      setDebugInfo(result.debug);
+      setDebugPanelOpen(true);
+    } else {
+      setOutputs(computeCycleTime(baseInput, baseOptions, tables));
+      setDebugInfo(undefined);
+    }
   };
 
   const isPinRunnerLocked = shouldLockPinRunner(parsedInput.plateType);
@@ -304,6 +338,15 @@ export default function CalculatorPage() {
       </div>
 
       <OutputTable outputs={outputs} />
+
+      <DebugPanel
+        visible={debugEnabled}
+        isOpen={debugPanelOpen}
+        onToggle={() => setDebugPanelOpen((prev) => !prev)}
+        debug={debugInfo}
+        input={parsedInput}
+        options={parsedOptions}
+      />
     </section>
   );
 }

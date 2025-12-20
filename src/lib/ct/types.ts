@@ -37,12 +37,14 @@ export type Outputs = {
   robot: number;
   close: number;
   total: number;
-  debug?: unknown;
+  debug?: CycleTimeDebug;
 };
 // src/lib/ct/types.ts (맨 아래에 추가)
 
 export type StageName = "fill" | "pack" | "cool" | "open" | "eject" | "robot" | "close";
 export type CavityKey = "1" | "2" | "4" | "6" | "8";
+
+export type StageMap = Record<StageName, number>;
 
 export type LookupMap = Record<string, number>;
 export type LookupTable = Record<string, LookupMap>;
@@ -77,4 +79,81 @@ export type CycleTimeTables = {
   stages: Record<StageName, StageTable>;
   // 배열 형태의 moldTypeRules 지원
   moldTypeRules?: MoldTypeRule[];
+};
+
+export type CoolingDebugInfo = {
+  option: Options["coolingOption"];
+  effectiveThickness: number;
+  baseCooling: number;
+  rawCoolingWithClamp: number;
+  clampOffset: number;
+  clampForceReference?: {
+    clampForce_ton: number;
+    timeAdd_s: number;
+  } | null;
+  minCoolingTime: number;
+  appliedMinCooling: boolean;
+  gradeMatched: boolean;
+};
+
+export type OpenCloseEjectDebugInfo = {
+  totalStroke_mm: number;
+  clampPercent: number;
+  openCloseSpeedMode: Options["openCloseSpeedMode"];
+  openCloseSpeedFactor: number;
+  openPercents: [number, number, number, number];
+  closePercents: [number, number, number, number];
+  clampForceAdderRow?: {
+    clampForce_threshold: number;
+    open_add_s: number;
+    close_add_s: number;
+    eject_add_s: number;
+  } | null;
+  ejectingSpeedMode: Options["ejectingSpeedMode"];
+  ejectingSpeedFactor: number;
+  ejectPercents: [number, number, number, number];
+  ejectStrokeMultiplierRow?: {
+    ejectStroke_mm: number;
+    multiplier: number;
+  } | null;
+  robotTimeRow?: {
+    minClampForce: number;
+    robotTime_s: number;
+  } | null;
+};
+
+export type MoldTypeAdjustmentDebug = {
+  rule?: MoldTypeRule;
+  timeAdd_s: number;
+  fillAdd_s?: number;
+  affectedStages: StageName[];
+};
+
+export type CycleTimeDebug = {
+  input: InputData;
+  options: Options;
+  stages: {
+    base: StageMap;
+    afterMold: StageMap;
+    afterRobot: StageMap;
+    raw: StageMap;
+    display: StageMap;
+  };
+  totals: {
+    rawTotal: number;
+    totalWithSafety: number;
+    displayTotal: number;
+  };
+  rounding: number;
+  safetyFactor: number;
+  moldType: string;
+  moldTypeAdjustments?: MoldTypeAdjustmentDebug;
+  robot: {
+    enabled: boolean;
+    requested?: boolean;
+    strokeEnabled: boolean;
+  };
+  robotEnabled?: boolean;
+  cooling?: CoolingDebugInfo;
+  openCloseEject?: OpenCloseEjectDebugInfo;
 };

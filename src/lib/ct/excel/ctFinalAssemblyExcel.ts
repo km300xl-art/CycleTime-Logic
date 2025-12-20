@@ -1,7 +1,13 @@
-import type { CycleTimeTables, InputData, MoldTypeRule, Options, StageName } from "../types";
+import type {
+  CycleTimeTables,
+  InputData,
+  MoldTypeAdjustmentDebug,
+  MoldTypeRule,
+  Options,
+  StageMap,
+  StageName,
+} from "../types";
 import moldTypeRulesJson from "../../../data/excel/extracted/moldTypeRules.json";
-
-type StageMap = Record<StageName, number>;
 
 const STAGES: StageName[] = ["fill", "pack", "cool", "open", "eject", "robot", "close"];
 
@@ -36,9 +42,13 @@ function normalizeSafetyFactor(options: Options, tables: CycleTimeTables): numbe
   return clampMin0(factor);
 }
 
-function applyMoldTypeAdjustments(base: StageMap, moldType: string, rules: MoldTypeRule[]): StageMap {
+function applyMoldTypeAdjustments(
+  base: StageMap,
+  moldType: string,
+  rules: MoldTypeRule[]
+): { stages: StageMap; adjustments?: MoldTypeAdjustmentDebug } {
   const rule = findMoldRule(moldType, rules);
-  if (!rule) return base;
+  if (!rule) return { stages: base, adjustments: undefined };
 
   const add = toNumberSafe(rule.timeAdd_s);
   const updated: StageMap = { ...base };
@@ -57,7 +67,21 @@ function applyMoldTypeAdjustments(base: StageMap, moldType: string, rules: MoldT
     updated.fill += toNumberSafe(rule.fillAdd_s) - add;
   }
 
-  return updated;
+  const affectedStages: StageName[] = [];
+  for (const stage of STAGES) {
+    const delta = updated[stage] - base[stage];
+    if (Math.abs(delta) > 0) affectedStages.push(stage);
+  }
+
+  return {
+    stages: updated,
+    adjustments: {
+      rule,
+      timeAdd_s: add,
+      fillAdd_s: isFiniteNumber(rule.fillAdd_s) ? toNumberSafe(rule.fillAdd_s) : undefined,
+      affectedStages,
+    },
+  };
 }
 
 export function applyCtFinalAssembly(
@@ -65,7 +89,22 @@ export function applyCtFinalAssembly(
   input: InputData,
   options: Options,
   tables: CycleTimeTables
-): { stages: StageMap; total: number; debug: Record<string, unknown> } {
+): {
+  stages: StageMap;
+  total: number;
+  debug: {
+    rounding: number;
+    safetyFactor: number;
+    rawTotal: number;
+    totalWithSafety: number;
+    robotEnabled: boolean;
+    moldTypeRule?: MoldTypeRule;
+    moldTypeAdjustments?: MoldTypeAdjustmentDebug;
+    base: StageMap;
+    afterMold: StageMap;
+    afterRobot: StageMap;
+  };
+} {
   const rounding = normalizeRounding(tables);
   const safetyFactor = normalizeSafetyFactor(options, tables);
   const robotToggle = options.robotEnabled ?? true;
@@ -74,7 +113,7 @@ export function applyCtFinalAssembly(
 
   const moldTypeRules = (tables.moldTypeRules ?? (moldTypeRulesJson as unknown as MoldTypeRule[])) ?? [];
 
-  const afterMold = applyMoldTypeAdjustments(baseStages, input.moldType, moldTypeRules);
+  const { stages: afterMold, adjustments } = applyMoldTypeAdjustments(baseStages, input.moldType, moldTypeRules);
   const afterRobot: StageMap = { ...afterMold, robot: robotEnabled ? afterMold.robot : 0 };
 
   // Raw total (no rounding). Safety factor applies to the total, not to individual stages.
@@ -92,15 +131,16 @@ export function applyCtFinalAssembly(
     stages: roundedStages,
     total,
     debug: {
-      base: baseStages,
-      afterMold,
-      afterRobot,
       rounding,
       safetyFactor,
       rawTotal,
       totalWithSafety,
       robotEnabled,
       moldTypeRule: findMoldRule(input.moldType, moldTypeRules),
+      moldTypeAdjustments: adjustments,
+      base: baseStages,
+      afterMold,
+      afterRobot,
     },
   };
 }

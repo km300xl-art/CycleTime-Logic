@@ -30,6 +30,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate Excel JSON bundles
+        run: npm run validate:excel-json
+
       - name: Build static site
         run: npm run build
 
