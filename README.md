@@ -46,6 +46,12 @@ The Excel OPTION panel is mirrored in `src/data/tables.json`, keeping the UI and
 - `coolingOption` → cool thickness handling (`BASE` uses the Excel thickness smoothing table; `LOGIC` uses the raw thickness).
 - `safetyFactor` → normalized as a fraction; values > 1 are treated as percentages.
 
+### Excel-parity UI defaults
+
+- **Robot ON/OFF** lives in the Input panel. Turning it off forces the CT_FINAL robot stage to zero (robot stroke still must be > 0 when ON).
+- **Ejecting stroke (mm)** auto-follows Height using CT_FINAL!AD15 (45 mm when height < 31 mm, otherwise `height * AD15`) with a manual override and “Reset to Auto” button.
+- **Safety factor (%)** is editable as a percent (default 10%) and is applied once to the raw stage sum before rounding the total.
+
 ### Cooling parity (Excel)
 
 The cooling stage mirrors the Excel sheet directly via `src/lib/ct/excel/coolingExcel.ts`.

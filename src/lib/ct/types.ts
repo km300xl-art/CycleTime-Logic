@@ -8,6 +8,7 @@ export type InputData = {
   thickness_mm: number; // >=0
   height_mm_eject: number; // >=0
   plateType: '2P' | '3P' | 'HOT';
+  robotEnabled?: boolean;
 };
 
 export type Options = {
@@ -152,6 +153,8 @@ export type CycleTimeDebug = {
     enabled: boolean;
     requested?: boolean;
     strokeEnabled: boolean;
+    overriddenToZero: boolean;
+    overrideReason?: 'toggle' | 'stroke';
   };
   robotEnabled?: boolean;
   cooling?: CoolingDebugInfo;

@@ -94,8 +94,10 @@ function computeCycleTimeInternal(
     moldTypeAdjustments: assembled.debug.moldTypeAdjustments,
     robot: {
       enabled: assembled.debug.robotEnabled,
-      requested: options.robotEnabled,
-      strokeEnabled: toNumberSafe(options.robotStroke_mm) > 0,
+      requested: assembled.debug.robotRequested,
+      strokeEnabled: assembled.debug.robotStrokeEnabled,
+      overriddenToZero: !assembled.debug.robotEnabled,
+      overrideReason: assembled.debug.robotOverrideReason,
     },
     robotEnabled: assembled.debug.robotEnabled,
     cooling: base.debug.cooling,

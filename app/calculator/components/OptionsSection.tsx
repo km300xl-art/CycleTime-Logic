@@ -6,11 +6,14 @@ type OptionsSectionProps = {
   errors: FieldErrors;
   onChange: (field: keyof OptionFormState, value: string) => void;
   onNumberChange: (field: keyof OptionFormState, value: string) => void;
+  onEjectStrokeChange: (value: string) => void;
+  onResetEjectStroke: () => void;
   clampControlOptions: string[];
   openCloseSpeedOptions: string[];
   ejectingSpeedOptions: string[];
   isPinRunnerLocked: boolean;
   coolingOptions: string[];
+  ejectStrokeIsManual: boolean;
 };
 
 export function OptionsSection({
@@ -18,11 +21,14 @@ export function OptionsSection({
   errors,
   onChange,
   onNumberChange,
+  onEjectStrokeChange,
+  onResetEjectStroke,
   clampControlOptions,
   openCloseSpeedOptions,
   ejectingSpeedOptions,
   isPinRunnerLocked,
   coolingOptions,
+  ejectStrokeIsManual,
 }: OptionsSectionProps) {
   return (
     <section className={styles.formSection} aria-labelledby="options-title">
@@ -68,7 +74,12 @@ export function OptionsSection({
         </div>
 
         <div className={styles.field}>
-          <label htmlFor="ejectStroke_mm">Ejecting stroke</label>
+          <div className={styles.fieldLabelRow}>
+            <label htmlFor="ejectStroke_mm">Ejecting stroke</label>
+            <button type="button" className={styles.tertiaryButton} onClick={onResetEjectStroke}>
+              Reset to Auto
+            </button>
+          </div>
           <div className={styles.inputWithUnit}>
             <input
               id="ejectStroke_mm"
@@ -77,10 +88,14 @@ export function OptionsSection({
               min={0}
               inputMode="decimal"
               value={values.ejectStroke_mm}
-              onChange={(e) => onNumberChange('ejectStroke_mm', e.target.value)}
+              onChange={(e) => onEjectStrokeChange(e.target.value)}
             />
             <span className={styles.unit}>mm</span>
           </div>
+          <p className={styles.muted}>
+            Default is auto from Height (CT_FINAL!AD15). Click Reset to Auto to restore.
+            {ejectStrokeIsManual ? ' (Manual override active)' : ''}
+          </p>
           {errors.ejectStroke_mm && <p className={styles.error}>{errors.ejectStroke_mm}</p>}
         </div>
 
@@ -167,6 +182,25 @@ export function OptionsSection({
             ))}
           </select>
           {errors.coolingOption && <p className={styles.error}>{errors.coolingOption}</p>}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="safetyFactor">Safety factor (%)</label>
+          <div className={styles.inputWithUnit}>
+            <input
+              id="safetyFactor"
+              name="safetyFactor"
+              type="number"
+              min={0}
+              max={100}
+              inputMode="decimal"
+              value={values.safetyFactor}
+              onChange={(e) => onNumberChange('safetyFactor', e.target.value)}
+            />
+            <span className={styles.unit}>%</span>
+          </div>
+          <p className={styles.muted}>Applies to TOTAL (CT_FINAL safety factor).</p>
+          {errors.safetyFactor && <p className={styles.error}>{errors.safetyFactor}</p>}
         </div>
 
         <div className={styles.field}>
