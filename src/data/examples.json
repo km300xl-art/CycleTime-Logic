@@ -32,12 +32,12 @@
     "expected": {
       "fill": 1.01,
       "pack": 2.04,
-      "cool": 12.65,
+      "cool": 11.5,
       "open": 1.83,
       "eject": 4.76,
       "robot": 2,
       "close": 2.07,
-      "total": 26.36
+      "total": 25.21
     }
   },
   {
@@ -73,12 +73,12 @@
     "expected": {
       "fill": 1.55,
       "pack": 2.39,
-      "cool": 13.75,
+      "cool": 12.5,
       "open": 2.22,
       "eject": 4.76,
       "robot": 2,
       "close": 2.46,
-      "total": 29.13
+      "total": 27.88
     }
   },
   {
@@ -114,12 +114,12 @@
     "expected": {
       "fill": 2.63,
       "pack": 3.07,
-      "cool": 23.49,
+      "cool": 21.36,
       "open": 3.73,
       "eject": 5.72,
       "robot": 2.5,
       "close": 3.97,
-      "total": 45.11
+      "total": 42.98
     }
   },
   {
@@ -155,12 +155,12 @@
     "expected": {
       "fill": 1.33,
       "pack": 2.14,
-      "cool": 13.27,
+      "cool": 16.81,
       "open": 1.99,
       "eject": 4.74,
       "robot": 2,
       "close": 2.74,
-      "total": 28.21
+      "total": 31.75
     }
   },
   {
@@ -196,12 +196,12 @@
     "expected": {
       "fill": 1.28,
       "pack": 2.25,
-      "cool": 14,
+      "cool": 12.5,
       "open": 2.57,
       "eject": 5.17,
       "robot": 2.5,
       "close": 3.23,
-      "total": 31
+      "total": 29.5
     }
   },
   {
@@ -237,12 +237,12 @@
     "expected": {
       "fill": 2.08,
       "pack": 2.66,
-      "cool": 19.31,
+      "cool": 22.07,
       "open": 3.2,
       "eject": 5.01,
       "robot": 2.5,
       "close": 3.58,
-      "total": 38.34
+      "total": 41.1
     }
   }
 ]

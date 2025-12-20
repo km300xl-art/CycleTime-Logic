@@ -1,10 +1,9 @@
 import type { InputData, Options, Outputs, CycleTimeTables, StageName, MoldTypeRule } from "./types";
 import moldTypeRulesJson from "../../data/moldTypeRules.json";
-import coolingGradeParamsJson from "../../data/excel/coolingGradeParams.json";
-import coolingClampForceReferenceJson from "../../data/excel/coolingClampForceReference.json";
 import clampForceStageAddersJson from "../../data/excel/open_close_eject/clampForceStageAdders.json";
 import ejectStrokeTimeMultiplierJson from "../../data/excel/open_close_eject/ejectStrokeTimeMultiplier.json";
 import robotTimeByClampForceJson from "../../data/excel/open_close_eject/robotTimeByClampForce.json";
+import { computeCoolingTimeExcel } from "./excel/coolingExcel";
 
 const STAGES: StageName[] = ["fill", "pack", "cool", "open", "eject", "robot", "close"];
 
@@ -53,15 +52,6 @@ function asLookupKey(raw: unknown): string {
 type ClampForceAdderRow = { clampForce: number; openAdd_s: number; closeAdd_s: number; ejectAdd_s: number };
 type EjectStrokeMultiplierRow = { ejectStroke_mm: number; multiplier: number };
 type RobotTimeRow = { clampForce: number; robotTime_s: number };
-type CoolingGradeParams = { alpha: number; extra_s?: number };
-type CoolingClampForceRow = { clampForce_ton: number; timeAdd_s: number };
-
-const coolingGradeParams = coolingGradeParamsJson as Record<string, CoolingGradeParams>;
-const coolingClampForceReference = coolingClampForceReferenceJson as {
-  minCoolingTime_s?: number;
-  clampForceReference?: CoolingClampForceRow[];
-};
-const coolingMinTime_s = toNumberSafe(coolingClampForceReference?.minCoolingTime_s) || 0;
 const clampForceStageAdders = clampForceStageAddersJson as ClampForceAdderRow[];
 const ejectStrokeTimeMultiplier = ejectStrokeTimeMultiplierJson as EjectStrokeMultiplierRow[];
 const robotTimeByClampForce = robotTimeByClampForceJson as RobotTimeRow[];
@@ -162,16 +152,6 @@ function computeOpenCloseEject(
   };
 }
 
-function computeCoolingStage(input: InputData, options: Options, tables: CycleTimeTables): number {
-  const gradeKey = getString(input.grade);
-  const params = coolingGradeParams[gradeKey];
-  const baseTableCooling = computeStageBase("cool", input, options, tables);
-  const gradeExtra = toNumberSafe(params?.extra_s);
-
-  const cooling = clampMin0(baseTableCooling + gradeExtra);
-  return Math.max(cooling, coolingMinTime_s);
-}
-
 function applyMoldTypeAdjustments(
   base: Record<StageName, number>,
   moldType: string,
@@ -207,7 +187,12 @@ export function computeCycleTime(input: InputData, options: Options, tables: Cyc
   const base: Record<StageName, number> = {
     fill: computeStageBase("fill", input, options, tables),
     pack: computeStageBase("pack", input, options, tables),
-    cool: computeCoolingStage(input, options, tables),
+    cool: computeCoolingTimeExcel({
+      thickness_mm: toNumberSafe(input.thickness_mm),
+      grade: getString(input.grade),
+      clampForce_ton: toNumberSafe(input.clampForce_ton),
+      coolingOption: options.coolingOption,
+    }),
     open: openCloseEject.open,
     eject: openCloseEject.eject,
     robot: openCloseEject.robot,

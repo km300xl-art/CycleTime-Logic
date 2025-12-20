@@ -6,7 +6,7 @@ Static Next.js site that prototypes a cycle-time calculator for injection moldin
 
 `src/lib/ct/computeCycleTime.ts` implements `computeCycleTime(input, options, tables) -> outputs`. The function:
 
-- Looks up base seconds for each stage (fill, pack, cool, open, eject, robot, close) from `tables.json`.
+- Looks up base seconds for each stage (fill, pack, open, eject, robot, close) from `tables.json`. The **cool** stage now uses a dedicated Excel-parity function instead of the table entry.
 - Applies multipliers and linear adders defined in the table (for cavity count, plate type, cooling option, weight, etc.).
 - Applies the safety factor **after** the base stage time, then rounds based on the table defaults.
 - Sums the stages into a `total` value.
@@ -42,8 +42,25 @@ The Excel OPTION panel is mirrored in `src/data/tables.json`, keeping the UI and
 - `openCloseStroke_mm` → open/close linear adders.
 - `openCloseSpeedMode` → open/close multipliers (`Low speed`, `Mid speed`, `Base speed`).
 - `ejectingSpeedMode` → eject multipliers (`Low speed`, `Base speed`).
-- `coolingOption` → cool option multipliers.
+- `coolingOption` → cool thickness handling (`BASE` uses the Excel thickness smoothing table; `LOGIC` uses the raw thickness).
 - `safetyFactor` → normalized as a fraction; values > 1 are treated as percentages.
+
+### Cooling parity (Excel)
+
+The cooling stage mirrors the Excel sheet directly via `src/lib/ct/excel/coolingExcel.ts`.
+
+- Data sources (all under `src/data/excel/extracted/`):
+  - `coolingGradeParams.json` (Tm, Tw, Te, alpha, extra_s per grade)
+  - `coolingClampForceReference.json` (clamp force → time offset and optional `minCoolingTime_s`)
+  - `coolingMinTime_s.json` (minimum cooling time; falls back to the clamp JSON value or **11.5s** if missing)
+  - `resinGrades.json` (grade validity only)
+- Formula (no internal rounding):  
+  `cooling = max(minCoolingTime, base + clampOffset)` where  
+  `base = (t_eff^2 / (π^2 * α)) * ln((4/π) * ((Tm - Tw) / (Te - Tw))) + extra_s`  
+  `t_eff` = raw `thickness_mm` for `LOGIC`, or the Excel thickness lookup (P61:R82) for `BASE` (clamped between ~1.95–3 mm as in the sheet).
+- Clamp offset uses the Excel-style approximate lookup (largest row ≤ clampForce).
+- The cavity multiplier is **not** applied to COOL because the Excel sheet does not include it.
+- To refresh data, replace the JSON files above with new extracts from Excel; if the thickness lookup table changes, update the inline map in `coolingExcel.ts`.
 
 ### Example cases (`src/data/examples.json`)
 
