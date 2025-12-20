@@ -1,0 +1,367 @@
+'use client';
+
+import { useEffect, useMemo, useState } from 'react';
+
+import rawTables from '../../src/data/tables.json';
+import { computeCycleTime, computeCycleTimeWithDebug } from '../../src/lib/ct/computeCycleTime';
+import { InputSection } from './components/InputSection';
+import { OptionsSection } from './components/OptionsSection';
+import { OutputTable } from './components/OutputTable';
+import { DebugPanel } from './components/DebugPanel';
+import styles from './Calculator.module.css';
+import { FieldErrors, InputFormState, OptionFormState } from './types';
+import type { InputData, Options, CycleTimeTables, CycleTimeDebug } from '../../src/lib/ct/types';
+
+import cavityOptions from '../../src/data/excel/extracted/extracted/cavityOptions.json';
+import clampControlTable from '../../src/data/excel/extracted/extracted/clampControlTable.json';
+import coolingOptionOptions from '../../src/data/excel/extracted/extracted/coolingOptionOptions.json';
+import ejectingSpeedControl from '../../src/data/excel/extracted/extracted/ejectingSpeedControl.json';
+import moldTypes from '../../src/data/excel/extracted/extracted/moldTypeOptions.json';
+import openCloseSpeedControl from '../../src/data/excel/extracted/extracted/openCloseSpeedControl.json';
+import plateTypeOptions from '../../src/data/excel/extracted/extracted/plateTypeOptions.json';
+import resinGrades from '../../src/data/excel/extracted/extracted/resinGrades.json';
+import resinOptions from '../../src/data/excel/extracted/extracted/resinOptions.json';
+import sprueLengthByWeight from '../../src/data/excel/extracted/extracted/sprueLengthByWeight.json';
+
+import { derivePinRunner, deriveSprueLength, shouldLockPinRunner, SprueBin } from '../../src/lib/ct/uiRules';
+
+type CalculatorClientProps = {
+  debugFromQuery: boolean;
+};
+
+// 이 3줄이 반드시 필요
+const moldTypeOptions = moldTypes as string[];
+const resinOptionsList = resinOptions as string[];
+const resinGradesMap = resinGrades as Record<string, string[]>;
+const cavityOptionsList = cavityOptions as string[];
+const plateTypeOptionsList = plateTypeOptions as InputData['plateType'][];
+const coolingOptionsList = coolingOptionOptions as Options['coolingOption'][];
+
+const clampControlOptionsList = (clampControlTable as { clampControl: Options['clampControl'] }[]).map(
+  (row) => row.clampControl,
+);
+
+const openCloseSpeedOptionsList = (
+  openCloseSpeedControl as { openCloseSpeedMode: Options['openCloseSpeedMode'] }[]
+).map((row) => row.openCloseSpeedMode);
+
+const ejectingSpeedOptionsList = (
+  ejectingSpeedControl as { ejectingSpeedMode: Options['ejectingSpeedMode'] }[]
+).map((row) => row.ejectingSpeedMode);
+
+const sprueLengthBins = sprueLengthByWeight as SprueBin[];
+
+const allowedCavities: InputData['cavity'][] = cavityOptionsList
+  .map((option) => Number(option))
+  .filter(
+    (option): option is InputData['cavity'] =>
+      option === 1 || option === 2 || option === 4 || option === 6 || option === 8,
+  );
+
+const allowedPlateTypes = plateTypeOptionsList.filter(
+  (plate): plate is InputData['plateType'] => plate === '2P' || plate === '3P' || plate === 'HOT',
+);
+
+const defaultCavity = cavityOptionsList[0] ?? '';
+const defaultPlateType = allowedPlateTypes[0] ?? '2P';
+const defaultSprueLength = deriveSprueLength(defaultPlateType, 0, sprueLengthBins);
+const defaultPinRunner = derivePinRunner(defaultPlateType, defaultSprueLength);
+
+const defaultOpenCloseSpeed =
+  openCloseSpeedOptionsList.find((option) => option === 'Base speed') ??
+  openCloseSpeedOptionsList[0] ??
+  'Base speed';
+
+const defaultEjectingSpeed =
+  ejectingSpeedOptionsList.find((option) => option === 'Base speed') ??
+  ejectingSpeedOptionsList[0] ??
+  'Base speed';
+
+const defaultCoolingOption = coolingOptionsList.find((option) => option === 'BASE') ?? coolingOptionsList[0] ?? 'BASE';
+
+const tables = rawTables as CycleTimeTables;
+
+const initialInputValues: InputFormState = {
+  moldType: '',
+  resin: '',
+  grade: '',
+  cavity: defaultCavity || '1',
+  weight_g_1cav: '',
+  clampForce_ton: '',
+  thickness_mm: '',
+  height_mm_eject: '',
+  plateType: defaultPlateType,
+};
+
+const initialOptionValues: OptionFormState = {
+  clampControl: '',
+  moldProtection_mm: '120',
+  ejectStroke_mm: '45',
+  cushionDistance_mm: '8',
+  robotStroke_mm: '100',
+  vpPosition_mm: '10',
+  sprueLength_mm: String(defaultSprueLength),
+  pinRunner3p_mm: String(defaultPinRunner),
+  injectionSpeed_mm_s: '20',
+  openCloseStroke_mm: '0',
+  openCloseSpeedMode: defaultOpenCloseSpeed,
+  ejectingSpeedMode: defaultEjectingSpeed,
+  coolingOption: defaultCoolingOption,
+  safetyFactor: '0',
+};
+
+const toInputData = (values: InputFormState): InputData => {
+  const numericCavity = Number(values.cavity);
+  const cavity = allowedCavities.includes(numericCavity as InputData['cavity'])
+    ? (numericCavity as InputData['cavity'])
+    : allowedCavities[0] ?? 1;
+
+  const plateType = allowedPlateTypes.includes(values.plateType as InputData['plateType'])
+    ? (values.plateType as InputData['plateType'])
+    : defaultPlateType;
+
+  const numberOrZero = (value: string) => {
+    if (value === '') return 0;
+    const num = Number(value);
+    return Number.isFinite(num) && num >= 0 ? num : 0;
+  };
+
+  return {
+    moldType: values.moldType,
+    resin: values.resin,
+    grade: values.grade,
+    cavity,
+    weight_g_1cav: numberOrZero(values.weight_g_1cav),
+    clampForce_ton: numberOrZero(values.clampForce_ton),
+    thickness_mm: numberOrZero(values.thickness_mm),
+    height_mm_eject: numberOrZero(values.height_mm_eject),
+    plateType,
+  };
+};
+
+const toOptions = (values: OptionFormState): Options => {
+  const numberOrZero = (value: string) => {
+    if (value === '') return 0;
+    const num = Number(value);
+    return Number.isFinite(num) && num >= 0 ? num : 0;
+  };
+
+  const clampControl = clampControlOptionsList.includes(values.clampControl)
+    ? values.clampControl
+    : ('' as Options['clampControl']);
+
+  const openCloseSpeedMode = openCloseSpeedOptionsList.includes(values.openCloseSpeedMode as Options['openCloseSpeedMode'])
+    ? (values.openCloseSpeedMode as Options['openCloseSpeedMode'])
+    : defaultOpenCloseSpeed;
+
+  const ejectingSpeedMode = ejectingSpeedOptionsList.includes(values.ejectingSpeedMode as Options['ejectingSpeedMode'])
+    ? (values.ejectingSpeedMode as Options['ejectingSpeedMode'])
+    : defaultEjectingSpeed;
+
+  const coolingOption = coolingOptionsList.includes(values.coolingOption as Options['coolingOption'])
+    ? (values.coolingOption as Options['coolingOption'])
+    : defaultCoolingOption;
+
+  return {
+    clampControl,
+    moldProtection_mm: numberOrZero(values.moldProtection_mm),
+    ejectStroke_mm: numberOrZero(values.ejectStroke_mm),
+    cushionDistance_mm: numberOrZero(values.cushionDistance_mm),
+    robotStroke_mm: numberOrZero(values.robotStroke_mm),
+    vpPosition_mm: numberOrZero(values.vpPosition_mm),
+    sprueLength_mm: numberOrZero(values.sprueLength_mm),
+    pinRunner3p_mm: numberOrZero(values.pinRunner3p_mm),
+    injectionSpeed_mm_s: numberOrZero(values.injectionSpeed_mm_s),
+    openCloseStroke_mm: numberOrZero(values.openCloseStroke_mm),
+    openCloseSpeedMode,
+    ejectingSpeedMode,
+    coolingOption,
+    safetyFactor: (() => {
+      if (values.safetyFactor === '') return 0;
+      const numeric = Number(values.safetyFactor);
+      const clamped = Number.isFinite(numeric) ? Math.max(0, numeric) : 0;
+      if (clamped > 1) return clamped / 100;
+      return clamped;
+    })(),
+  };
+};
+
+export default function CalculatorClient({ debugFromQuery }: CalculatorClientProps) {
+  const [inputValues, setInputValues] = useState<InputFormState>(initialInputValues);
+  const [optionValues, setOptionValues] = useState<OptionFormState>(initialOptionValues);
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const [debugEnabled, setDebugEnabled] = useState(debugFromQuery);
+  const [debugPanelOpen, setDebugPanelOpen] = useState(debugFromQuery);
+  const [debugInfo, setDebugInfo] = useState<CycleTimeDebug | undefined>(undefined);
+
+  const gradeOptions = useMemo(() => {
+    if (!inputValues.resin) return [];
+    return resinGradesMap[inputValues.resin] ?? [];
+  }, [inputValues.resin]);
+
+  // query(debug=1) 값이 바뀌면(페이지 네비게이션으로 들어오면) 상태도 맞춰줌
+  useEffect(() => {
+    setDebugEnabled(debugFromQuery);
+    if (debugFromQuery) setDebugPanelOpen(true);
+    if (!debugFromQuery) setDebugInfo(undefined);
+  }, [debugFromQuery]);
+
+  const parsedInput = useMemo(() => toInputData(inputValues), [inputValues]);
+  const parsedOptions = useMemo(() => toOptions(optionValues), [optionValues]);
+
+  useEffect(() => {
+    const nextSprue = deriveSprueLength(parsedInput.plateType, parsedInput.weight_g_1cav, sprueLengthBins);
+    setOptionValues((prev) => {
+      const sprueAsString = String(nextSprue);
+      return prev.sprueLength_mm === sprueAsString ? prev : { ...prev, sprueLength_mm: sprueAsString };
+    });
+  }, [parsedInput.plateType, parsedInput.weight_g_1cav]);
+
+  useEffect(() => {
+    const sprueLength = Number(optionValues.sprueLength_mm) || 0;
+    const targetPinRunner = derivePinRunner(parsedInput.plateType, sprueLength);
+    setOptionValues((prev) => {
+      const pinAsString = String(targetPinRunner);
+      return prev.pinRunner3p_mm === pinAsString ? prev : { ...prev, pinRunner3p_mm: pinAsString };
+    });
+  }, [parsedInput.plateType, optionValues.sprueLength_mm]);
+
+  const [outputs, setOutputs] = useState(() => computeCycleTime(parsedInput, parsedOptions, tables));
+
+  useEffect(() => {
+    if (debugEnabled) {
+      const result = computeCycleTimeWithDebug(parsedInput, parsedOptions, tables);
+      setOutputs(result);
+      setDebugInfo(result.debug);
+      setDebugPanelOpen(true);
+      return;
+    }
+    setOutputs(computeCycleTime(parsedInput, parsedOptions, tables));
+    setDebugInfo(undefined);
+  }, [parsedInput, parsedOptions, debugEnabled]);
+
+  const handleTextChange = (field: keyof InputFormState, value: string) => {
+    setInputValues((prev) => {
+      const next = { ...prev, [field]: value };
+      if (field === 'resin') {
+        const nextGrades = resinGradesMap[value] ?? [];
+        next.grade = nextGrades[0] ?? '';
+      }
+      return next;
+    });
+    setErrors((prev) => ({ ...prev, [field]: undefined }));
+  };
+
+  const handleOptionTextChange = (field: keyof OptionFormState, value: string) => {
+    setOptionValues((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: undefined }));
+  };
+
+  const handleNumberChange = (
+    field: keyof InputFormState | keyof OptionFormState,
+    value: string,
+    update: typeof setInputValues | typeof setOptionValues,
+  ) => {
+    if (value === '') {
+      update((prev: any) => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+      return;
+    }
+
+    const numericValue = Number(value);
+    const safeValue = numericValue < 0 ? '0' : value;
+
+    update((prev: any) => ({ ...prev, [field]: safeValue }));
+    if (numericValue < 0) {
+      setErrors((prev) => ({ ...prev, [field]: 'Must be ≥ 0' }));
+    } else {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const validate = () => {
+    const newErrors: FieldErrors = {};
+    if (!inputValues.moldType) newErrors.moldType = 'Required';
+    if (!inputValues.resin) newErrors.resin = 'Required';
+    if (!inputValues.cavity) newErrors.cavity = 'Required';
+    return newErrors;
+  };
+
+  const handleCalculate = () => {
+    const validation = validate();
+    setErrors(validation);
+  };
+
+  const handleReset = () => {
+    setInputValues(initialInputValues);
+    setOptionValues(initialOptionValues);
+    setErrors({});
+    const baseInput = toInputData(initialInputValues);
+    const baseOptions = toOptions(initialOptionValues);
+    if (debugEnabled) {
+      const result = computeCycleTimeWithDebug(baseInput, baseOptions, tables);
+      setOutputs(result);
+      setDebugInfo(result.debug);
+      setDebugPanelOpen(true);
+    } else {
+      setOutputs(computeCycleTime(baseInput, baseOptions, tables));
+      setDebugInfo(undefined);
+    }
+  };
+
+  const isPinRunnerLocked = shouldLockPinRunner(parsedInput.plateType);
+
+  return (
+    <section className="section">
+      <h1 className={styles.pageTitle}>Cycle Time Calculator</h1>
+      <p className={styles.pageLead}>Explore how clamp control and part inputs shape the cycle-time profile.</p>
+
+      <div className={styles.formLayout}>
+        <InputSection
+          values={inputValues}
+          errors={errors}
+          onChange={handleTextChange}
+          onNumberChange={(field, value) => handleNumberChange(field, value, setInputValues)}
+          moldTypeOptions={moldTypeOptions}
+          resinOptions={resinOptionsList}
+          gradeOptions={gradeOptions}
+          isGradeDisabled={!inputValues.resin}
+          cavityOptions={cavityOptionsList}
+          plateTypeOptions={plateTypeOptionsList}
+        />
+
+        <OptionsSection
+          values={optionValues}
+          errors={errors}
+          onChange={handleOptionTextChange}
+          onNumberChange={(field, value) => handleNumberChange(field, value, setOptionValues)}
+          clampControlOptions={[...clampControlOptionsList]}
+          openCloseSpeedOptions={[...openCloseSpeedOptionsList]}
+          ejectingSpeedOptions={[...ejectingSpeedOptionsList]}
+          isPinRunnerLocked={isPinRunnerLocked}
+          coolingOptions={[...coolingOptionsList]}
+        />
+      </div>
+
+      <div className={styles.actions}>
+        <button type="button" className={`${styles.button} ${styles.primary}`} onClick={handleCalculate}>
+          Calculate
+        </button>
+        <button type="button" className={`${styles.button} ${styles.secondary}`} onClick={handleReset}>
+          Reset
+        </button>
+      </div>
+
+      <OutputTable outputs={outputs} />
+
+      <DebugPanel
+        visible={debugEnabled}
+        isOpen={debugPanelOpen}
+        onToggle={() => setDebugPanelOpen((prev) => !prev)}
+        debug={debugInfo}
+        input={parsedInput}
+        options={parsedOptions}
+      />
+    </section>
+  );
+}
