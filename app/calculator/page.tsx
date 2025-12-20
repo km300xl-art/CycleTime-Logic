@@ -1,10 +1,10 @@
+import { Suspense } from 'react';
 import CalculatorClient from './CalculatorClient';
 
-export default function CalculatorPage({
-  searchParams,
-}: {
-  searchParams?: Record<string, string | string[] | undefined>;
-}) {
-  const debugFromQuery = searchParams?.debug === '1';
-  return <CalculatorClient debugFromQuery={debugFromQuery} />;
+export default function CalculatorPage() {
+  return (
+    <Suspense fallback={null}>
+      <CalculatorClient />
+    </Suspense>
+  );
 }
