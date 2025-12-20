@@ -3,6 +3,7 @@ import { describe, test } from 'node:test';
 import tables from '../../data/tables.json';
 import examples from '../../data/examples.json';
 import { computeCycleTime } from './computeCycleTime';
+import { applyCtFinalAssembly } from './excel/ctFinalAssemblyExcel';
 import { InputData, Options, Outputs } from './types';
 
 type Example = {
@@ -41,22 +42,10 @@ describe('excel regression totals', () => {
   (examples as Example[])
     .filter((example) => (example.id ? excelIds.has(example.id) : false))
     .forEach((example) => {
-      const label = `${example.name ?? example.id} (stage sum)`;
+      const label = `${example.name ?? example.id} (stage + total parity)`;
       test(label, () => {
         const result = computeCycleTime(example.input as InputData, example.options as Options, tables);
         compareOutputs(result, example.expected as Outputs, label);
-
-        const stageSum = stageKeys.reduce((sum, key) => sum + result[key], 0);
-        assert.equal(
-          stageSum.toFixed(2),
-          result.total.toFixed(2),
-          `${label} -> total should equal the sum of stage times`,
-        );
-        assert.equal(
-          stageSum.toFixed(2),
-          Number(example.expected.total).toFixed(2),
-          `${label} -> expected total should align with stage sum`,
-        );
       });
     });
 });
@@ -144,5 +133,65 @@ describe('computeCycleTime edge cases', () => {
     assert.equal(result.robot.toFixed(2), '0.00', 'robot stage should be disabled when stroke is 0');
     const debug = result.debug as any;
     assert.equal(debug?.robotEnabled, false, 'debug flag should reflect robot toggle');
+  });
+
+  test('omits robot stage when disabled explicitly', () => {
+    const base = examples[0];
+    const options: Options = {
+      ...(base.options as Options),
+      robotEnabled: false,
+    };
+    const result = computeCycleTime(base.input as InputData, options, tables);
+    assert.equal(result.robot.toFixed(2), '0.00', 'robot stage should be disabled when robotEnabled is false');
+    const debug = result.debug as any;
+    assert.equal(debug?.robotEnabled, false, 'debug flag should reflect robot toggle');
+  });
+
+  test('uses raw stage sums when rounding total', () => {
+    const baseStages = {
+      fill: 0.005,
+      pack: 0.005,
+      cool: 0.005,
+      open: 0.005,
+      eject: 0.005,
+      robot: 0.005,
+      close: 0.005,
+    };
+
+    const input: InputData = {
+      moldType: 'General INJ.',
+      resin: 'PP',
+      grade: 'Test',
+      cavity: 1,
+      weight_g_1cav: 1,
+      clampForce_ton: 50,
+      thickness_mm: 1,
+      height_mm_eject: 1,
+      plateType: '2P',
+    };
+
+    const options: Options = {
+      clampControl: 'Logic valve',
+      moldProtection_mm: 0,
+      ejectStroke_mm: 10,
+      cushionDistance_mm: 1,
+      robotStroke_mm: 10,
+      vpPosition_mm: 0,
+      sprueLength_mm: 0,
+      pinRunner3p_mm: 0,
+      injectionSpeed_mm_s: 10,
+      openCloseStroke_mm: 0,
+      openCloseSpeedMode: 'Base speed',
+      ejectingSpeedMode: 'Base speed',
+      coolingOption: 'BASE',
+      safetyFactor: 0,
+    };
+
+    const { stages, total } = applyCtFinalAssembly(baseStages, input, options, tables);
+    const stageSumRounded = stageKeys.reduce((sum, key) => sum + stages[key], 0);
+
+    assert.equal(stages.fill.toFixed(2), '0.01');
+    assert.equal(total.toFixed(2), '0.04', 'raw total should be rounded after summing raw stages');
+    assert.equal(stageSumRounded.toFixed(2), '0.07', 'stage rounding should not drive the total calculation');
   });
 });
