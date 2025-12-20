@@ -9,5 +9,5 @@
     "isolatedModules": false,
     "types": ["node", "react", "prop-types"]
   },
-  "include": ["src/lib/ct/**/*.*", "src/data/**/*.json"]
+  "include": ["src/lib/ct/**/*.*", "src/lib/excelDump/**/*.*", "src/data/**/*.json"]
 }
