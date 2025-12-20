@@ -1,0 +1,14 @@
+{
+  "openCloseMaxSpeed_mm_s": 450.0,
+  "ejectorMaxSpeed_mm_s": 600.0,
+  "openTime_formula": "=N44 + F63",
+  "ejectTime_formula": "=N22+H63",
+  "closeTime_formula": "=N32 + G63",
+  "robotTime_formula": "=R31",
+  "openBaseTime_formula": "=SUM(N40:N43)",
+  "closeBaseTime_formula": "=SUM(N28:N31)",
+  "ejectBaseTime_formula": "=SUM(N16:N21)*P18",
+  "openAdder_formula": "=VLOOKUP(E63,D52:F63,3)",
+  "closeAdder_formula": "=VLOOKUP(E63,D52:G63,4)",
+  "ejectAdder_formula": "=VLOOKUP(E63,D52:H63,5)"
+}

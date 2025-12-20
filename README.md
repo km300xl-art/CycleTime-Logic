@@ -62,6 +62,18 @@ The cooling stage mirrors the Excel sheet directly via `src/lib/ct/excel/cooling
 - The cavity multiplier is **not** applied to COOL because the Excel sheet does not include it.
 - To refresh data, replace the JSON files above with new extracts from Excel; if the thickness lookup table changes, update the inline map in `coolingExcel.ts`.
 
+### Open_close_eject parity (Excel)
+
+The OPEN, CLOSE, EJECT, and ROBOT stages mirror the `Open_close_eject` sheet via extracted JSON tables under `src/data/excel/extracted/`:
+
+- `clampControlTable.json` → clamp closing speed percent (Control table).
+- `openCloseSpeedControl.json` → open/close speed factors (E28/E41 lookup).
+- `ejectingSpeedControl.json` → ejector speed factors (E30/E47 lookup).
+- `clampForceStageAdders.json` → per-stage clamp-force adders (D52:H63).
+- `ejectStrokeTimeMultiplier.json` → eject stroke multipliers (P10:R14).
+- `robotTimeByClampForce.json` → robot time by clamp force (P25:R29).
+- `openCloseEject_constants_and_formulas.json` → max speeds and sheet formulas reference.
+
 ### Example cases (`src/data/examples.json`)
 
 `examples.json` contains regression scenarios. Each entry includes:

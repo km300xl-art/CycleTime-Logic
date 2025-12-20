@@ -1,0 +1,32 @@
+[
+  {
+    "idx": 1,
+    "minClampForce": 0.0,
+    "robotTime_s": 2.0
+  },
+  {
+    "idx": 2,
+    "minClampForce": 151.0,
+    "robotTime_s": 2.5
+  },
+  {
+    "idx": 3,
+    "minClampForce": 351.0,
+    "robotTime_s": 3.0
+  },
+  {
+    "idx": 4,
+    "minClampForce": 551.0,
+    "robotTime_s": 4.0
+  },
+  {
+    "idx": 5,
+    "minClampForce": 1051.0,
+    "robotTime_s": 5.0
+  },
+  {
+    "idx": 6,
+    "minClampForce": 50000.0,
+    "robotTime_s": 5.0
+  }
+]

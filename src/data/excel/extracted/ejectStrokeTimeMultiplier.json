@@ -1,0 +1,22 @@
+[
+  {
+    "ejectStroke_mm": 0.0,
+    "multiplier": 2.0
+  },
+  {
+    "ejectStroke_mm": 100.0,
+    "multiplier": 1.7
+  },
+  {
+    "ejectStroke_mm": 150.0,
+    "multiplier": 1.4
+  },
+  {
+    "ejectStroke_mm": 200.0,
+    "multiplier": 1.0
+  },
+  {
+    "ejectStroke_mm": 250.0,
+    "multiplier": 0.7
+  }
+]

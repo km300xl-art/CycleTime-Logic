@@ -1,0 +1,14 @@
+[
+  {
+    "openCloseSpeedMode": "Low speed",
+    "speedFactor": 30.0
+  },
+  {
+    "openCloseSpeedMode": "Mid speed",
+    "speedFactor": 40.0
+  },
+  {
+    "openCloseSpeedMode": "Base speed",
+    "speedFactor": 1.0
+  }
+]
