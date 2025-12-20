@@ -16,6 +16,7 @@ export type Options = {
   ejectStroke_mm: number; // >=0
   cushionDistance_mm: number; // >=0
   robotStroke_mm: number; // >=0
+  robotEnabled?: boolean;
   vpPosition_mm: number; // >=0
   sprueLength_mm: number; // >=0
   pinRunner3p_mm: number; // >=0

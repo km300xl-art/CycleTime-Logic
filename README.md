@@ -8,8 +8,8 @@ Static Next.js site that prototypes a cycle-time calculator for injection moldin
 
 - Looks up base seconds for each stage (fill, pack, open, eject, robot, close) from `tables.json`. The **cool** stage now uses a dedicated Excel-parity function instead of the table entry.
 - Applies multipliers and linear adders defined in the table (for cavity count, plate type, cooling option, weight, etc.).
-- Applies the safety factor **after** the base stage time, then rounds based on the table defaults.
-- Sums the stages into a `total` value.
+- Assembles the CT_FINAL sheet behavior (mold-type time adds, robot on/off, and Excel-style total rounding) before emitting results.
+- Sums the unrounded stages, applies the safety factor to the total, and rounds stages/totals using the table defaults.
 - Returns zeroed outputs for invalid data instead of throwing.
 
 ### Table schema (`src/data/tables.json`)
@@ -35,6 +35,7 @@ The Excel OPTION panel is mirrored in `src/data/tables.json`, keeping the UI and
 - `ejectStroke_mm` → eject linear adders.
 - `cushionDistance_mm` → pack linear adders.
 - `robotStroke_mm` → robot linear adders.
+- `robotEnabled` → gates the robot stage on/off (still requires `robotStroke_mm > 0`).
 - `vpPosition_mm` → close linear adders.
 - `sprueLength_mm` → fill and eject linear adders.
 - `pinRunner3p_mm` → fill and open linear adders.
@@ -73,6 +74,12 @@ The OPEN, CLOSE, EJECT, and ROBOT stages mirror the `Open_close_eject` sheet via
 - `ejectStrokeTimeMultiplier.json` → eject stroke multipliers (P10:R14).
 - `robotTimeByClampForce.json` → robot time by clamp force (P25:R29).
 - `openCloseEject_constants_and_formulas.json` → max speeds and sheet formulas reference.
+
+### CT_FINAL assembly parity (Excel)
+
+- Mold-type time adds come from `src/data/excel/extracted/moldTypeRules.json`. The `timeAdd_s` value is added to **FILL** and to any flagged stages (Pack+, Cool+, Open+, Close+). `packZero` forces PACK to 0.
+- Robot stages honor both the stroke check and a `robotEnabled` toggle (default **true**). If either is off, the robot stage is zeroed.
+- Totals mirror Excel: each stage is rounded for display, but the **raw** (unrounded) stage sum is used for the total. The safety factor multiplies that raw total, and the final number is rounded once at the end.
 
 ### Example cases (`src/data/examples.json`)
 
