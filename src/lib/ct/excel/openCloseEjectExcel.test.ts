@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 import tables from '../../../data/tables.json';
-import { computeCloseTimeExcel, computeEjectTimeExcel, computeOpenTimeExcel, computeRobotTimeExcel } from './openCloseEjectExcel';
+import {
+  computeCloseTimeExcel,
+  computeEjectTimeExcel,
+  computeOpenCloseEjectStages,
+  computeOpenTimeExcel,
+  computeRobotTimeExcel,
+} from './openCloseEjectExcel';
 import { InputData, Options } from '../types';
 
 const baseInput: InputData = {
@@ -56,6 +62,33 @@ describe('openCloseEject Excel parity helpers', () => {
     const base = computeOpenTimeExcel(baseInput, baseOptions, tables);
 
     assert.ok(low > mid && mid > base, 'Base speed should be fastest; Low speed should be slowest');
+  });
+
+  test('open/close percent arrays follow the sheet logic', () => {
+    const clampPercent = 70;
+    const base = computeOpenCloseEjectStages(baseInput, baseOptions, tables, {}, true);
+    assert.deepEqual(base.debug?.openPercents, [40, clampPercent, 60, 50]);
+    assert.deepEqual(base.debug?.closePercents, [30, clampPercent, 50, 30]);
+
+    const low = computeOpenCloseEjectStages(
+      baseInput,
+      { ...baseOptions, openCloseSpeedMode: 'Low speed' },
+      tables,
+      {},
+      true
+    );
+    assert.deepEqual(low.debug?.openPercents, [30, 30, 30, 50]);
+    assert.deepEqual(low.debug?.closePercents, [30, 30, 30, 30]);
+
+    const mid = computeOpenCloseEjectStages(
+      baseInput,
+      { ...baseOptions, openCloseSpeedMode: 'Mid speed' },
+      tables,
+      {},
+      true
+    );
+    assert.deepEqual(mid.debug?.openPercents, [40, 40, 40, 50]);
+    assert.deepEqual(mid.debug?.closePercents, [40, 40, 40, 30]);
   });
 
   test('ejecting speed mode swaps to the low-speed profile', () => {

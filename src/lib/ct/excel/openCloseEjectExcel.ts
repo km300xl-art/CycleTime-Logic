@@ -71,6 +71,8 @@ function findClampPercent(clampControl: string, tables: OpenCloseEjectTables): n
 function findOpenCloseSpeedFactor(mode: string, tables: OpenCloseEjectTables): number {
   const match = tables.openCloseSpeedControl.find((row) => row.openCloseSpeedMode === mode);
   if (match) return toNumber(match.speedFactor);
+  const base = tables.openCloseSpeedControl.find((row) => row.openCloseSpeedMode === "Base speed");
+  if (base) return toNumber(base.speedFactor) || 1;
   return toNumber(tables.openCloseSpeedControl[0]?.speedFactor) || 1;
 }
 
@@ -83,12 +85,12 @@ function findEjectingSpeedFactor(mode: string, tables: OpenCloseEjectTables): nu
 function resolveOpenClosePercents(
   speedFactor: number,
   clampPercent: number,
-  defaults: [number, number, number],
-  trailing: number
+  defaults: [number, number, number]
 ): [number, number, number, number] {
+  const trailing = defaults[2];
   if (speedFactor === 40) return [40, 40, 40, trailing];
   if (speedFactor === 30) return [30, 30, 30, trailing];
-  return [defaults[0], clampPercent, defaults[1], defaults[2] ?? trailing];
+  return [defaults[0], clampPercent, defaults[1], trailing];
 }
 
 function resolveEjectPercents(speedFactor: number): [number, number, number, number] {
@@ -173,12 +175,7 @@ function computeOpenCloseBase(
   const speedFactor = findOpenCloseSpeedFactor(options.openCloseSpeedMode, tables);
   const maxSpeed = OPEN_CLOSE_MAX_SPEED;
 
-  const percents = resolveOpenClosePercents(
-    speedFactor,
-    clampPercent,
-    isOpen ? OPEN_BASE_SPEEDS : CLOSE_BASE_SPEEDS,
-    isOpen ? OPEN_BASE_SPEEDS[2] : CLOSE_BASE_SPEEDS[2]
-  );
+  const percents = resolveOpenClosePercents(speedFactor, clampPercent, isOpen ? OPEN_BASE_SPEEDS : CLOSE_BASE_SPEEDS);
 
   const distances = computeDistances(totalStroke, moldProtection);
   return distances.reduce(
@@ -240,14 +237,12 @@ export function computeOpenCloseEjectStages(
   const openPercents = resolveOpenClosePercents(
     openCloseSpeedFactor,
     clampPercent,
-    OPEN_BASE_SPEEDS,
-    OPEN_BASE_SPEEDS[2]
+    OPEN_BASE_SPEEDS
   );
   const closePercents = resolveOpenClosePercents(
     openCloseSpeedFactor,
     clampPercent,
-    CLOSE_BASE_SPEEDS,
-    CLOSE_BASE_SPEEDS[2]
+    CLOSE_BASE_SPEEDS
   );
   const openCloseDistances = computeDistances(totalStroke, moldProtection);
   const openBase = openCloseDistances.reduce(
