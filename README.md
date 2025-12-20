@@ -92,6 +92,31 @@ The OPEN, CLOSE, EJECT, and ROBOT stages mirror the `Open_close_eject` sheet via
 
 To extend coverage, add new entries with fresh expected numbers produced by the compute engine after you adjust `tables.json`.
 
+## How the Excel parity works
+
+Text diagram of the data path:
+
+- **Excel workbook** (private): CT_FINAL, Fill_Pack, Cooling, Open_close_eject.
+- → **Extraction step** (private tooling) converts sheets into JSON bundles.
+- → **JSON bundles** live under `src/data/excel/**` (tables, options, clamp bins, mold rules).
+- → **Compute engine** (`src/lib/ct/computeCycleTime.ts`) mirrors the Excel sheets and CT_FINAL assembly logic.
+- → **UI** (static Next.js in `/app`) renders outputs from the same compute function.
+
+The parity checks rely on the extracted JSON staying aligned with the workbook—refresh the JSON whenever the spreadsheet changes.
+
+## How to update JSON when Excel changes
+
+- Keep the `.xlsm` workbook **only** in `CycleTime-Logic-Private/reference/*.xlsm`. Do not commit the Excel file to this repo.
+- Run the private extractor (see `tools/README.md`) to regenerate the contents of `src/data/excel/` and copy them here.
+- Run `npm run validate:excel-json` to ensure required files, option lists, and clamp/speed bins are present before committing.
+
+## How to debug mismatches
+
+- Open `/calculator?debug=1` (or toggle the footer switch in non-production) to reveal the **Excel Parity Debug** panel.
+- The panel shows raw stage values (used for totals) next to the rounded display values, plus CT_FINAL adjustments (mold type adds, robot toggle, safety factor, rounding).
+- Cooling and open/close/eject sections surface the bins and clamp-force rows that were applied, helping align against Excel sheets.
+- Compare the raw totals to Excel first; if those match, compare the rounded display values to the UI.
+
 ## Running locally
 
 Install dependencies and run the static build:

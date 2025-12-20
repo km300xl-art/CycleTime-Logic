@@ -1,6 +1,7 @@
 import gradeParamsJson from "../../../data/excel/extracted/coolingGradeParams.json";
 import clampForceReferenceJson from "../../../data/excel/extracted/coolingClampForceReference.json";
 import coolingMinTimeJson from "../../../data/excel/extracted/coolingMinTime_s.json";
+import type { CoolingDebugInfo } from "../types";
 
 type CoolingArgs = {
   thickness_mm: number;
@@ -95,10 +96,25 @@ function getEffectiveThickness(thickness: number, option: CoolingArgs["coolingOp
   return toNumberSafe(row?.effectiveThickness) || thickness;
 }
 
-export function computeCoolingTimeExcel(args: CoolingArgs): number {
+export function computeCoolingTimeExcelDetailed(args: CoolingArgs): { value: number; debug: CoolingDebugInfo } {
   const { thickness_mm, grade, clampForce_ton, coolingOption } = args;
   const params = gradeParams.get(grade);
-  if (!params) return minCoolingTime;
+  if (!params) {
+    return {
+      value: minCoolingTime,
+      debug: {
+        option: coolingOption,
+        effectiveThickness: getEffectiveThickness(toNumberSafe(thickness_mm), coolingOption),
+        baseCooling: 0,
+        rawCoolingWithClamp: 0,
+        clampOffset: 0,
+        clampForceReference: null,
+        minCoolingTime,
+        appliedMinCooling: true,
+        gradeMatched: false,
+      },
+    };
+  }
 
   const effectiveThickness = getEffectiveThickness(toNumberSafe(thickness_mm), coolingOption);
   const alpha = toNumberSafe(params.alpha);
@@ -115,7 +131,26 @@ export function computeCoolingTimeExcel(args: CoolingArgs): number {
   const clampOffset = toNumberSafe(clampRow?.timeAdd_s);
 
   const cooling = baseCooling + clampOffset;
-  return Math.max(cooling, minCoolingTime);
+  const final = Math.max(cooling, minCoolingTime);
+
+  return {
+    value: final,
+    debug: {
+      option: coolingOption,
+      effectiveThickness,
+      baseCooling,
+      rawCoolingWithClamp: cooling,
+      clampOffset,
+      clampForceReference: clampRow ? { clampForce_ton: toNumberSafe(clampRow.clampForce_ton), timeAdd_s: clampOffset } : null,
+      minCoolingTime,
+      appliedMinCooling: cooling < minCoolingTime,
+      gradeMatched: true,
+    },
+  };
+}
+
+export function computeCoolingTimeExcel(args: CoolingArgs): number {
+  return computeCoolingTimeExcelDetailed(args).value;
 }
 
 export default computeCoolingTimeExcel;

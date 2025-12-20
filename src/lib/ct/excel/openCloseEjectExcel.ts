@@ -5,7 +5,7 @@ import clampForceStageAddersJson from "../../../data/excel/extracted/clampForceS
 import robotTimeByClampForceJson from "../../../data/excel/extracted/robotTimeByClampForce.json";
 import ejectStrokeTimeMultiplierJson from "../../../data/excel/extracted/ejectStrokeTimeMultiplier.json";
 import constantsJson from "../../../data/excel/extracted/openCloseEject_constants_and_formulas.json";
-import type { CycleTimeTables, InputData, Options } from "../types";
+import type { CycleTimeTables, InputData, OpenCloseEjectDebugInfo, Options } from "../types";
 
 type ClampControlRow = { clampControl: string; closingSpeed_percent: number };
 type OpenCloseSpeedRow = { openCloseSpeedMode: string; speedFactor: number };
@@ -133,6 +133,10 @@ function computeClampForceAdders(clampForce: number, tables: OpenCloseEjectTable
   };
 }
 
+function findClampForceAdderRow(clampForce: number, tables: OpenCloseEjectTables) {
+  return approximateLookup(tables.clampForceStageAdders, clampForce, (row) => toNumber(row.clampForce_threshold));
+}
+
 function computeEjectMultiplier(ejectStroke: number, tables: OpenCloseEjectTables): number {
   const match = approximateLookup(tables.ejectStrokeTimeMultiplier, ejectStroke, (row) =>
     toNumber(row.ejectStroke_mm)
@@ -140,11 +144,21 @@ function computeEjectMultiplier(ejectStroke: number, tables: OpenCloseEjectTable
   return toNumber(match?.multiplier) || 1;
 }
 
+function findEjectMultiplierRow(ejectStroke: number, tables: OpenCloseEjectTables) {
+  return approximateLookup(tables.ejectStrokeTimeMultiplier, ejectStroke, (row) =>
+    toNumber(row.ejectStroke_mm)
+  );
+}
+
 function computeRobotTime(clampForce: number, tables: OpenCloseEjectTables): number {
   const match = approximateLookup(tables.robotTimeByClampForce, clampForce, (row) =>
     toNumber(row.minClampForce)
   );
   return toNumber(match?.robotTime_s);
+}
+
+function findRobotTimeRow(clampForce: number, tables: OpenCloseEjectTables) {
+  return approximateLookup(tables.robotTimeByClampForce, clampForce, (row) => toNumber(row.minClampForce));
 }
 
 function computeOpenCloseBase(
@@ -179,10 +193,7 @@ export function computeOpenTimeExcel(
   _tables: CycleTimeTables,
   overrides: Partial<OpenCloseEjectTables> = {}
 ): number {
-  const tables = { ...DEFAULT_TABLES, ...overrides };
-  const base = computeOpenCloseBase(true, input, options, tables);
-  const adders = computeClampForceAdders(toNumber(input.clampForce_ton), tables);
-  return clampMinZero(base + adders.open);
+  return computeOpenCloseEjectStages(input, options, _tables, overrides).open;
 }
 
 export function computeCloseTimeExcel(
@@ -191,10 +202,7 @@ export function computeCloseTimeExcel(
   _tables: CycleTimeTables,
   overrides: Partial<OpenCloseEjectTables> = {}
 ): number {
-  const tables = { ...DEFAULT_TABLES, ...overrides };
-  const base = computeOpenCloseBase(false, input, options, tables);
-  const adders = computeClampForceAdders(toNumber(input.clampForce_ton), tables);
-  return clampMinZero(base + adders.close);
+  return computeOpenCloseEjectStages(input, options, _tables, overrides).close;
 }
 
 export function computeEjectTimeExcel(
@@ -203,22 +211,7 @@ export function computeEjectTimeExcel(
   _tables: CycleTimeTables,
   overrides: Partial<OpenCloseEjectTables> = {}
 ): number {
-  const tables = { ...DEFAULT_TABLES, ...overrides };
-  const speedFactor = findEjectingSpeedFactor(options.ejectingSpeedMode, tables);
-  const percents = resolveEjectPercents(speedFactor);
-  const maxSpeed = EJECTOR_MAX_SPEED;
-
-  const stroke = clampMinZero(toNumber(options.ejectStroke_mm));
-  const distances = [stroke / 2, stroke / 2, stroke / 2, stroke / 2];
-
-  const base =
-    distances.reduce(
-      (sum, distance, idx) => sum + computeSegmentTime(distance, percents[idx], maxSpeed),
-      0
-    ) * computeEjectMultiplier(stroke, tables);
-
-  const adders = computeClampForceAdders(toNumber(input.clampForce_ton), tables);
-  return clampMinZero(base + adders.eject);
+  return computeOpenCloseEjectStages(input, options, _tables, overrides).eject;
 }
 
 export function computeRobotTimeExcel(
@@ -227,7 +220,90 @@ export function computeRobotTimeExcel(
   _tables: CycleTimeTables,
   overrides: Partial<OpenCloseEjectTables> = {}
 ): number {
-  if (toNumber(options.robotStroke_mm) <= 0) return 0;
+  return computeOpenCloseEjectStages(input, options, _tables, overrides).robot;
+}
+
+export function computeOpenCloseEjectStages(
+  input: InputData,
+  options: Options,
+  _tables: CycleTimeTables,
+  overrides: Partial<OpenCloseEjectTables> = {},
+  withDebug = false
+): { open: number; close: number; eject: number; robot: number; debug?: OpenCloseEjectDebugInfo } {
   const tables = { ...DEFAULT_TABLES, ...overrides };
-  return clampMinZero(computeRobotTime(toNumber(input.clampForce_ton), tables));
+  const clampForce = toNumber(input.clampForce_ton);
+  const totalStroke = computeTotalStroke(input, options);
+  const moldProtection = clampMinZero(toNumber(options.moldProtection_mm));
+  const clampPercent = findClampPercent(options.clampControl, tables);
+  const openCloseSpeedFactor = findOpenCloseSpeedFactor(options.openCloseSpeedMode, tables);
+
+  const openPercents = resolveOpenClosePercents(
+    openCloseSpeedFactor,
+    clampPercent,
+    OPEN_BASE_SPEEDS,
+    OPEN_BASE_SPEEDS[2]
+  );
+  const closePercents = resolveOpenClosePercents(
+    openCloseSpeedFactor,
+    clampPercent,
+    CLOSE_BASE_SPEEDS,
+    CLOSE_BASE_SPEEDS[2]
+  );
+  const openCloseDistances = computeDistances(totalStroke, moldProtection);
+  const openBase = openCloseDistances.reduce(
+    (sum, distance, idx) => sum + computeSegmentTime(distance, openPercents[idx], OPEN_CLOSE_MAX_SPEED),
+    0
+  );
+  const closeBase = openCloseDistances.reduce(
+    (sum, distance, idx) => sum + computeSegmentTime(distance, closePercents[idx], OPEN_CLOSE_MAX_SPEED),
+    0
+  );
+
+  const clampForceRow = findClampForceAdderRow(clampForce, tables);
+  const clampAdders = {
+    open: toNumber(clampForceRow?.open_add_s),
+    close: toNumber(clampForceRow?.close_add_s),
+    eject: toNumber(clampForceRow?.eject_add_s),
+  };
+
+  const ejectingSpeedFactor = findEjectingSpeedFactor(options.ejectingSpeedMode, tables);
+  const ejectPercents = resolveEjectPercents(ejectingSpeedFactor);
+  const maxSpeed = EJECTOR_MAX_SPEED;
+  const stroke = clampMinZero(toNumber(options.ejectStroke_mm));
+  const ejectDistances = [stroke / 2, stroke / 2, stroke / 2, stroke / 2];
+  const ejectMultiplierRow = findEjectMultiplierRow(stroke, tables);
+  const ejectMultiplier = toNumber(ejectMultiplierRow?.multiplier) || 1;
+
+  const ejectBase =
+    ejectDistances.reduce(
+      (sum, distance, idx) => sum + computeSegmentTime(distance, ejectPercents[idx], maxSpeed),
+      0
+    ) * ejectMultiplier;
+
+  const robotRow = findRobotTimeRow(clampForce, tables);
+  const robotStrokeEnabled = toNumber(options.robotStroke_mm) > 0;
+
+  const open = clampMinZero(openBase + clampAdders.open);
+  const close = clampMinZero(closeBase + clampAdders.close);
+  const eject = clampMinZero(ejectBase + clampAdders.eject);
+  const robot = robotStrokeEnabled ? clampMinZero(toNumber(robotRow?.robotTime_s)) : 0;
+
+  const debug: OpenCloseEjectDebugInfo | undefined = withDebug
+    ? {
+        totalStroke_mm: totalStroke,
+        clampPercent,
+        openCloseSpeedMode: options.openCloseSpeedMode,
+        openCloseSpeedFactor,
+        openPercents,
+        closePercents,
+        clampForceAdderRow: clampForceRow ?? null,
+        ejectingSpeedMode: options.ejectingSpeedMode,
+        ejectingSpeedFactor,
+        ejectPercents,
+        ejectStrokeMultiplierRow: ejectMultiplierRow ?? null,
+        robotTimeRow: robotRow ?? null,
+      }
+    : undefined;
+
+  return { open, close, eject, robot, debug };
 }
