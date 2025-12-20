@@ -1,9 +1,12 @@
 import type { InputData, Options, Outputs, CycleTimeTables, StageName, MoldTypeRule } from "./types";
 import moldTypeRulesJson from "../../data/moldTypeRules.json";
-import clampForceStageAddersJson from "../../data/excel/open_close_eject/clampForceStageAdders.json";
-import ejectStrokeTimeMultiplierJson from "../../data/excel/open_close_eject/ejectStrokeTimeMultiplier.json";
-import robotTimeByClampForceJson from "../../data/excel/open_close_eject/robotTimeByClampForce.json";
 import { computeCoolingTimeExcel } from "./excel/coolingExcel";
+import {
+  computeCloseTimeExcel,
+  computeEjectTimeExcel,
+  computeOpenTimeExcel,
+  computeRobotTimeExcel,
+} from "./excel/openCloseEjectExcel";
 
 const STAGES: StageName[] = ["fill", "pack", "cool", "open", "eject", "robot", "close"];
 
@@ -49,24 +52,6 @@ function asLookupKey(raw: unknown): string {
   return getString(raw);
 }
 
-type ClampForceAdderRow = { clampForce: number; openAdd_s: number; closeAdd_s: number; ejectAdd_s: number };
-type EjectStrokeMultiplierRow = { ejectStroke_mm: number; multiplier: number };
-type RobotTimeRow = { clampForce: number; robotTime_s: number };
-const clampForceStageAdders = clampForceStageAddersJson as ClampForceAdderRow[];
-const ejectStrokeTimeMultiplier = ejectStrokeTimeMultiplierJson as EjectStrokeMultiplierRow[];
-const robotTimeByClampForce = robotTimeByClampForceJson as RobotTimeRow[];
-
-function approximateLookup<T>(rows: readonly T[] | undefined, value: number, getter: (row: T) => number): T | undefined {
-  if (!rows || rows.length === 0) return undefined;
-  const sorted = [...rows].sort((a, b) => getter(a) - getter(b));
-  let current = sorted[0];
-  for (const row of sorted) {
-    if (value < getter(row)) return current;
-    current = row;
-  }
-  return current;
-}
-
 function computeStageBase(stage: StageName, input: InputData, options: Options, tables: CycleTimeTables): number {
   const s = tables.stages?.[stage];
   if (!s) return 0;
@@ -109,49 +94,6 @@ function computeStageBase(stage: StageName, input: InputData, options: Options, 
   return clampMin0(value);
 }
 
-function computeOpenCloseEject(
-  input: InputData,
-  options: Options,
-  tables: CycleTimeTables
-): Record<"open" | "eject" | "close" | "robot", number> & { robotEnabled: boolean } {
-  const robotEnabled = options.robotStroke_mm > 0;
-  const clampAddRow = approximateLookup(clampForceStageAdders, toNumberSafe(input.clampForce_ton), (r) => toNumberSafe(r.clampForce));
-  const strokeMultiplierRow = approximateLookup(
-    ejectStrokeTimeMultiplier,
-    toNumberSafe(options.ejectStroke_mm),
-    (r) => toNumberSafe(r.ejectStroke_mm)
-  );
-  const robotRow = approximateLookup(robotTimeByClampForce, toNumberSafe(input.clampForce_ton), (r) => toNumberSafe(r.clampForce));
-
-  const strokeMultiplier = toNumberSafe(strokeMultiplierRow?.multiplier) || 1;
-
-  const openStageTime = computeStageBase("open", input, options, tables);
-  const closeStageTime = computeStageBase("close", input, options, tables);
-  const ejectStageTime = computeStageBase("eject", input, options, tables);
-
-  const openAdd = toNumberSafe(clampAddRow?.openAdd_s);
-  const closeAdd = toNumberSafe(clampAddRow?.closeAdd_s);
-  const ejectAdd = toNumberSafe(clampAddRow?.ejectAdd_s);
-
-  const open = clampMin0(openStageTime + openAdd);
-  const close = clampMin0(closeStageTime + closeAdd);
-
-  const ejectBase = clampMin0(ejectStageTime * strokeMultiplier);
-  const eject = clampMin0(ejectBase + ejectAdd);
-
-  const robotTable = toNumberSafe(robotRow?.robotTime_s);
-  const robotStage = computeStageBase("robot", input, options, tables);
-  const robot = robotEnabled ? (robotTable > 0 ? robotTable : robotStage) : 0;
-
-  return {
-    open,
-    eject,
-    close,
-    robot,
-    robotEnabled,
-  };
-}
-
 function applyMoldTypeAdjustments(
   base: Record<StageName, number>,
   moldType: string,
@@ -181,7 +123,7 @@ export function computeCycleTime(input: InputData, options: Options, tables: Cyc
   const safetyFactor = rawSafety > 1 ? rawSafety / 100 : clampMin0(rawSafety);
 
   const rules = (moldTypeRulesJson as unknown as MoldTypeRule[]) ?? [];
-  const openCloseEject = computeOpenCloseEject(input, options, tables);
+  const robotEnabled = options.robotStroke_mm > 0;
 
   // 1) base 계산
   const base: Record<StageName, number> = {
@@ -193,10 +135,10 @@ export function computeCycleTime(input: InputData, options: Options, tables: Cyc
       clampForce_ton: toNumberSafe(input.clampForce_ton),
       coolingOption: options.coolingOption,
     }),
-    open: openCloseEject.open,
-    eject: openCloseEject.eject,
-    robot: openCloseEject.robot,
-    close: openCloseEject.close,
+    open: computeOpenTimeExcel(input, options, tables),
+    eject: computeEjectTimeExcel(input, options, tables),
+    robot: robotEnabled ? computeRobotTimeExcel(input, options, tables) : 0,
+    close: computeCloseTimeExcel(input, options, tables),
   };
 
   // 2) moldType 반영
@@ -231,7 +173,7 @@ export function computeCycleTime(input: InputData, options: Options, tables: Cyc
       safetyFactor,
       rounding,
       moldType: input.moldType,
-      openCloseEject,
+      robotEnabled,
     },
   };
 }

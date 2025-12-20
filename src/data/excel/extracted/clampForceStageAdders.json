@@ -1,0 +1,38 @@
+[
+  {
+    "clampForce_threshold": 100.0,
+    "open_add_s": 0.2,
+    "close_add_s": 0.1,
+    "eject_add_s": 1.0
+  },
+  {
+    "clampForce_threshold": 150.0,
+    "open_add_s": 0.6,
+    "close_add_s": 0.8,
+    "eject_add_s": 1.3
+  },
+  {
+    "clampForce_threshold": 250.0,
+    "open_add_s": 1.2,
+    "close_add_s": 1.1,
+    "eject_add_s": 1.3
+  },
+  {
+    "clampForce_threshold": 350.0,
+    "open_add_s": 1.5,
+    "close_add_s": 1.5,
+    "eject_add_s": 1.6
+  },
+  {
+    "clampForce_threshold": 450.0,
+    "open_add_s": 1.5,
+    "close_add_s": 1.5,
+    "eject_add_s": 1.8
+  },
+  {
+    "clampForce_threshold": 550.0,
+    "open_add_s": 2.4,
+    "close_add_s": 2.4,
+    "eject_add_s": 2.3
+  }
+]

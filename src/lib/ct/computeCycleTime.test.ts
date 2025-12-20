@@ -143,6 +143,6 @@ describe('computeCycleTime edge cases', () => {
     const result = computeCycleTime(base.input as InputData, options, tables);
     assert.equal(result.robot.toFixed(2), '0.00', 'robot stage should be disabled when stroke is 0');
     const debug = result.debug as any;
-    assert.equal(debug?.openCloseEject?.robotEnabled, false, 'debug flag should reflect robot toggle');
+    assert.equal(debug?.robotEnabled, false, 'debug flag should reflect robot toggle');
   });
 });

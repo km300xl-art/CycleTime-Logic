@@ -1,0 +1,10 @@
+[
+  {
+    "ejectingSpeedMode": "Low speed",
+    "speedFactor": 15.0
+  },
+  {
+    "ejectingSpeedMode": "Base speed",
+    "speedFactor": 1.0
+  }
+]

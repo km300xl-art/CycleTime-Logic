@@ -1,0 +1,14 @@
+[
+  {
+    "clampControl": "Logic valve",
+    "closingSpeed_percent": 70.0
+  },
+  {
+    "clampControl": "Proportional valve",
+    "closingSpeed_percent": 80.0
+  },
+  {
+    "clampControl": "ServoValve",
+    "closingSpeed_percent": 90.0
+  }
+]
