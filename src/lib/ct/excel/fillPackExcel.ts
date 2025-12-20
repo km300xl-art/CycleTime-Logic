@@ -15,6 +15,7 @@ type FillPackArgs = {
   input: InputData;
   options: Options;
   extracted?: FillPackExtracted;
+  includeDebug?: boolean;
 };
 
 const DEFAULT_EXTRACTED = fillPackExtracted as FillPackExtracted;
@@ -51,6 +52,7 @@ function computeDensity(grade: string, extracted: FillPackExtracted): number {
 function computeFillInternals(args: FillPackArgs) {
   const extracted = args.extracted ?? DEFAULT_EXTRACTED;
   const { input, options } = args;
+  const includeDebug = args.includeDebug ?? false;
 
   // Input mappings to sheet cells
   const E17 = toNumber(input.weight_g_1cav); // CT_FINAL!F16
@@ -133,7 +135,21 @@ function computeFillInternals(args: FillPackArgs) {
   // PACK: IF(R16=R9,0,P28*N7^0.25+K16)
   const pack = toString(input.moldType) === moldGas ? 0 : P28 * N7 ** 0.25 + K16;
 
-  return { fill: K27, pack, N7 };
+  const debug = includeDebug
+    ? {
+        weightingDistance_K21: K21,
+        injectionRate_K25: K25,
+        ramVolume_N22: N22,
+        allCavWeight_N7: N7,
+        runnerWeight_N8: N14,
+        totalWeight_N9: N9,
+        allVolume_N10: N10,
+        runnerBinIndex: U22,
+        vpLookupValue: toNumber(V22num, 0),
+      }
+    : undefined;
+
+  return { fill: K27, pack, N7, debug };
 }
 
 export function computeFillTimeExcel(input: InputData, options: Options, extracted?: FillPackExtracted): number {
@@ -144,3 +160,10 @@ export function computePackTimeExcel(input: InputData, options: Options, extract
   return computeFillInternals({ input, options, extracted }).pack;
 }
 
+export function computeFillPackExcelDetailed(
+  input: InputData,
+  options: Options,
+  extracted?: FillPackExtracted,
+): { fill: number; pack: number; debug?: ReturnType<typeof computeFillInternals>['debug'] } {
+  return computeFillInternals({ input, options, extracted, includeDebug: true });
+}

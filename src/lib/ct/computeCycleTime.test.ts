@@ -289,4 +289,26 @@ describe('debug helpers', () => {
     assert.ok(debug.cooling, 'cooling debug should be populated');
     assert.ok(debug.openCloseEject, 'open/close/eject debug should be populated');
   });
+
+  test('includes Fill_Pack Excel cell debug values', () => {
+    const example = examples[0] as Example;
+    const result = computeCycleTimeWithDebug(example.input as InputData, example.options as Options, tables);
+    const fillPack = result.debug.fillPack;
+    assert.ok(fillPack, 'fillPack debug should be present');
+
+    const keys: (keyof NonNullable<typeof fillPack>)[] = [
+      'weightingDistance_K21',
+      'injectionRate_K25',
+      'ramVolume_N22',
+      'allCavWeight_N7',
+      'runnerWeight_N8',
+      'totalWeight_N9',
+      'allVolume_N10',
+    ];
+
+    keys.forEach((key) => {
+      const value = fillPack?.[key];
+      assert.ok(Number.isFinite(value), `${String(key)} should be a finite number`);
+    });
+  });
 });

@@ -159,4 +159,15 @@ export type CycleTimeDebug = {
   robotEnabled?: boolean;
   cooling?: CoolingDebugInfo;
   openCloseEject?: OpenCloseEjectDebugInfo;
+  fillPack?: {
+    weightingDistance_K21: number;
+    injectionRate_K25: number;
+    ramVolume_N22: number;
+    allCavWeight_N7: number;
+    runnerWeight_N8: number;
+    totalWeight_N9: number;
+    allVolume_N10: number;
+    runnerBinIndex?: number | null;
+    vpLookupValue?: number;
+  };
 };

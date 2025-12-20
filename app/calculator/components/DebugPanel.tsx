@@ -8,6 +8,7 @@ type DebugPanelProps = {
   debug?: CycleTimeDebug;
   input: InputData;
   options: Options;
+  hasCalculated: boolean;
 };
 
 const stageOrder: StageName[] = ['fill', 'pack', 'cool', 'open', 'eject', 'robot', 'close'];
@@ -42,7 +43,7 @@ const renderList = (rows: { label: string; value: string | number }[]) => (
   </dl>
 );
 
-export function DebugPanel({ visible, isOpen, onToggle, debug, input, options }: DebugPanelProps) {
+export function DebugPanel({ visible, isOpen, onToggle, debug, input, options, hasCalculated }: DebugPanelProps) {
   if (!visible) return null;
 
   const hasDebug = Boolean(debug);
@@ -52,6 +53,19 @@ export function DebugPanel({ visible, isOpen, onToggle, debug, input, options }:
     raw: debug?.stages.raw[stage],
     display: debug?.stages.display[stage],
   }));
+
+  const fillPackRows =
+    debug?.fillPack && debug.fillPack
+      ? [
+          { key: 'weightingDistance_K21', label: 'Weighting Distance (Fill_Pack!K21)', value: debug.fillPack.weightingDistance_K21 },
+          { key: 'injectionRate_K25', label: 'Injection Rate (Fill_Pack!K25)', value: debug.fillPack.injectionRate_K25 },
+          { key: 'ramVolume_N22', label: 'Ram Volume (Fill_Pack!N22)', value: debug.fillPack.ramVolume_N22 },
+          { key: 'allCavWeight_N7', label: 'All Cav. Weight (Fill_Pack!N7)', value: debug.fillPack.allCavWeight_N7 },
+          { key: 'runnerWeight_N8', label: 'Runner Weight (Fill_Pack!N8)', value: debug.fillPack.runnerWeight_N8 },
+          { key: 'totalWeight_N9', label: 'Total Weight (Fill_Pack!N9)', value: debug.fillPack.totalWeight_N9 },
+          { key: 'allVolume_N10', label: 'ALL Volume (Fill_Pack!N10)', value: debug.fillPack.allVolume_N10 },
+        ]
+      : [];
 
   return (
     <section className={styles.debugPanel} aria-labelledby="debug-panel-title">
@@ -70,7 +84,9 @@ export function DebugPanel({ visible, isOpen, onToggle, debug, input, options }:
 
       {isOpen && (
         <div className={styles.debugBody}>
-          {!hasDebug ? (
+          {!hasCalculated ? (
+            <p className={styles.muted}>Calculate to view debug outputs.</p>
+          ) : !hasDebug ? (
             <p className={styles.muted}>Waiting for debug data... try adjusting an input or toggling debug again.</p>
           ) : (
             <>
@@ -275,6 +291,40 @@ export function DebugPanel({ visible, isOpen, onToggle, debug, input, options }:
                   </>
                 ) : (
                   <p className={styles.muted}>Enable debug to view open/close/eject speed bins.</p>
+                )}
+              </div>
+
+              <div className={styles.debugCard}>
+                <h3 className={styles.debugTitle}>Fill_Pack (Excel cells)</h3>
+                {fillPackRows.length === 0 ? (
+                  <p className={styles.muted}>Calculate with debug enabled to view Fill_Pack intermediate cells.</p>
+                ) : (
+                  <div className={styles.debugTableWrapper}>
+                    <table className={styles.debugTable}>
+                      <thead>
+                        <tr>
+                          <th scope="col">Cell</th>
+                          <th scope="col">Raw</th>
+                          <th scope="col">2-dec</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {fillPackRows.map((row) => (
+                          <tr key={row.key}>
+                            <th scope="row">{row.label}</th>
+                            <td>{row.value}</td>
+                            <td>{formatNumber(row.value, 2)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                {(debug?.fillPack?.runnerBinIndex || debug?.fillPack?.vpLookupValue) && (
+                  <p className={styles.muted}>
+                    Runner bin index: {debug?.fillPack?.runnerBinIndex ?? '—'} / VP lookup value:{' '}
+                    {formatNumber(debug?.fillPack?.vpLookupValue, 3)}
+                  </p>
                 )}
               </div>
             </>
