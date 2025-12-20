@@ -8,7 +8,7 @@ import type {
 } from "./types";
 import { computeCoolingTimeExcel, computeCoolingTimeExcelDetailed } from "./excel/coolingExcel";
 import { computeOpenCloseEjectStages } from "./excel/openCloseEjectExcel";
-import { computeFillTimeExcel, computePackTimeExcel } from "./excel/fillPackExcel";
+import { computeFillPackExcelDetailed, computeFillTimeExcel, computePackTimeExcel } from "./excel/fillPackExcel";
 import { applyCtFinalAssembly } from "./excel/ctFinalAssemblyExcel";
 
 function isFiniteNumber(v: unknown): v is number {
@@ -28,7 +28,14 @@ function buildBaseStages(
   options: Options,
   tables: CycleTimeTables,
   withDebug: boolean
-): { stages: StageMap; debug: { cooling?: CycleTimeDebug["cooling"]; openCloseEject?: CycleTimeDebug["openCloseEject"] } } {
+): {
+  stages: StageMap;
+  debug: {
+    cooling?: CycleTimeDebug["cooling"];
+    openCloseEject?: CycleTimeDebug["openCloseEject"];
+    fillPack?: CycleTimeDebug["fillPack"];
+  };
+} {
   const coolingArgs = {
     thickness_mm: toNumberSafe(input.thickness_mm),
     grade: getString(input.grade),
@@ -36,8 +43,11 @@ function buildBaseStages(
     coolingOption: options.coolingOption,
   };
 
-  const fill = computeFillTimeExcel(input, options);
-  const pack = computePackTimeExcel(input, options);
+  const fillPack = withDebug
+    ? computeFillPackExcelDetailed(input, options)
+    : { fill: computeFillTimeExcel(input, options), pack: computePackTimeExcel(input, options), debug: undefined };
+  const fill = fillPack.fill;
+  const pack = fillPack.pack;
   const coolingResult = withDebug
     ? computeCoolingTimeExcelDetailed(coolingArgs)
     : { value: computeCoolingTimeExcel(coolingArgs), debug: undefined };
@@ -57,6 +67,7 @@ function buildBaseStages(
     debug: {
       cooling: coolingResult.debug,
       openCloseEject: openCloseEject.debug,
+      fillPack: fillPack.debug,
     },
   };
 }
@@ -102,6 +113,7 @@ function computeCycleTimeInternal(
     robotEnabled: assembled.debug.robotEnabled,
     cooling: base.debug.cooling,
     openCloseEject: base.debug.openCloseEject,
+    fillPack: base.debug.fillPack,
   };
 
   return {

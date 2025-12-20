@@ -51,6 +51,7 @@ The Excel OPTION panel is mirrored in `src/data/tables.json`, keeping the UI and
 - **Robot ON/OFF** lives in the Input panel. Turning it off forces the CT_FINAL robot stage to zero (robot stroke still must be > 0 when ON).
 - **Ejecting stroke (mm)** auto-follows Height using CT_FINAL!AD15 (45 mm when height < 31 mm, otherwise `height * AD15`) with a manual override and “Reset to Auto” button.
 - **Safety factor (%)** is editable as a percent (default 10%) and is applied once to the raw stage sum before rounding the total.
+- **Calculate trigger**: outputs start at zero and only update after clicking **Calculate**. Subsequent edits do not change outputs until Calculate is clicked again (Reset restores the zeroed state).
 
 ### Cooling parity (Excel)
 
@@ -86,6 +87,7 @@ The OPEN, CLOSE, EJECT, and ROBOT stages mirror the `Open_close_eject` sheet via
 - Mold-type time adds come from `src/data/excel/extracted/moldTypeRules.json`. The `timeAdd_s` value is added to **FILL** and to any flagged stages (Pack+, Cool+, Open+, Close+). `packZero` forces PACK to 0.
 - Robot stages honor both the stroke check and a `robotEnabled` toggle (default **true**). If either is off, the robot stage is zeroed.
 - Totals mirror Excel: each stage is rounded for display, but the **raw** (unrounded) stage sum is used for the total. The safety factor multiplies that raw total, and the final number is rounded once at the end.
+- The debug panel now surfaces key `Fill_Pack` sheet cells (K21, K25, N22, N7, N8, N9, N10) to validate intermediate values against Excel.
 
 ### Example cases (`src/data/examples.json`)
 

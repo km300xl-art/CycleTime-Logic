@@ -3,14 +3,14 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import rawTables from '../../src/data/tables.json';
-import { computeCycleTime, computeCycleTimeWithDebug } from '../../src/lib/ct/computeCycleTime';
+import { calculateSnapshot, createInitialSnapshot, createZeroOutputs, recomputeFromApplied } from '../../src/lib/ct/calculatorState';
 import { InputSection } from './components/InputSection';
 import { OptionsSection } from './components/OptionsSection';
 import { OutputTable } from './components/OutputTable';
 import { DebugPanel } from './components/DebugPanel';
 import styles from './Calculator.module.css';
 import { FieldErrors, InputFormState, OptionFormState } from './types';
-import type { InputData, Options, CycleTimeTables, CycleTimeDebug } from '../../src/lib/ct/types';
+import type { InputData, Options, CycleTimeTables } from '../../src/lib/ct/types';
 import { maybeApplyAutoEjectStroke, resetEjectStrokeToAuto } from '../../src/lib/ct/excel/ctFinalDefaults';
 
 import cavityOptions from '../../src/data/excel/extracted/extracted/cavityOptions.json';
@@ -193,7 +193,7 @@ export default function CalculatorClient() {
   const [debugFromQuery, setDebugFromQuery] = useState(false);
   const [debugEnabled, setDebugEnabled] = useState(false);
   const [debugPanelOpen, setDebugPanelOpen] = useState(false);
-  const [debugInfo, setDebugInfo] = useState<CycleTimeDebug | undefined>(undefined);
+  const [snapshot, setSnapshot] = useState(() => createInitialSnapshot());
 
   const gradeOptions = useMemo(() => {
     if (!inputValues.resin) return [];
@@ -216,7 +216,6 @@ export default function CalculatorClient() {
   useEffect(() => {
     setDebugEnabled(debugFromQuery);
     if (debugFromQuery) setDebugPanelOpen(true);
-    if (!debugFromQuery) setDebugInfo(undefined);
   }, [debugFromQuery]);
 
   const parsedInput = useMemo(() => toInputData(inputValues), [inputValues]);
@@ -252,19 +251,7 @@ export default function CalculatorClient() {
     });
   }, [parsedInput.height_mm_eject]);
 
-  const [outputs, setOutputs] = useState(() => computeCycleTime(parsedInput, parsedOptions, tables));
-
-  useEffect(() => {
-    if (debugEnabled) {
-      const result = computeCycleTimeWithDebug(parsedInput, parsedOptions, tables);
-      setOutputs(result);
-      setDebugInfo(result.debug);
-      setDebugPanelOpen(true);
-      return;
-    }
-    setOutputs(computeCycleTime(parsedInput, parsedOptions, tables));
-    setDebugInfo(undefined);
-  }, [parsedInput, parsedOptions, debugEnabled]);
+  const outputs = snapshot.outputs ?? createZeroOutputs();
 
   const handleTextChange = (field: keyof InputFormState, value: string) => {
     setInputValues((prev) => {
@@ -342,26 +329,46 @@ export default function CalculatorClient() {
   const handleCalculate = () => {
     const validation = validate();
     setErrors(validation);
+    if (Object.keys(validation).length > 0) return;
+    const nextSnapshot = calculateSnapshot(parsedInput, parsedOptions, tables, debugEnabled);
+    setSnapshot(nextSnapshot);
+    if (debugEnabled) {
+      setDebugPanelOpen(true);
+    }
   };
 
   const handleReset = () => {
     setInputValues(initialInputValues);
     setOptionValues(initialOptionValues);
     setErrors({});
-    const baseInput = toInputData(initialInputValues);
-    const baseOptions = toOptions(initialOptionValues);
-    if (debugEnabled) {
-      const result = computeCycleTimeWithDebug(baseInput, baseOptions, tables);
-      setOutputs(result);
-      setDebugInfo(result.debug);
-      setDebugPanelOpen(true);
-    } else {
-      setOutputs(computeCycleTime(baseInput, baseOptions, tables));
-      setDebugInfo(undefined);
-    }
+    setSnapshot(createInitialSnapshot());
   };
 
   const isPinRunnerLocked = shouldLockPinRunner(parsedInput.plateType);
+
+  useEffect(() => {
+    setSnapshot((prev) => recomputeFromApplied(prev, tables, debugEnabled));
+  }, [debugEnabled, tables]);
+
+  useEffect(() => {
+    if (debugEnabled && snapshot.hasCalculated) {
+      setDebugPanelOpen(true);
+    }
+  }, [debugEnabled, snapshot.hasCalculated]);
+
+  useEffect(() => {
+    if (!debugEnabled) {
+      setSnapshot((prev) => ({ ...prev, debug: undefined }));
+    }
+  }, [debugEnabled]);
+  const appliedInput = snapshot.appliedInput ?? parsedInput;
+  const appliedOptions = snapshot.appliedOptions ?? parsedOptions;
+  const hasPendingChanges =
+    snapshot.hasCalculated &&
+    snapshot.appliedInput &&
+    snapshot.appliedOptions &&
+    (JSON.stringify(parsedInput) !== JSON.stringify(snapshot.appliedInput) ||
+      JSON.stringify(parsedOptions) !== JSON.stringify(snapshot.appliedOptions));
 
   return (
     <section className="section">
@@ -408,15 +415,21 @@ export default function CalculatorClient() {
         </button>
       </div>
 
+      {hasPendingChanges && (
+        <p className={styles.muted} role="status">
+          Edited — click Calculate to update outputs.
+        </p>
+      )}
       <OutputTable outputs={outputs} />
 
       <DebugPanel
         visible={debugEnabled}
         isOpen={debugPanelOpen}
         onToggle={() => setDebugPanelOpen((prev) => !prev)}
-        debug={debugInfo}
-        input={parsedInput}
-        options={parsedOptions}
+        debug={snapshot.hasCalculated ? snapshot.debug : undefined}
+        input={appliedInput}
+        options={appliedOptions}
+        hasCalculated={snapshot.hasCalculated}
       />
     </section>
   );
