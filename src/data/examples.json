@@ -30,14 +30,14 @@
       "openCloseStroke_mm": 0
     },
     "expected": {
-      "fill": 1.01,
-      "pack": 2.04,
+      "fill": 0.92,
+      "pack": 1.86,
       "cool": 11.5,
       "open": 1.48,
       "eject": 1.59,
       "robot": 2,
       "close": 1.79,
-      "total": 21.41
+      "total": 21.14
     }
   },
   {
@@ -71,14 +71,14 @@
       "openCloseStroke_mm": 0
     },
     "expected": {
-      "fill": 1.55,
-      "pack": 2.39,
+      "fill": 2,
+      "pack": 2.18,
       "cool": 12.5,
       "open": 1.83,
       "eject": 1.59,
       "robot": 2,
       "close": 2.14,
-      "total": 24
+      "total": 24.24
     }
   },
   {
@@ -112,14 +112,14 @@
       "openCloseStroke_mm": 0
     },
     "expected": {
-      "fill": 2.63,
-      "pack": 3.07,
+      "fill": 2.39,
+      "pack": 2.79,
       "cool": 21.36,
       "open": 2.3,
       "eject": 1.89,
       "robot": 2.5,
       "close": 2.61,
-      "total": 36.36
+      "total": 35.84
     }
   },
   {
@@ -153,14 +153,14 @@
       "openCloseStroke_mm": 0
     },
     "expected": {
-      "fill": 1.33,
-      "pack": 2.14,
+      "fill": 1.53,
+      "pack": 2.3,
       "cool": 16.81,
       "open": 2.17,
       "eject": 2.33,
       "robot": 2,
       "close": 2.34,
-      "total": 29.12
+      "total": 29.48
     }
   },
   {
@@ -194,14 +194,14 @@
       "openCloseStroke_mm": 0
     },
     "expected": {
-      "fill": 1.28,
-      "pack": 2.25,
+      "fill": 0.99,
+      "pack": 2.26,
       "cool": 12.5,
       "open": 2.78,
       "eject": 2.02,
       "robot": 2.5,
       "close": 3.39,
-      "total": 26.72
+      "total": 26.44
     }
   },
   {
@@ -235,14 +235,14 @@
       "openCloseStroke_mm": 0
     },
     "expected": {
-      "fill": 2.08,
-      "pack": 2.66,
+      "fill": 1.35,
+      "pack": 2.2,
       "cool": 22.07,
       "open": 2.13,
       "eject": 1.98,
       "robot": 2.5,
       "close": 2.71,
-      "total": 36.13
+      "total": 34.94
     }
   }
 ]

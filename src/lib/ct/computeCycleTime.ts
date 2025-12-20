@@ -7,6 +7,7 @@ import {
   computeOpenTimeExcel,
   computeRobotTimeExcel,
 } from "./excel/openCloseEjectExcel";
+import { computeFillTimeExcel, computePackTimeExcel } from "./excel/fillPackExcel";
 
 const STAGES: StageName[] = ["fill", "pack", "cool", "open", "eject", "robot", "close"];
 
@@ -127,8 +128,8 @@ export function computeCycleTime(input: InputData, options: Options, tables: Cyc
 
   // 1) base 계산
   const base: Record<StageName, number> = {
-    fill: computeStageBase("fill", input, options, tables),
-    pack: computeStageBase("pack", input, options, tables),
+    fill: computeFillTimeExcel(input, options),
+    pack: computePackTimeExcel(input, options),
     cool: computeCoolingTimeExcel({
       thickness_mm: toNumberSafe(input.thickness_mm),
       grade: getString(input.grade),
