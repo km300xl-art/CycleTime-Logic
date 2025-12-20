@@ -71,14 +71,14 @@
       "openCloseStroke_mm": 0
     },
     "expected": {
-      "fill": 3,
+      "fill": 2,
       "pack": 2.18,
       "cool": 12.5,
       "open": 1.83,
       "eject": 1.59,
       "robot": 2,
       "close": 2.14,
-      "total": 25.24
+      "total": 24.24
     }
   },
   {
@@ -194,14 +194,14 @@
       "openCloseStroke_mm": 0
     },
     "expected": {
-      "fill": 1.99,
+      "fill": 0.99,
       "pack": 2.26,
       "cool": 12.5,
       "open": 2.78,
       "eject": 2.02,
       "robot": 2.5,
       "close": 3.39,
-      "total": 27.44
+      "total": 26.44
     }
   },
   {

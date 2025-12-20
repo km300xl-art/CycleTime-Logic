@@ -59,13 +59,8 @@ function applyMoldTypeAdjustments(
   if (rule.openPlus) updated.open += add;
   if (rule.closePlus) updated.close += add;
 
-  // Excel's CT_FINAL sheet propagates the time add to the fill column.
-  updated.fill += add;
-
-  if (isFiniteNumber(rule.fillAdd_s)) {
-    // Avoid double-applying if a dedicated fillAdd is present.
-    updated.fill += toNumberSafe(rule.fillAdd_s) - add;
-  }
+  // Fill time should not receive the generic mold-type adders.
+  if (isFiniteNumber(rule.fillAdd_s)) updated.fill += toNumberSafe(rule.fillAdd_s);
 
   const affectedStages: StageName[] = [];
   for (const stage of STAGES) {

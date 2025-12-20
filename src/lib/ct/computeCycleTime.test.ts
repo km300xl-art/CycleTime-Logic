@@ -154,6 +154,21 @@ describe('computeCycleTime edge cases', () => {
     assert.equal(debug?.robotEnabled, false, 'debug flag should reflect robot toggle');
   });
 
+  test('mold-type time adds do not change fill', () => {
+    const base = examples[0];
+    assert.ok(base, 'expected at least one example entry');
+
+    const input: InputData = { ...(base.input as InputData), moldType: 'Insert INJ.' };
+    const options: Options = { ...(base.options as Options) };
+
+    const result = computeCycleTimeWithDebug(input, options, tables);
+    const baseStages = result.debug.stages.base;
+    const afterMold = result.debug.stages.afterMold;
+
+    assert.equal(afterMold.fill.toFixed(4), baseStages.fill.toFixed(4), 'fill should ignore mold-type adders');
+    assert.ok(afterMold.open > baseStages.open, 'other mold-type adders still apply to flagged stages');
+  });
+
   test('uses raw stage sums when rounding total', () => {
     const baseStages = {
       fill: 0.005,

@@ -84,7 +84,7 @@ The OPEN, CLOSE, EJECT, and ROBOT stages mirror the `Open_close_eject` sheet via
 
 ### CT_FINAL assembly parity (Excel)
 
-- Mold-type time adds come from `src/data/excel/extracted/moldTypeRules.json`. The `timeAdd_s` value is added to **FILL** and to any flagged stages (Pack+, Cool+, Open+, Close+). `packZero` forces PACK to 0.
+- Mold-type time adds come from `src/data/excel/extracted/moldTypeRules.json`. The `timeAdd_s` value is applied only to the flagged stages (Pack+, Cool+, Open+, Close+); **FILL** stays unchanged unless a dedicated `fillAdd_s` is present. `packZero` forces PACK to 0.
 - Robot stages honor both the stroke check and a `robotEnabled` toggle (default **true**). If either is off, the robot stage is zeroed.
 - Totals mirror Excel: each stage is rounded for display, but the **raw** (unrounded) stage sum is used for the total. The safety factor multiplies that raw total, and the final number is rounded once at the end.
 - The debug panel now surfaces key `Fill_Pack` sheet cells (K21, K25, N22, N7, N8, N9, N10) to validate intermediate values against Excel.
