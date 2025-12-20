@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-import sprueTable from '../../src/data/excel/sprueLengthByWeight.json';
 import rawTables from '../../src/data/tables.json';
 import { computeCycleTime } from '../../src/lib/ct/computeCycleTime';
 import { InputSection } from './components/InputSection';
@@ -11,30 +10,56 @@ import { OutputTable } from './components/OutputTable';
 import styles from './Calculator.module.css';
 import { FieldErrors, InputFormState, OptionFormState } from './types';
 import type { InputData, Options, CycleTimeTables } from '../../src/lib/ct/types';
-
-import moldTypes from '../../src/data/excel/moldTypeOptions.json';
-import resinOptions from '../../src/data/excel/resinOptions.json';
-import resinGrades from '../../src/data/excel/resinGrades.json';
-import clampControlTable from '../../src/data/excel/open_close_eject/clampControlTable.json';
-import openCloseSpeedControl from '../../src/data/excel/open_close_eject/openCloseSpeedControl.json';
-import ejectingSpeedControl from '../../src/data/excel/open_close_eject/ejectingSpeedControl.json';
+import cavityOptions from '../../src/data/excel/extracted/extracted/cavityOptions.json';
+import clampControlTable from '../../src/data/excel/extracted/extracted/clampControlTable.json';
+import coolingOptionOptions from '../../src/data/excel/extracted/extracted/coolingOptionOptions.json';
+import ejectingSpeedControl from '../../src/data/excel/extracted/extracted/ejectingSpeedControl.json';
+import moldTypes from '../../src/data/excel/extracted/extracted/moldTypeOptions.json';
+import openCloseSpeedControl from '../../src/data/excel/extracted/extracted/openCloseSpeedControl.json';
+import plateTypeOptions from '../../src/data/excel/extracted/extracted/plateTypeOptions.json';
+import resinGrades from '../../src/data/excel/extracted/extracted/resinGrades.json';
+import resinOptions from '../../src/data/excel/extracted/extracted/resinOptions.json';
+import sprueLengthByWeight from '../../src/data/excel/extracted/extracted/sprueLengthByWeight.json';
+import { derivePinRunner, deriveSprueLength, shouldLockPinRunner, SprueBin } from '../../src/lib/ct/uiRules';
 
 // 이 3줄이 반드시 필요
 const moldTypeOptions = moldTypes as string[];
 const resinOptionsList = resinOptions as string[];
 const resinGradesMap = resinGrades as Record<string, string[]>;
-const clampControlOptionsList = (clampControlTable as { label: string }[]).map((row) => row.label);
-const openCloseSpeedOptionsList = (openCloseSpeedControl as { label: string }[]).map((row) => row.label);
-const ejectingSpeedOptionsList = (ejectingSpeedControl as { label: string }[]).map((row) => row.label);
+const cavityOptionsList = cavityOptions as string[];
+const plateTypeOptionsList = plateTypeOptions as InputData['plateType'][];
+const coolingOptionsList = coolingOptionOptions as Options['coolingOption'][];
+const clampControlOptionsList = (clampControlTable as { clampControl: Options['clampControl'] }[]).map(
+  (row) => row.clampControl,
+);
+const openCloseSpeedOptionsList = (
+  openCloseSpeedControl as { openCloseSpeedMode: Options['openCloseSpeedMode'] }[]
+).map((row) => row.openCloseSpeedMode);
+const ejectingSpeedOptionsList = (
+  ejectingSpeedControl as { ejectingSpeedMode: Options['ejectingSpeedMode'] }[]
+).map((row) => row.ejectingSpeedMode);
+const sprueLengthBins = sprueLengthByWeight as SprueBin[];
 
-function sprueFromWeight(weight: number): number {
-  const table = (sprueTable as { bins: { maxWeight: number; sprueLength_mm: number }[] }).bins ?? [];
-  for (const row of table) {
-    if (weight <= row.maxWeight) return row.sprueLength_mm;
-  }
-  if (table.length === 0) return 0;
-  return table[table.length - 1].sprueLength_mm;
-}
+const allowedCavities: InputData['cavity'][] = cavityOptionsList
+  .map((option) => Number(option))
+  .filter(
+    (option): option is InputData['cavity'] =>
+      option === 1 || option === 2 || option === 4 || option === 6 || option === 8,
+  );
+const allowedPlateTypes = plateTypeOptionsList.filter(
+  (plate): plate is InputData['plateType'] => plate === '2P' || plate === '3P' || plate === 'HOT',
+);
+
+const defaultCavity = cavityOptionsList[0] ?? '';
+const defaultPlateType = allowedPlateTypes[0] ?? '2P';
+const defaultSprueLength = deriveSprueLength(defaultPlateType, 0, sprueLengthBins);
+const defaultPinRunner = derivePinRunner(defaultPlateType, defaultSprueLength);
+const defaultOpenCloseSpeed =
+  openCloseSpeedOptionsList.find((option) => option === 'Base speed') ?? openCloseSpeedOptionsList[0] ?? 'Base speed';
+const defaultEjectingSpeed =
+  ejectingSpeedOptionsList.find((option) => option === 'Base speed') ?? ejectingSpeedOptionsList[0] ?? 'Base speed';
+const defaultCoolingOption =
+  coolingOptionsList.find((option) => option === 'BASE') ?? coolingOptionsList[0] ?? 'BASE';
 
 const tables = rawTables as CycleTimeTables;
 
@@ -42,12 +67,12 @@ const initialInputValues: InputFormState = {
   moldType: '',
   resin: '',
   grade: '',
-  cavity: '1',
+  cavity: defaultCavity || '1',
   weight_g_1cav: '',
   clampForce_ton: '',
   thickness_mm: '',
   height_mm_eject: '',
-  plateType: '2P',
+  plateType: defaultPlateType,
 };
 
 const initialOptionValues: OptionFormState = {
@@ -57,32 +82,25 @@ const initialOptionValues: OptionFormState = {
   cushionDistance_mm: '8',
   robotStroke_mm: '100',
   vpPosition_mm: '10',
-  sprueLength_mm: '70',
-  pinRunner3p_mm: '0',
+  sprueLength_mm: String(defaultSprueLength),
+  pinRunner3p_mm: String(defaultPinRunner),
   injectionSpeed_mm_s: '20',
   openCloseStroke_mm: '0',
-  openCloseSpeedMode: 'Base speed',
-  ejectingSpeedMode: 'Base speed',
-  coolingOption: 'BASE',
+  openCloseSpeedMode: defaultOpenCloseSpeed,
+  ejectingSpeedMode: defaultEjectingSpeed,
+  coolingOption: defaultCoolingOption,
   safetyFactor: '0',
 };
 
-const deriveSprueLength = (plateType: InputData['plateType'], weight: number) => {
-  if (plateType === 'HOT') return 0;
-  return sprueFromWeight(weight);
-};
-
-const derivePinRunner = (plateType: InputData['plateType'], sprueLength: number) => {
-  if (plateType === '3P') return sprueLength + 30;
-  return 0;
-};
-
 const toInputData = (values: InputFormState): InputData => {
-  const allowedCavities: InputData['cavity'][] = [1, 2, 4, 6, 8];
   const numericCavity = Number(values.cavity);
   const cavity = allowedCavities.includes(numericCavity as InputData['cavity'])
     ? (numericCavity as InputData['cavity'])
-    : 1;
+    : allowedCavities[0] ?? 1;
+
+  const plateType = allowedPlateTypes.includes(values.plateType as InputData['plateType'])
+    ? (values.plateType as InputData['plateType'])
+    : defaultPlateType;
 
   const numberOrZero = (value: string) => {
     if (value === '') return 0;
@@ -99,7 +117,7 @@ const toInputData = (values: InputFormState): InputData => {
     clampForce_ton: numberOrZero(values.clampForce_ton),
     thickness_mm: numberOrZero(values.thickness_mm),
     height_mm_eject: numberOrZero(values.height_mm_eject),
-    plateType: values.plateType as InputData['plateType'],
+    plateType,
   };
 };
 
@@ -110,8 +128,21 @@ const toOptions = (values: OptionFormState): Options => {
     return Number.isFinite(num) && num >= 0 ? num : 0;
   };
 
+  const clampControl = clampControlOptionsList.includes(values.clampControl)
+    ? values.clampControl
+    : ('' as Options['clampControl']);
+  const openCloseSpeedMode = openCloseSpeedOptionsList.includes(values.openCloseSpeedMode as Options['openCloseSpeedMode'])
+    ? (values.openCloseSpeedMode as Options['openCloseSpeedMode'])
+    : defaultOpenCloseSpeed;
+  const ejectingSpeedMode = ejectingSpeedOptionsList.includes(values.ejectingSpeedMode as Options['ejectingSpeedMode'])
+    ? (values.ejectingSpeedMode as Options['ejectingSpeedMode'])
+    : defaultEjectingSpeed;
+  const coolingOption = coolingOptionsList.includes(values.coolingOption as Options['coolingOption'])
+    ? (values.coolingOption as Options['coolingOption'])
+    : defaultCoolingOption;
+
   return {
-    clampControl: values.clampControl,
+    clampControl,
     moldProtection_mm: numberOrZero(values.moldProtection_mm),
     ejectStroke_mm: numberOrZero(values.ejectStroke_mm),
     cushionDistance_mm: numberOrZero(values.cushionDistance_mm),
@@ -121,9 +152,9 @@ const toOptions = (values: OptionFormState): Options => {
     pinRunner3p_mm: numberOrZero(values.pinRunner3p_mm),
     injectionSpeed_mm_s: numberOrZero(values.injectionSpeed_mm_s),
     openCloseStroke_mm: numberOrZero(values.openCloseStroke_mm),
-    openCloseSpeedMode: values.openCloseSpeedMode as Options['openCloseSpeedMode'],
-    ejectingSpeedMode: values.ejectingSpeedMode as Options['ejectingSpeedMode'],
-    coolingOption: values.coolingOption as Options['coolingOption'],
+    openCloseSpeedMode,
+    ejectingSpeedMode,
+    coolingOption,
     safetyFactor: (() => {
       if (values.safetyFactor === '') return 0;
       const numeric = Number(values.safetyFactor);
@@ -148,26 +179,27 @@ export default function CalculatorPage() {
   const parsedOptions = useMemo(() => toOptions(optionValues), [optionValues]);
 
   useEffect(() => {
-    const weight = Number.isFinite(Number(inputValues.weight_g_1cav))
-      ? Number(inputValues.weight_g_1cav)
-      : 0;
-    const nextSprue = deriveSprueLength(inputValues.plateType as InputData['plateType'], weight);
+    const nextSprue = deriveSprueLength(parsedInput.plateType, parsedInput.weight_g_1cav, sprueLengthBins);
     setOptionValues((prev) => {
       const sprueAsString = String(nextSprue);
       return prev.sprueLength_mm === sprueAsString ? prev : { ...prev, sprueLength_mm: sprueAsString };
     });
-  }, [inputValues.weight_g_1cav, inputValues.plateType]);
+  }, [parsedInput.plateType, parsedInput.weight_g_1cav]);
 
   useEffect(() => {
     const sprueLength = Number(optionValues.sprueLength_mm) || 0;
-    const targetPinRunner = derivePinRunner(inputValues.plateType as InputData['plateType'], sprueLength);
+    const targetPinRunner = derivePinRunner(parsedInput.plateType, sprueLength);
     setOptionValues((prev) => {
       const pinAsString = String(targetPinRunner);
       return prev.pinRunner3p_mm === pinAsString ? prev : { ...prev, pinRunner3p_mm: pinAsString };
     });
-  }, [inputValues.plateType, optionValues.sprueLength_mm]);
+  }, [parsedInput.plateType, optionValues.sprueLength_mm]);
 
   const [outputs, setOutputs] = useState(() => computeCycleTime(parsedInput, parsedOptions, tables));
+
+  useEffect(() => {
+    setOutputs(computeCycleTime(parsedInput, parsedOptions, tables));
+  }, [parsedInput, parsedOptions]);
 
   const handleTextChange = (field: keyof InputFormState, value: string) => {
     setInputValues((prev) => {
@@ -219,10 +251,6 @@ export default function CalculatorPage() {
   const handleCalculate = () => {
     const validation = validate();
     setErrors(validation);
-    if (Object.keys(validation).length > 0) return;
-
-    const result = computeCycleTime(toInputData(inputValues), toOptions(optionValues), tables);
-    setOutputs(result);
   };
 
   const handleReset = () => {
@@ -232,7 +260,7 @@ export default function CalculatorPage() {
     setOutputs(computeCycleTime(toInputData(initialInputValues), toOptions(initialOptionValues), tables));
   };
 
-  const isPinRunnerLocked = true;
+  const isPinRunnerLocked = shouldLockPinRunner(parsedInput.plateType);
 
   return (
     <section className="section">
@@ -249,6 +277,8 @@ export default function CalculatorPage() {
           resinOptions={resinOptionsList}
           gradeOptions={gradeOptions}
           isGradeDisabled={!inputValues.resin}
+          cavityOptions={cavityOptionsList}
+          plateTypeOptions={plateTypeOptionsList}
         />
 
         <OptionsSection
@@ -260,6 +290,7 @@ export default function CalculatorPage() {
           openCloseSpeedOptions={[...openCloseSpeedOptionsList]}
           ejectingSpeedOptions={[...ejectingSpeedOptionsList]}
           isPinRunnerLocked={isPinRunnerLocked}
+          coolingOptions={[...coolingOptionsList]}
         />
       </div>
 

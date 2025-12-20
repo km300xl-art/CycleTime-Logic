@@ -10,6 +10,7 @@ type OptionsSectionProps = {
   openCloseSpeedOptions: string[];
   ejectingSpeedOptions: string[];
   isPinRunnerLocked: boolean;
+  coolingOptions: string[];
 };
 
 export function OptionsSection({
@@ -21,6 +22,7 @@ export function OptionsSection({
   openCloseSpeedOptions,
   ejectingSpeedOptions,
   isPinRunnerLocked,
+  coolingOptions,
 }: OptionsSectionProps) {
   return (
     <section className={styles.formSection} aria-labelledby="options-title">
@@ -158,7 +160,7 @@ export function OptionsSection({
             value={values.coolingOption}
             onChange={(e) => onChange('coolingOption', e.target.value)}
           >
-            {['BASE', 'LOGIC'].map((option) => (
+            {coolingOptions.map((option) => (
               <option key={option} value={option}>
                 {option}
               </option>

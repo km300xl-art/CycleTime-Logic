@@ -10,6 +10,8 @@ type InputSectionProps = {
   resinOptions: string[];
   gradeOptions: string[];
   isGradeDisabled: boolean;
+  cavityOptions: string[];
+  plateTypeOptions: string[];
 };
 
 export function InputSection({
@@ -21,6 +23,8 @@ export function InputSection({
   resinOptions,
   gradeOptions,
   isGradeDisabled,
+  cavityOptions,
+  plateTypeOptions,
 }: InputSectionProps) {
   return (
     <section className={styles.formSection} aria-labelledby="input-data-title">
@@ -94,7 +98,7 @@ export function InputSection({
             value={values.cavity}
             onChange={(e) => onChange('cavity', e.target.value)}
           >
-            {[1, 2, 4, 6, 8].map((cavity) => (
+            {cavityOptions.map((cavity) => (
               <option key={cavity} value={cavity}>
                 {cavity}
               </option>
@@ -179,7 +183,7 @@ export function InputSection({
             value={values.plateType}
             onChange={(e) => onChange('plateType', e.target.value)}
           >
-            {['2P', '3P', 'HOT'].map((plate) => (
+            {plateTypeOptions.map((plate) => (
               <option key={plate} value={plate}>
                 {plate}
               </option>
