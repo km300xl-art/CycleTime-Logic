@@ -39,7 +39,7 @@ function normalizeRounding(tables: CycleTimeTables): number {
 function normalizeSafetyFactor(options: Options, tables: CycleTimeTables): number {
   const rawSafety = toNumberSafe(options.safetyFactor ?? tables.defaults?.safetyFactor ?? 0);
   const factor = rawSafety > 1 ? rawSafety / 100 : rawSafety;
-  return clampMin0(factor);
+  return Math.min(1, clampMin0(factor));
 }
 
 function applyMoldTypeAdjustments(
@@ -98,6 +98,9 @@ export function applyCtFinalAssembly(
     rawTotal: number;
     totalWithSafety: number;
     robotEnabled: boolean;
+    robotRequested: boolean;
+    robotStrokeEnabled: boolean;
+    robotOverrideReason?: 'toggle' | 'stroke';
     moldTypeRule?: MoldTypeRule;
     moldTypeAdjustments?: MoldTypeAdjustmentDebug;
     base: StageMap;
@@ -107,9 +110,14 @@ export function applyCtFinalAssembly(
 } {
   const rounding = normalizeRounding(tables);
   const safetyFactor = normalizeSafetyFactor(options, tables);
-  const robotToggle = options.robotEnabled ?? true;
+  const robotToggle = input.robotEnabled ?? options.robotEnabled ?? true;
   const robotStrokeEnabled = toNumberSafe(options.robotStroke_mm) > 0;
   const robotEnabled = robotToggle && robotStrokeEnabled;
+  const robotOverrideReason: 'toggle' | 'stroke' | undefined = (() => {
+    if (!robotToggle) return 'toggle';
+    if (!robotStrokeEnabled) return 'stroke';
+    return undefined;
+  })();
 
   const moldTypeRules = (tables.moldTypeRules ?? (moldTypeRulesJson as unknown as MoldTypeRule[])) ?? [];
 
@@ -136,6 +144,9 @@ export function applyCtFinalAssembly(
       rawTotal,
       totalWithSafety,
       robotEnabled,
+      robotRequested: robotToggle,
+      robotStrokeEnabled,
+      robotOverrideReason,
       moldTypeRule: findMoldRule(input.moldType, moldTypeRules),
       moldTypeAdjustments: adjustments,
       base: baseStages,

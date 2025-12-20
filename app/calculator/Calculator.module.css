@@ -59,6 +59,13 @@
   font-size: 1rem;
 }
 
+.fieldLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
 .field input:focus,
 .field select:focus {
   outline: 2px solid #2563eb;
@@ -123,6 +130,16 @@
   background: #f1f5f9;
   color: #0f172a;
   border-color: #cbd5e1;
+}
+
+.tertiaryButton {
+  background: #e5e7eb;
+  color: #111827;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 .outputSection {

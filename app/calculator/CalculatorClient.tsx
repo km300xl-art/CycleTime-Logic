@@ -1,6 +1,5 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 import rawTables from '../../src/data/tables.json';
@@ -12,6 +11,7 @@ import { DebugPanel } from './components/DebugPanel';
 import styles from './Calculator.module.css';
 import { FieldErrors, InputFormState, OptionFormState } from './types';
 import type { InputData, Options, CycleTimeTables, CycleTimeDebug } from '../../src/lib/ct/types';
+import { maybeApplyAutoEjectStroke, resetEjectStrokeToAuto } from '../../src/lib/ct/excel/ctFinalDefaults';
 
 import cavityOptions from '../../src/data/excel/extracted/extracted/cavityOptions.json';
 import clampControlTable from '../../src/data/excel/extracted/extracted/clampControlTable.json';
@@ -88,12 +88,14 @@ const initialInputValues: InputFormState = {
   thickness_mm: '',
   height_mm_eject: '',
   plateType: defaultPlateType,
+  robotEnabled: true,
 };
 
 const initialOptionValues: OptionFormState = {
   clampControl: '',
   moldProtection_mm: '120',
   ejectStroke_mm: '45',
+  ejectStrokeIsManual: false,
   cushionDistance_mm: '8',
   robotStroke_mm: '100',
   vpPosition_mm: '10',
@@ -104,7 +106,7 @@ const initialOptionValues: OptionFormState = {
   openCloseSpeedMode: defaultOpenCloseSpeed,
   ejectingSpeedMode: defaultEjectingSpeed,
   coolingOption: defaultCoolingOption,
-  safetyFactor: '0',
+  safetyFactor: '10',
 };
 
 const toInputData = (values: InputFormState): InputData => {
@@ -133,6 +135,7 @@ const toInputData = (values: InputFormState): InputData => {
     thickness_mm: numberOrZero(values.thickness_mm),
     height_mm_eject: numberOrZero(values.height_mm_eject),
     plateType,
+    robotEnabled: values.robotEnabled ?? true,
   };
 };
 
@@ -176,15 +179,14 @@ const toOptions = (values: OptionFormState): Options => {
     safetyFactor: (() => {
       if (values.safetyFactor === '') return 0;
       const numeric = Number(values.safetyFactor);
-      const clamped = Number.isFinite(numeric) ? Math.max(0, numeric) : 0;
-      if (clamped > 1) return clamped / 100;
-      return clamped;
+      if (!Number.isFinite(numeric)) return 0;
+      const bounded = Math.min(100, Math.max(0, numeric));
+      return bounded / 100;
     })(),
   };
 };
 
 export default function CalculatorClient() {
-  const searchParams = useSearchParams();
   const [inputValues, setInputValues] = useState<InputFormState>(initialInputValues);
   const [optionValues, setOptionValues] = useState<OptionFormState>(initialOptionValues);
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -199,9 +201,16 @@ export default function CalculatorClient() {
   }, [inputValues.resin]);
 
   useEffect(() => {
-    const sp = new URLSearchParams(window.location.search);
-    setDebugFromQuery(sp.get('debug') === '1');
-  }, [searchParams]);
+    const readDebugFlag = () => {
+      if (typeof window === 'undefined') return;
+      const sp = new URLSearchParams(window.location.search);
+      setDebugFromQuery(sp.get('debug') === '1');
+    };
+
+    readDebugFlag();
+    window.addEventListener('popstate', readDebugFlag);
+    return () => window.removeEventListener('popstate', readDebugFlag);
+  }, []);
 
   // query(debug=1) 값이 바뀌면(페이지 네비게이션으로 들어오면) 상태도 맞춰줌
   useEffect(() => {
@@ -211,7 +220,10 @@ export default function CalculatorClient() {
   }, [debugFromQuery]);
 
   const parsedInput = useMemo(() => toInputData(inputValues), [inputValues]);
-  const parsedOptions = useMemo(() => toOptions(optionValues), [optionValues]);
+  const parsedOptions = useMemo(
+    () => ({ ...toOptions(optionValues), robotEnabled: parsedInput.robotEnabled }),
+    [optionValues, parsedInput.robotEnabled],
+  );
 
   useEffect(() => {
     const nextSprue = deriveSprueLength(parsedInput.plateType, parsedInput.weight_g_1cav, sprueLengthBins);
@@ -229,6 +241,16 @@ export default function CalculatorClient() {
       return prev.pinRunner3p_mm === pinAsString ? prev : { ...prev, pinRunner3p_mm: pinAsString };
     });
   }, [parsedInput.plateType, optionValues.sprueLength_mm]);
+
+  useEffect(() => {
+    setOptionValues((prev) => {
+      const next = maybeApplyAutoEjectStroke(parsedInput.height_mm_eject, prev.ejectStroke_mm, prev.ejectStrokeIsManual);
+      if (next.ejectStroke_mm === prev.ejectStroke_mm && next.ejectStrokeIsManual === prev.ejectStrokeIsManual) {
+        return prev;
+      }
+      return { ...prev, ...next };
+    });
+  }, [parsedInput.height_mm_eject]);
 
   const [outputs, setOutputs] = useState(() => computeCycleTime(parsedInput, parsedOptions, tables));
 
@@ -283,6 +305,32 @@ export default function CalculatorClient() {
     }
   };
 
+  const handleEjectStrokeNumberChange = (value: string) => {
+    if (value === '') {
+      setOptionValues((prev) => ({ ...prev, ejectStroke_mm: '', ejectStrokeIsManual: true }));
+      setErrors((prev) => ({ ...prev, ejectStroke_mm: undefined }));
+      return;
+    }
+
+    const numericValue = Number(value);
+    const safeValue = numericValue < 0 ? '0' : value;
+    setOptionValues((prev) => ({ ...prev, ejectStroke_mm: safeValue, ejectStrokeIsManual: true }));
+    if (numericValue < 0) {
+      setErrors((prev) => ({ ...prev, ejectStroke_mm: 'Must be ≥ 0' }));
+    } else {
+      setErrors((prev) => ({ ...prev, ejectStroke_mm: undefined }));
+    }
+  };
+
+  const handleResetEjectStroke = () => {
+    setOptionValues((prev) => ({ ...prev, ...resetEjectStrokeToAuto(parsedInput.height_mm_eject) }));
+    setErrors((prev) => ({ ...prev, ejectStroke_mm: undefined }));
+  };
+
+  const handleRobotToggle = (enabled: boolean) => {
+    setInputValues((prev) => ({ ...prev, robotEnabled: enabled }));
+  };
+
   const validate = () => {
     const newErrors: FieldErrors = {};
     if (!inputValues.moldType) newErrors.moldType = 'Required';
@@ -332,6 +380,7 @@ export default function CalculatorClient() {
           isGradeDisabled={!inputValues.resin}
           cavityOptions={cavityOptionsList}
           plateTypeOptions={plateTypeOptionsList}
+          onRobotToggle={handleRobotToggle}
         />
 
         <OptionsSection
@@ -344,6 +393,9 @@ export default function CalculatorClient() {
           ejectingSpeedOptions={[...ejectingSpeedOptionsList]}
           isPinRunnerLocked={isPinRunnerLocked}
           coolingOptions={[...coolingOptionsList]}
+          ejectStrokeIsManual={optionValues.ejectStrokeIsManual}
+          onEjectStrokeChange={handleEjectStrokeNumberChange}
+          onResetEjectStroke={handleResetEjectStroke}
         />
       </div>
 

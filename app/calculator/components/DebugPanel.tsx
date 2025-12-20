@@ -97,7 +97,7 @@ export function DebugPanel({ visible, isOpen, onToggle, debug, input, options }:
                     { label: 'Eject stroke (mm)', value: options.ejectStroke_mm },
                     { label: 'Cushion distance (mm)', value: options.cushionDistance_mm },
                     { label: 'Robot stroke (mm)', value: options.robotStroke_mm },
-                    { label: 'Robot enabled', value: String(options.robotEnabled ?? true) },
+                    { label: 'Robot enabled', value: (options.robotEnabled ?? true) ? 'ON' : 'OFF' },
                     { label: 'VP position (mm)', value: options.vpPosition_mm },
                     { label: 'Sprue length (mm)', value: options.sprueLength_mm },
                     { label: 'Pin/runner 3P (mm)', value: options.pinRunner3p_mm },
@@ -155,9 +155,13 @@ export function DebugPanel({ visible, isOpen, onToggle, debug, input, options }:
                     {
                       label: 'Robot enabled',
                       value: debug?.robot
-                        ? `${debug.robot.enabled ? 'Yes' : 'No'} (requested=${String(
-                            debug.robot.requested ?? true,
-                          )}, stroke=${debug.robot.strokeEnabled ? '>' : '='}0)`
+                        ? `${debug.robot.enabled ? 'Yes' : 'No'} (requested=${
+                            debug.robot.requested === undefined ? '—' : debug.robot.requested ? 'ON' : 'OFF'
+                          }, stroke=${debug.robot.strokeEnabled ? '>' : '='}0${
+                            debug.robot.overriddenToZero
+                              ? `, override=${debug.robot.overrideReason ?? 'toggle'}`
+                              : ''
+                          })`
                         : '—',
                     },
                     {

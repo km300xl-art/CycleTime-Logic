@@ -4,6 +4,13 @@ import tables from '../../data/tables.json';
 import examples from '../../data/examples.json';
 import { computeCycleTime, computeCycleTimeWithDebug } from './computeCycleTime';
 import { applyCtFinalAssembly } from './excel/ctFinalAssemblyExcel';
+import {
+  computeDefaultEjectStroke,
+  getAutoEjectStrokeValue,
+  getCtFinalAD15,
+  maybeApplyAutoEjectStroke,
+  resetEjectStrokeToAuto,
+} from './excel/ctFinalDefaults';
 import { InputData, Options, Outputs } from './types';
 
 type Example = {
@@ -193,6 +200,80 @@ describe('computeCycleTime edge cases', () => {
     assert.equal(stages.fill.toFixed(2), '0.01');
     assert.equal(total.toFixed(2), '0.04', 'raw total should be rounded after summing raw stages');
     assert.equal(stageSumRounded.toFixed(2), '0.07', 'stage rounding should not drive the total calculation');
+  });
+});
+
+describe('robot and eject stroke parity', () => {
+  test('robot toggle comes from input and zeros the stage/time when OFF', () => {
+    const example = examples.find((ex) => ex.id === 'excel_case_01') as Example;
+    assert.ok(example, 'excel_case_01 example is required');
+
+    const on = computeCycleTimeWithDebug(
+      { ...(example.input as InputData), robotEnabled: true },
+      example.options as Options,
+      tables,
+    );
+
+    const off = computeCycleTimeWithDebug(
+      { ...(example.input as InputData), robotEnabled: false },
+      example.options as Options,
+      tables,
+    );
+
+    assert.ok(on.robot > 0, 'robot should be present when enabled');
+    assert.equal(off.robot, 0, 'robot should be zeroed when disabled');
+
+    const robotRaw = on.debug.stages.afterMold.robot;
+    const expectedReduction = robotRaw * (1 + on.debug.safetyFactor);
+    const expectedOffTotal = on.debug.totals.totalWithSafety - expectedReduction;
+
+    assert.equal(off.total.toFixed(2), expectedOffTotal.toFixed(2), 'total should drop by the robot contribution');
+    assert.ok(off.debug.robot?.overriddenToZero, 'debug should report the robot override');
+    assert.equal(off.debug.robot?.overrideReason, 'toggle');
+  });
+
+  test('default eject stroke tracks height unless manual, and reset restores auto', () => {
+    const ad15 = getCtFinalAD15();
+    const autoLow = computeDefaultEjectStroke(30, ad15);
+    assert.equal(autoLow, 45);
+
+    const autoHigh = computeDefaultEjectStroke(40, ad15);
+    assert.equal(autoHigh, 40 * ad15);
+
+    const autoState = maybeApplyAutoEjectStroke(30, '0', false);
+    assert.equal(autoState.ejectStroke_mm, '45');
+    assert.equal(autoState.ejectStrokeIsManual, false);
+
+    const manualState = maybeApplyAutoEjectStroke(30, '123', true);
+    const afterHeightChange = maybeApplyAutoEjectStroke(80, manualState.ejectStroke_mm, manualState.ejectStrokeIsManual);
+    assert.equal(afterHeightChange.ejectStroke_mm, '123', 'manual entry should be preserved across height changes');
+
+    const reset = resetEjectStrokeToAuto(80);
+    assert.equal(reset.ejectStroke_mm, getAutoEjectStrokeValue(80));
+    assert.equal(reset.ejectStrokeIsManual, false);
+  });
+});
+
+describe('safety factor parity', () => {
+  test('safety factor applies a percent to the raw total and rounds once', () => {
+    const example = examples[0] as Example;
+    const base = computeCycleTimeWithDebug(example.input as InputData, { ...(example.options as Options), safetyFactor: 0 }, tables);
+    const withTenPercent = computeCycleTimeWithDebug(
+      example.input as InputData,
+      { ...(example.options as Options), safetyFactor: 0.1 },
+      tables,
+    );
+
+    const expectedWithTen = Math.round(base.debug.totals.rawTotal * 1.1 * 10 ** base.debug.rounding) / 10 ** base.debug.rounding;
+    assert.equal(withTenPercent.total.toFixed(2), expectedWithTen.toFixed(2));
+
+    const withTwentyPercent = computeCycleTimeWithDebug(
+      example.input as InputData,
+      { ...(example.options as Options), safetyFactor: 0.2 },
+      tables,
+    );
+
+    assert.ok(withTwentyPercent.total > withTenPercent.total, 'raising the safety factor should raise the total');
   });
 });
 

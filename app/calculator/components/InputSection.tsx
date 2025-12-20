@@ -6,6 +6,7 @@ type InputSectionProps = {
   errors: FieldErrors;
   onChange: (field: keyof InputFormState, value: string) => void;
   onNumberChange: (field: keyof InputFormState, value: string) => void;
+  onRobotToggle: (enabled: boolean) => void;
   moldTypeOptions: string[];
   resinOptions: string[];
   gradeOptions: string[];
@@ -25,6 +26,7 @@ export function InputSection({
   isGradeDisabled,
   cavityOptions,
   plateTypeOptions,
+  onRobotToggle,
 }: InputSectionProps) {
   return (
     <section className={styles.formSection} aria-labelledby="input-data-title">
@@ -190,6 +192,19 @@ export function InputSection({
             ))}
           </select>
           {errors.plateType && <p className={styles.error}>{errors.plateType}</p>}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="robotEnabled">Robot</label>
+          <select
+            id="robotEnabled"
+            name="robotEnabled"
+            value={values.robotEnabled ? 'on' : 'off'}
+            onChange={(e) => onRobotToggle(e.target.value === 'on')}
+          >
+            <option value="on">ON</option>
+            <option value="off">OFF</option>
+          </select>
         </div>
       </div>
     </section>
