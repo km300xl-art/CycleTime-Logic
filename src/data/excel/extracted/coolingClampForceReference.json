@@ -1,0 +1,99 @@
+{
+  "minCoolingTime_s": 11.5,
+  "clampForceReference": [
+    {
+      "clampForce_ton": 50.0,
+      "timeAdd_s": -11.1
+    },
+    {
+      "clampForce_ton": 70.0,
+      "timeAdd_s": -8.0
+    },
+    {
+      "clampForce_ton": 90.0,
+      "timeAdd_s": -3.5
+    },
+    {
+      "clampForce_ton": 100.0,
+      "timeAdd_s": 0.5
+    },
+    {
+      "clampForce_ton": 150.0,
+      "timeAdd_s": 1.0
+    },
+    {
+      "clampForce_ton": 200.0,
+      "timeAdd_s": 3.0
+    },
+    {
+      "clampForce_ton": 250.0,
+      "timeAdd_s": 3.5
+    },
+    {
+      "clampForce_ton": 300.0,
+      "timeAdd_s": 3.6
+    },
+    {
+      "clampForce_ton": 350.0,
+      "timeAdd_s": 3.0
+    },
+    {
+      "clampForce_ton": 400.0,
+      "timeAdd_s": 1.5
+    },
+    {
+      "clampForce_ton": 450.0,
+      "timeAdd_s": 1.8
+    },
+    {
+      "clampForce_ton": 500.0,
+      "timeAdd_s": 2.0
+    },
+    {
+      "clampForce_ton": 550.0,
+      "timeAdd_s": 3.2
+    },
+    {
+      "clampForce_ton": 600.0,
+      "timeAdd_s": 3.5
+    },
+    {
+      "clampForce_ton": 650.0,
+      "timeAdd_s": 4.5
+    },
+    {
+      "clampForce_ton": 700.0,
+      "timeAdd_s": 6.2
+    },
+    {
+      "clampForce_ton": 750.0,
+      "timeAdd_s": 7.8
+    },
+    {
+      "clampForce_ton": 800.0,
+      "timeAdd_s": 8.0
+    },
+    {
+      "clampForce_ton": 850.0,
+      "timeAdd_s": 9.0
+    },
+    {
+      "clampForce_ton": 900.0,
+      "timeAdd_s": 12.0
+    },
+    {
+      "clampForce_ton": 1000.0,
+      "timeAdd_s": 6.0
+    },
+    {
+      "clampForce_ton": 1200.0,
+      "timeAdd_s": 6.2
+    },
+    {
+      "clampForce_ton": 2500.0,
+      "timeAdd_s": 6.3
+    }
+  ],
+  "sourceSheet": "Cooling",
+  "refRange": "Q32:R55 (numeric rows only)"
+}
