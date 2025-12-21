@@ -238,8 +238,8 @@ describe('robot and eject stroke parity', () => {
     assert.ok(on.robot > 0, 'robot should be present when enabled');
     assert.equal(off.robot, 0, 'robot should be zeroed when disabled');
 
-    const robotRaw = on.debug.stages.afterMold.robot;
-    const expectedReduction = robotRaw * (1 + on.debug.safetyFactor);
+    const robotRaw = on.debug.stages.afterRobot.robot;
+    const expectedReduction = robotRaw; // safety factor does not apply to robot
     const expectedOffTotal = on.debug.totals.totalWithSafety - expectedReduction;
 
     assert.equal(off.total.toFixed(2), expectedOffTotal.toFixed(2), 'total should drop by the robot contribution');
@@ -270,25 +270,42 @@ describe('robot and eject stroke parity', () => {
 });
 
 describe('safety factor parity', () => {
-  test('safety factor applies a percent to the raw total and rounds once', () => {
-    const example = examples[0] as Example;
-    const base = computeCycleTimeWithDebug(example.input as InputData, { ...(example.options as Options), safetyFactor: 0 }, tables);
-    const withTenPercent = computeCycleTimeWithDebug(
+  test('applies safety factor to individual stages (excluding robot)', () => {
+    const example = examples.find((ex) => ex.input.plateType !== '2P') ?? (examples[0] as Example);
+    const base = computeCycleTimeWithDebug(
+      example.input as InputData,
+      { ...(example.options as Options), safetyFactor: 0 },
+      tables,
+    );
+    const withSafety = computeCycleTimeWithDebug(
       example.input as InputData,
       { ...(example.options as Options), safetyFactor: 0.1 },
       tables,
     );
 
-    const expectedWithTen = Math.round(base.debug.totals.rawTotal * 1.1 * 10 ** base.debug.rounding) / 10 ** base.debug.rounding;
-    assert.equal(withTenPercent.total.toFixed(2), expectedWithTen.toFixed(2));
+    const multiplier = 1.1;
+    const rounded = (value: number) =>
+      Math.round(value * 10 ** base.debug.rounding) / 10 ** base.debug.rounding;
 
-    const withTwentyPercent = computeCycleTimeWithDebug(
-      example.input as InputData,
-      { ...(example.options as Options), safetyFactor: 0.2 },
-      tables,
-    );
+    const expectedRawTotal =
+      base.debug.stages.afterRobot.fill * multiplier +
+      base.debug.stages.afterRobot.pack * multiplier +
+      base.debug.stages.afterRobot.cool * multiplier +
+      base.debug.stages.afterRobot.open * multiplier +
+      base.debug.stages.afterRobot.eject * multiplier +
+      base.debug.stages.afterRobot.close * multiplier +
+      base.debug.stages.afterRobot.robot;
 
-    assert.ok(withTwentyPercent.total > withTenPercent.total, 'raising the safety factor should raise the total');
+    assert.equal(withSafety.fill.toFixed(2), rounded(base.debug.stages.afterRobot.fill * multiplier).toFixed(2));
+    assert.equal(withSafety.pack.toFixed(2), rounded(base.debug.stages.afterRobot.pack * multiplier).toFixed(2));
+    assert.equal(withSafety.cool.toFixed(2), rounded(base.debug.stages.afterRobot.cool * multiplier).toFixed(2));
+    assert.equal(withSafety.open.toFixed(2), rounded(base.debug.stages.afterRobot.open * multiplier).toFixed(2));
+    assert.equal(withSafety.eject.toFixed(2), rounded(base.debug.stages.afterRobot.eject * multiplier).toFixed(2));
+    assert.equal(withSafety.close.toFixed(2), rounded(base.debug.stages.afterRobot.close * multiplier).toFixed(2));
+    assert.equal(withSafety.robot.toFixed(2), base.debug.stages.afterRobot.robot.toFixed(2), 'robot stays unscaled');
+
+    const expectedTotal = rounded(expectedRawTotal);
+    assert.equal(withSafety.total.toFixed(2), expectedTotal.toFixed(2));
   });
 });
 
