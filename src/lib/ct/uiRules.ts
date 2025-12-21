@@ -23,3 +23,5 @@ export const derivePinRunner = (plateType: InputData['plateType'], sprueLength: 
 };
 
 export const shouldLockPinRunner = (plateType: InputData['plateType']) => plateType === '2P' || plateType === 'HOT';
+
+export const shouldLockSprueLength = (plateType: InputData['plateType']) => plateType === 'HOT';

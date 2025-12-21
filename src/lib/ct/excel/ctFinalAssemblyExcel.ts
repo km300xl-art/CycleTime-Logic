@@ -10,6 +10,7 @@ import type {
 import moldTypeRulesJson from "../../../data/excel/extracted/moldTypeRules.json";
 
 const STAGES: StageName[] = ["fill", "pack", "cool", "open", "eject", "robot", "close"];
+const SAFETY_APPLIED_STAGES: StageName[] = ["fill", "pack", "cool", "open", "eject", "close"];
 
 function isFiniteNumber(v: unknown): v is number {
   return typeof v === "number" && Number.isFinite(v);
@@ -101,10 +102,12 @@ export function applyCtFinalAssembly(
     base: StageMap;
     afterMold: StageMap;
     afterRobot: StageMap;
+    afterSafety: StageMap;
   };
 } {
   const rounding = normalizeRounding(tables);
   const safetyFactor = normalizeSafetyFactor(options, tables);
+  const safetyMultiplier = 1 + safetyFactor;
   const robotToggle = input.robotEnabled ?? options.robotEnabled ?? true;
   const robotStrokeEnabled = toNumberSafe(options.robotStroke_mm) > 0;
   const robotEnabled = robotToggle && robotStrokeEnabled;
@@ -119,13 +122,17 @@ export function applyCtFinalAssembly(
   const { stages: afterMold, adjustments } = applyMoldTypeAdjustments(baseStages, input.moldType, moldTypeRules);
   const afterRobot: StageMap = { ...afterMold, robot: robotEnabled ? afterMold.robot : 0 };
 
-  // Raw total (no rounding). Safety factor applies to the total, not to individual stages.
-  const rawTotal = STAGES.reduce((sum, stage) => sum + toNumberSafe(afterRobot[stage]), 0);
-  const totalWithSafety = rawTotal * (1 + safetyFactor);
+  const afterSafety: StageMap = { ...afterRobot };
+  for (const stage of SAFETY_APPLIED_STAGES) {
+    afterSafety[stage] = afterRobot[stage] * safetyMultiplier;
+  }
 
-  const roundedStages: StageMap = { ...afterRobot };
+  const rawTotal = STAGES.reduce((sum, stage) => sum + toNumberSafe(afterRobot[stage]), 0);
+  const totalWithSafety = STAGES.reduce((sum, stage) => sum + toNumberSafe(afterSafety[stage]), 0);
+
+  const roundedStages: StageMap = { ...afterSafety };
   for (const stage of STAGES) {
-    roundedStages[stage] = round(afterRobot[stage], rounding);
+    roundedStages[stage] = round(afterSafety[stage], rounding);
   }
 
   const total = round(totalWithSafety, rounding);
@@ -147,6 +154,7 @@ export function applyCtFinalAssembly(
       base: baseStages,
       afterMold,
       afterRobot,
+      afterSafety,
     },
   };
 }

@@ -81,7 +81,7 @@ function computeCycleTimeInternal(
   const base = buildBaseStages(input, options, tables, withDebug);
   const assembled = applyCtFinalAssembly(base.stages, input, options, tables);
 
-  const rawStages: StageMap = { ...assembled.debug.afterRobot };
+  const rawStages: StageMap = { ...assembled.debug.afterSafety };
   const displayStages: StageMap = { ...assembled.stages };
 
   const debug: CycleTimeDebug = {
@@ -91,6 +91,7 @@ function computeCycleTimeInternal(
       base: base.stages,
       afterMold: assembled.debug.afterMold,
       afterRobot: assembled.debug.afterRobot,
+      afterSafety: assembled.debug.afterSafety,
       raw: rawStages,
       display: displayStages,
     },

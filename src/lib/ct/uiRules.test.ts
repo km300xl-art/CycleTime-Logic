@@ -2,7 +2,14 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import sprueLengthByWeight from '../../data/excel/extracted/extracted/sprueLengthByWeight.json';
-import { derivePinRunner, deriveSprueLength, selectSprueLength, shouldLockPinRunner, SprueBin } from './uiRules';
+import {
+  derivePinRunner,
+  deriveSprueLength,
+  selectSprueLength,
+  shouldLockPinRunner,
+  shouldLockSprueLength,
+  SprueBin,
+} from './uiRules';
 
 const bins = sprueLengthByWeight as SprueBin[];
 
@@ -38,5 +45,12 @@ describe('pin runner lock and forcing', () => {
   it('allows 3P to follow sprue-derived offset', () => {
     assert.equal(shouldLockPinRunner('3P'), false);
     assert.equal(derivePinRunner('3P', 70), 100);
+  });
+
+  it('locks sprue length when plate type is HOT', () => {
+    assert.equal(shouldLockSprueLength('HOT'), true);
+    assert.equal(shouldLockSprueLength('2P'), false);
+    assert.equal(shouldLockSprueLength('3P'), false);
+    assert.equal(deriveSprueLength('HOT', 500, bins), 0);
   });
 });

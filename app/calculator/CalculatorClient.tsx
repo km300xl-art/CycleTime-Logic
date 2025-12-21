@@ -12,6 +12,7 @@ import styles from './Calculator.module.css';
 import { FieldErrors, InputFormState, OptionFormState } from './types';
 import type { InputData, Options, CycleTimeTables } from '../../src/lib/ct/types';
 import { maybeApplyAutoEjectStroke, resetEjectStrokeToAuto } from '../../src/lib/ct/excel/ctFinalDefaults';
+import { hasValidationErrors, validateRequiredInputs } from '../../src/lib/ct/formValidation';
 
 import cavityOptions from '../../src/data/excel/extracted/extracted/cavityOptions.json';
 import clampControlTable from '../../src/data/excel/extracted/extracted/clampControlTable.json';
@@ -24,7 +25,13 @@ import resinGrades from '../../src/data/excel/extracted/extracted/resinGrades.js
 import resinOptions from '../../src/data/excel/extracted/extracted/resinOptions.json';
 import sprueLengthByWeight from '../../src/data/excel/extracted/extracted/sprueLengthByWeight.json';
 
-import { derivePinRunner, deriveSprueLength, shouldLockPinRunner, SprueBin } from '../../src/lib/ct/uiRules';
+import {
+  derivePinRunner,
+  deriveSprueLength,
+  shouldLockPinRunner,
+  shouldLockSprueLength,
+  SprueBin,
+} from '../../src/lib/ct/uiRules';
 
 // 이 3줄이 반드시 필요
 const moldTypeOptions = moldTypes as string[];
@@ -318,18 +325,13 @@ export default function CalculatorClient() {
     setInputValues((prev) => ({ ...prev, robotEnabled: enabled }));
   };
 
-  const validate = () => {
-    const newErrors: FieldErrors = {};
-    if (!inputValues.moldType) newErrors.moldType = 'Required';
-    if (!inputValues.resin) newErrors.resin = 'Required';
-    if (!inputValues.cavity) newErrors.cavity = 'Required';
-    return newErrors;
-  };
-
   const handleCalculate = () => {
-    const validation = validate();
+    const validation = validateRequiredInputs(inputValues);
     setErrors(validation);
-    if (Object.keys(validation).length > 0) return;
+    if (hasValidationErrors(validation)) {
+      setSnapshot(createInitialSnapshot());
+      return;
+    }
     const nextSnapshot = calculateSnapshot(parsedInput, parsedOptions, tables, debugEnabled);
     setSnapshot(nextSnapshot);
     if (debugEnabled) {
@@ -345,6 +347,7 @@ export default function CalculatorClient() {
   };
 
   const isPinRunnerLocked = shouldLockPinRunner(parsedInput.plateType);
+  const isSprueLocked = shouldLockSprueLength(parsedInput.plateType);
 
   useEffect(() => {
     setSnapshot((prev) => recomputeFromApplied(prev, tables, debugEnabled));
@@ -399,6 +402,7 @@ export default function CalculatorClient() {
           openCloseSpeedOptions={[...openCloseSpeedOptionsList]}
           ejectingSpeedOptions={[...ejectingSpeedOptionsList]}
           isPinRunnerLocked={isPinRunnerLocked}
+          isSprueLocked={isSprueLocked}
           coolingOptions={[...coolingOptionsList]}
           ejectStrokeIsManual={optionValues.ejectStrokeIsManual}
           onEjectStrokeChange={handleEjectStrokeNumberChange}

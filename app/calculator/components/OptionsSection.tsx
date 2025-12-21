@@ -12,6 +12,7 @@ type OptionsSectionProps = {
   openCloseSpeedOptions: string[];
   ejectingSpeedOptions: string[];
   isPinRunnerLocked: boolean;
+  isSprueLocked: boolean;
   coolingOptions: string[];
   ejectStrokeIsManual: boolean;
 };
@@ -27,6 +28,7 @@ export function OptionsSection({
   openCloseSpeedOptions,
   ejectingSpeedOptions,
   isPinRunnerLocked,
+  isSprueLocked,
   coolingOptions,
   ejectStrokeIsManual,
 }: OptionsSectionProps) {
@@ -199,7 +201,7 @@ export function OptionsSection({
             />
             <span className={styles.unit}>%</span>
           </div>
-          <p className={styles.muted}>Applies to TOTAL (CT_FINAL safety factor).</p>
+          <p className={styles.muted}>Applies per stage (ROBOT excluded), matching CT_FINAL.</p>
           {errors.safetyFactor && <p className={styles.error}>{errors.safetyFactor}</p>}
         </div>
 
@@ -213,11 +215,13 @@ export function OptionsSection({
               min={0}
               inputMode="decimal"
               value={values.sprueLength_mm}
+              disabled={isSprueLocked}
               onChange={(e) => onNumberChange('sprueLength_mm', e.target.value)}
             />
             <span className={styles.unit}>mm</span>
           </div>
           {errors.sprueLength_mm && <p className={styles.error}>{errors.sprueLength_mm}</p>}
+          {isSprueLocked && <p className={styles.muted}>Locked to 0 when plate type is HOT.</p>}
         </div>
 
         <div className={styles.field}>

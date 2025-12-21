@@ -137,6 +137,7 @@ export type CycleTimeDebug = {
     base: StageMap;
     afterMold: StageMap;
     afterRobot: StageMap;
+    afterSafety: StageMap;
     raw: StageMap;
     display: StageMap;
   };
