@@ -99,7 +99,7 @@ const initialInputValues: InputFormState = {
 };
 
 const initialOptionValues: OptionFormState = {
-  clampControl: '',
+  clampControl: 'Logic valve',
   moldProtection_mm: '120',
   ejectStroke_mm: '45',
   ejectStrokeIsManual: false,
