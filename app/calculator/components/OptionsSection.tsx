@@ -89,17 +89,14 @@ export function OptionsSection({
               type="number"
               min={0}
               inputMode="decimal"
-              value={values.ejectStroke_mm}
-              onChange={(e) => onEjectStrokeChange(e.target.value)}
-            />
-            <span className={styles.unit}>mm</span>
-          </div>
-          <p className={styles.muted}>
-            Default is auto from Height (CT_FINAL!AD15). Click Reset to Auto to restore.
-            {ejectStrokeIsManual ? ' (Manual override active)' : ''}
-          </p>
-          {errors.ejectStroke_mm && <p className={styles.error}>{errors.ejectStroke_mm}</p>}
-        </div>
+          value={values.ejectStroke_mm}
+          onChange={(e) => onEjectStrokeChange(e.target.value)}
+        />
+        <span className={styles.unit}>mm</span>
+      </div>
+      {ejectStrokeIsManual && <p className={styles.muted}>Manual override active.</p>}
+      {errors.ejectStroke_mm && <p className={styles.error}>{errors.ejectStroke_mm}</p>}
+    </div>
 
         <div className={styles.field}>
           <label htmlFor="robotStroke_mm">Robot Stroke</label>
@@ -196,14 +193,13 @@ export function OptionsSection({
               min={0}
               max={100}
               inputMode="decimal"
-              value={values.safetyFactor}
-              onChange={(e) => onNumberChange('safetyFactor', e.target.value)}
-            />
-            <span className={styles.unit}>%</span>
-          </div>
-          <p className={styles.muted}>Applies per stage (ROBOT excluded), matching CT_FINAL.</p>
-          {errors.safetyFactor && <p className={styles.error}>{errors.safetyFactor}</p>}
-        </div>
+          value={values.safetyFactor}
+          onChange={(e) => onNumberChange('safetyFactor', e.target.value)}
+        />
+        <span className={styles.unit}>%</span>
+      </div>
+      {errors.safetyFactor && <p className={styles.error}>{errors.safetyFactor}</p>}
+    </div>
 
         <div className={styles.field}>
           <label htmlFor="sprueLength_mm">Sprue Length</label>
@@ -233,15 +229,15 @@ export function OptionsSection({
               type="number"
               min={0}
               inputMode="decimal"
-              value={values.pinRunner3p_mm}
-              disabled={isPinRunnerLocked}
-              onChange={(e) => onNumberChange('pinRunner3p_mm', e.target.value)}
-            />
-            <span className={styles.unit}>mm</span>
-          </div>
-          {errors.pinRunner3p_mm && <p className={styles.error}>{errors.pinRunner3p_mm}</p>}
-          {isPinRunnerLocked && <p className={styles.muted}>Value is fixed by plate type (Excel rule).</p>}
-        </div>
+          value={values.pinRunner3p_mm}
+          disabled={isPinRunnerLocked}
+          onChange={(e) => onNumberChange('pinRunner3p_mm', e.target.value)}
+        />
+        <span className={styles.unit}>mm</span>
+      </div>
+      {errors.pinRunner3p_mm && <p className={styles.error}>{errors.pinRunner3p_mm}</p>}
+      {isPinRunnerLocked && <p className={styles.muted}>Auto-set based on plate type.</p>}
+    </div>
 
         <div className={styles.field}>
           <label htmlFor="cushionDistance_mm">Cushion Distance</label>
