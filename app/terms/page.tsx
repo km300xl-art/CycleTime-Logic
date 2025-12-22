@@ -1,11 +1,45 @@
 export default function TermsPage() {
   return (
     <section className="section">
-      <h1>Terms of Service</h1>
+      <h1>Terms</h1>
+
       <p>
-        Outline your acceptable use, disclaimers, and liability limits here. The static site format
-        keeps this page easy to maintain and publish.
+        <strong>시행일:</strong> 2025-12-21
       </p>
+
+      <h2>1) 목적</h2>
+      <p>본 약관은 CycleTime Logic 웹서비스의 이용조건 및 책임 범위를 정합니다.</p>
+
+      <h2>2) 서비스 성격(중요)</h2>
+      <ul>
+        <li>본 서비스의 계산 결과는 참고용이며, 실제 금형/설비/공정 조건에 따라 차이가 발생할 수 있습니다.</li>
+        <li>이용자는 결과를 최종 의사결정의 유일한 근거로 사용하지 않아야 합니다.</li>
+      </ul>
+
+      <h2>3) 책임 제한</h2>
+      <p>
+        서비스 제공자는 본 서비스의 사용 또는 사용 불가로 인해 발생한 직접·간접 손해에 대해, 관련 법령이 허용하는 범위
+        내에서 책임을 제한합니다.
+      </p>
+
+      <h2>4) 지적재산권</h2>
+      <p>
+        서비스에 포함된 콘텐츠(문서, UI, 데이터 구조, 로직 등)에 대한 권리는 서비스 제공자 또는 정당한 권리자에게
+        귀속됩니다. 오픈소스 공개/라이선스 정책은 레포의 LICENSE/README를 따릅니다.
+      </p>
+
+      <h2>5) 금지행위</h2>
+      <ul>
+        <li>서비스의 비정상적 호출(과도한 자동화, 스팸 트래픽 유발)</li>
+        <li>서비스의 보안/운영을 방해하는 행위</li>
+        <li>법령 또는 제3자 권리를 침해하는 행위</li>
+      </ul>
+
+      <h2>6) 광고</h2>
+      <p>서비스는 운영을 위해 광고를 노출할 수 있습니다(AdSense 등).</p>
+
+      <h2>7) 약관 변경</h2>
+      <p>약관 변경 시 시행일과 함께 본 페이지에 공지합니다.</p>
     </section>
   );
 }
