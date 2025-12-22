@@ -2,10 +2,64 @@ export default function PrivacyPage() {
   return (
     <section className="section">
       <h1>Privacy Policy</h1>
+
       <p>
-        Placeholder text for your privacy practices. Update this page with details about data
-        handling, analytics, and contact information.
+        <strong>시행일:</strong> 2025-12-21
+        <br />
+        <strong>서비스명:</strong> CycleTime Logic
+        <br />
+        <strong>문의:</strong> (km300xl@gmail.com)
       </p>
+
+      <h2>1) 개요</h2>
+      <p>
+        CycleTime Logic은 회원가입 기능이 없으며, 사용자가 입력한 값은 <strong>브라우저에서만 계산</strong>되고 서버에
+        저장되지 않습니다. 다만, 본 사이트가 Google AdSense를 사용하여 광고를 제공하는 경우, 광고 제공 과정에서{' '}
+        <strong>쿠키 및 유사 기술</strong>이 사용될 수 있습니다.
+      </p>
+
+      <h2>2) 수집·이용하는 정보</h2>
+      <h3>(1) 사용자가 직접 제공하는 정보</h3>
+      <ul>
+        <li>본 서비스는 회원가입/로그인을 제공하지 않으며, 계산을 위해 입력한 값은 서버로 전송·저장하지 않습니다.</li>
+      </ul>
+
+      <h3>(2) 자동으로 생성·수집될 수 있는 정보(광고/브라우저 환경)</h3>
+      <ul>
+        <li>
+          광고 제공 및 측정을 위해 쿠키(또는 유사 식별자), IP 기반의 대략적 위치 정보, 브라우저/기기 정보 등이 제3자
+          광고 사업자에 의해 처리될 수 있습니다.
+        </li>
+      </ul>
+
+      <h2>3) Google AdSense 및 쿠키 사용 안내</h2>
+      <p>본 사이트는 Google AdSense를 포함한 제3자 광고 서비스를 사용할 수 있으며, 다음 사항을 사용자에게 고지합니다.</p>
+      <ul>
+        <li>제3자 벤더(Google 포함)는 쿠키를 사용하여 사용자의 이전 방문 기록 등을 기반으로 광고를 제공할 수 있습니다.</li>
+        <li>
+          Google의 광고 쿠키 사용으로 Google 및 파트너는 사용자의 사이트 방문 기록 및/또는 다른 사이트 방문 기록을
+          기반으로 광고를 제공할 수 있습니다.
+        </li>
+        <li>
+          사용자는 Google의 광고 설정(Ads Settings)에서 맞춤형 광고를 관리하거나 해제할 수 있으며, 일부 지역에서는 업계
+          표준 옵트아웃(예: aboutads)을 통해서도 설정할 수 있습니다.
+        </li>
+      </ul>
+
+      <h2>4) 쿠키 설정 방법</h2>
+      <ul>
+        <li>브라우저 설정에서 쿠키 저장을 거부하거나 삭제할 수 있습니다.</li>
+        <li>쿠키를 차단하면 광고가 정상적으로 표시되지 않거나, 비개인화 광고로만 표시될 수 있습니다.</li>
+      </ul>
+
+      <h2>5) EEA/영국/스위스 사용자에 대한 동의(해당 시)</h2>
+      <p>
+        EEA/영국/스위스 사용자에게 개인화 광고를 제공하는 경우, Google 정책에 따라 동의 관리(CMP) 요구가 적용될 수
+        있습니다. 필요 시 본 사이트는 해당 지역 사용자에게 동의 UI를 제공할 수 있습니다.
+      </p>
+
+      <h2>6) 개인정보처리방침의 변경</h2>
+      <p>본 방침이 변경되는 경우, 본 페이지를 통해 시행일과 함께 공지합니다.</p>
     </section>
   );
 }
