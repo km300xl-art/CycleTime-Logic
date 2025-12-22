@@ -375,66 +375,74 @@ export default function CalculatorClient() {
 
   return (
     <section className="section">
-      <h1 className={styles.pageTitle}>Cycle Time Calculator</h1>
-      <p className={styles.pageLead}>Explore how clamp control and part inputs shape the cycle-time profile.</p>
-
-      <div className={styles.formLayout}>
-        <InputSection
-          values={inputValues}
-          errors={errors}
-          onChange={handleTextChange}
-          onNumberChange={(field, value) => handleNumberChange(field, value, setInputValues)}
-          moldTypeOptions={moldTypeOptions}
-          resinOptions={resinOptionsList}
-          gradeOptions={gradeOptions}
-          isGradeDisabled={!inputValues.resin}
-          cavityOptions={cavityOptionsList}
-          plateTypeOptions={plateTypeOptionsList}
-          onRobotToggle={handleRobotToggle}
-        />
-
-        <OptionsSection
-          values={optionValues}
-          errors={errors}
-          onChange={handleOptionTextChange}
-          onNumberChange={(field, value) => handleNumberChange(field, value, setOptionValues)}
-          clampControlOptions={[...clampControlOptionsList]}
-          openCloseSpeedOptions={[...openCloseSpeedOptionsList]}
-          ejectingSpeedOptions={[...ejectingSpeedOptionsList]}
-          isPinRunnerLocked={isPinRunnerLocked}
-          isSprueLocked={isSprueLocked}
-          coolingOptions={[...coolingOptionsList]}
-          ejectStrokeIsManual={optionValues.ejectStrokeIsManual}
-          onEjectStrokeChange={handleEjectStrokeNumberChange}
-          onResetEjectStroke={handleResetEjectStroke}
-        />
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>Cycle Time Calculator</h1>
+        <p className={styles.pageLead}>Explore how clamp control and part inputs shape the cycle-time profile.</p>
       </div>
 
-      <div className={styles.actions}>
-        <button type="button" className={`${styles.button} ${styles.primary}`} onClick={handleCalculate}>
-          Calculate
-        </button>
-        <button type="button" className={`${styles.button} ${styles.secondary}`} onClick={handleReset}>
-          Reset
-        </button>
+      <div className={styles.pageGrid}>
+        <div className={styles.columnStack}>
+          <InputSection
+            values={inputValues}
+            errors={errors}
+            onChange={handleTextChange}
+            onNumberChange={(field, value) => handleNumberChange(field, value, setInputValues)}
+            moldTypeOptions={moldTypeOptions}
+            resinOptions={resinOptionsList}
+            gradeOptions={gradeOptions}
+            isGradeDisabled={!inputValues.resin}
+            cavityOptions={cavityOptionsList}
+            plateTypeOptions={plateTypeOptionsList}
+            onRobotToggle={handleRobotToggle}
+          />
+
+          <OptionsSection
+            values={optionValues}
+            errors={errors}
+            onChange={handleOptionTextChange}
+            onNumberChange={(field, value) => handleNumberChange(field, value, setOptionValues)}
+            clampControlOptions={[...clampControlOptionsList]}
+            openCloseSpeedOptions={[...openCloseSpeedOptionsList]}
+            ejectingSpeedOptions={[...ejectingSpeedOptionsList]}
+            isPinRunnerLocked={isPinRunnerLocked}
+            isSprueLocked={isSprueLocked}
+            coolingOptions={[...coolingOptionsList]}
+            ejectStrokeIsManual={optionValues.ejectStrokeIsManual}
+            onEjectStrokeChange={handleEjectStrokeNumberChange}
+            onResetEjectStroke={handleResetEjectStroke}
+          />
+
+          <div className={`${styles.formSection} ${styles.actionsCard}`}>
+            <div className={styles.actions}>
+              <button type="button" className={`${styles.button} ${styles.primary}`} onClick={handleCalculate}>
+                Calculate
+              </button>
+              <button type="button" className={`${styles.button} ${styles.secondary}`} onClick={handleReset}>
+                Reset
+              </button>
+            </div>
+            {hasPendingChanges && (
+              <p className={styles.statusNote} role="status">
+                Edited — click Calculate to update outputs.
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className={styles.columnStack}>
+          <OutputTable outputs={outputs} />
+
+          <DebugPanel
+            visible={debugEnabled}
+            isOpen={debugPanelOpen}
+            onToggle={() => setDebugPanelOpen((prev) => !prev)}
+            debug={snapshot.hasCalculated ? snapshot.debug : undefined}
+            input={appliedInput}
+            options={appliedOptions}
+            hasCalculated={snapshot.hasCalculated}
+          />
+        </div>
       </div>
-
-      {hasPendingChanges && (
-        <p className={styles.muted} role="status">
-          Edited — click Calculate to update outputs.
-        </p>
-      )}
-      <OutputTable outputs={outputs} />
-
-      <DebugPanel
-        visible={debugEnabled}
-        isOpen={debugPanelOpen}
-        onToggle={() => setDebugPanelOpen((prev) => !prev)}
-        debug={snapshot.hasCalculated ? snapshot.debug : undefined}
-        input={appliedInput}
-        options={appliedOptions}
-        hasCalculated={snapshot.hasCalculated}
-      />
     </section>
   );
 }
