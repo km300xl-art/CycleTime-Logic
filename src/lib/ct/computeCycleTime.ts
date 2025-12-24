@@ -38,6 +38,7 @@ function buildBaseStages(
 } {
   const coolingArgs = {
     thickness_mm: toNumberSafe(input.thickness_mm),
+    resin: getString(input.resin),
     grade: getString(input.grade),
     clampForce_ton: toNumberSafe(input.clampForce_ton),
     coolingOption: options.coolingOption,
