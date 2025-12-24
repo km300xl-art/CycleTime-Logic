@@ -1,4 +1,5 @@
-import type { CycleTimeDebug, InputData, Options, StageName } from '../../../src/lib/ct/types';
+import type { CycleTimeDebug, CycleTimeTables, InputData, Options, StageName } from '../../../src/lib/ct/types';
+import { BatchCsvRunner } from './BatchCsvRunner';
 import styles from '../Calculator.module.css';
 
 type DebugPanelProps = {
@@ -9,6 +10,7 @@ type DebugPanelProps = {
   input: InputData;
   options: Options;
   hasCalculated: boolean;
+  tables: CycleTimeTables;
 };
 
 const stageOrder: StageName[] = ['fill', 'pack', 'cool', 'open', 'eject', 'robot', 'close'];
@@ -43,7 +45,7 @@ const renderList = (rows: { label: string; value: string | number }[]) => (
   </dl>
 );
 
-export function DebugPanel({ visible, isOpen, onToggle, debug, input, options, hasCalculated }: DebugPanelProps) {
+export function DebugPanel({ visible, isOpen, onToggle, debug, input, options, hasCalculated, tables }: DebugPanelProps) {
   if (!visible) return null;
 
   const hasDebug = Boolean(debug);
@@ -327,6 +329,8 @@ export function DebugPanel({ visible, isOpen, onToggle, debug, input, options, h
                   </p>
                 )}
               </div>
+
+              <BatchCsvRunner tables={tables} baseOptions={options} hasCalculated={hasCalculated} />
             </>
           )}
         </div>

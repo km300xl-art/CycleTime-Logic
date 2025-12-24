@@ -31,6 +31,13 @@ const HEADERS: HeaderConfig[] = [
   { key: 'robot', label: 'Robot' },
 ];
 
+export const BATCH_CSV_HEADERS = HEADERS.map((header) => header.label);
+export const DEFAULT_BATCH_CSV_TEMPLATE = [
+  BATCH_CSV_HEADERS.join(','),
+  'General INJ.,PP,HJ500,8,0.52,90,2,3,2P,ON',
+  'General INJ.,PP,HJ500,4,0.6,120,2.5,5,3P,OFF',
+].join('\n');
+
 const PLATE_TYPES: InputData['plateType'][] = ['2P', '3P', 'HOT'];
 const ROBOT_VALUES = ['ON', 'OFF'] as const;
 const ALLOWED_CAVITIES: InputData['cavity'][] = [1, 2, 4, 6, 8];
