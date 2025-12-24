@@ -5,6 +5,7 @@ import type { CoolingDebugInfo } from "../types";
 
 type CoolingArgs = {
   thickness_mm: number;
+  resin: string;
   grade: string;
   clampForce_ton: number;
   coolingOption: "BASE" | "LOGIC";
@@ -31,7 +32,7 @@ type ThicknessReferenceRow = {
 };
 
 const gradeParams = new Map(
-  (gradeParamsJson as CoolingGradeParams[]).map((row) => [row.grade, row])
+  (gradeParamsJson as CoolingGradeParams[]).map((row) => [`${row.resin}||${row.grade}`, row])
 );
 
 const clampForceReference: ClampForceReferenceRow[] =
@@ -71,8 +72,13 @@ const thicknessReference: ThicknessReferenceRow[] = [
   { input: 50, effectiveThickness: 3 },
 ];
 
-function toNumberSafe(v: unknown): number {
-  return typeof v === "number" && Number.isFinite(v) ? v : 0;
+function toNumber(v: unknown): number {
+  if (typeof v === "number") return Number.isFinite(v) ? v : 0;
+  if (typeof v === "string") {
+    const parsed = Number(v.trim());
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+  return 0;
 }
 
 function approximateLookup<T>(
@@ -93,18 +99,18 @@ function approximateLookup<T>(
 function getEffectiveThickness(thickness: number, option: CoolingArgs["coolingOption"]): number {
   if (option === "LOGIC") return thickness;
   const row = approximateLookup(thicknessReference, thickness, (r) => r.input);
-  return toNumberSafe(row?.effectiveThickness) || thickness;
+  return toNumber(row?.effectiveThickness) || thickness;
 }
 
 export function computeCoolingTimeExcelDetailed(args: CoolingArgs): { value: number; debug: CoolingDebugInfo } {
-  const { thickness_mm, grade, clampForce_ton, coolingOption } = args;
-  const params = gradeParams.get(grade);
+  const { thickness_mm, resin, grade, clampForce_ton, coolingOption } = args;
+  const params = gradeParams.get(`${resin}||${grade}`);
   if (!params) {
     return {
       value: minCoolingTime,
       debug: {
         option: coolingOption,
-        effectiveThickness: getEffectiveThickness(toNumberSafe(thickness_mm), coolingOption),
+        effectiveThickness: getEffectiveThickness(toNumber(thickness_mm), coolingOption),
         baseCooling: 0,
         rawCoolingWithClamp: 0,
         clampOffset: 0,
@@ -116,19 +122,22 @@ export function computeCoolingTimeExcelDetailed(args: CoolingArgs): { value: num
     };
   }
 
-  const effectiveThickness = getEffectiveThickness(toNumberSafe(thickness_mm), coolingOption);
-  const alpha = toNumberSafe(params.alpha);
+  const effectiveThickness = getEffectiveThickness(toNumber(thickness_mm), coolingOption);
+  const Tm = toNumber(params.Tm);
+  const Tw = toNumber(params.Tw);
+  const Te = toNumber(params.Te);
+  const alpha = toNumber(params.alpha);
   const numerator = effectiveThickness ** 2;
   const denominator = Math.PI ** 2 * (alpha || 1);
 
-  const logInput = (4 / Math.PI) * ((params.Tm - params.Tw) / (params.Te - params.Tw));
+  const logInput = (4 / Math.PI) * ((Tm - Tw) / (Te - Tw));
   const conduction = logInput > 0 && alpha > 0 ? (numerator / denominator) * Math.log(logInput) : 0;
-  const baseCooling = conduction + toNumberSafe(params.extra_s);
+  const baseCooling = conduction + toNumber(params.extra_s);
 
-  const clampRow = approximateLookup(clampForceReference, toNumberSafe(clampForce_ton), (r) =>
-    toNumberSafe(r.clampForce_ton)
+  const clampRow = approximateLookup(clampForceReference, toNumber(clampForce_ton), (r) =>
+    toNumber(r.clampForce_ton)
   );
-  const clampOffset = toNumberSafe(clampRow?.timeAdd_s);
+  const clampOffset = toNumber(clampRow?.timeAdd_s);
 
   const cooling = baseCooling + clampOffset;
   const final = Math.max(cooling, minCoolingTime);
@@ -141,7 +150,7 @@ export function computeCoolingTimeExcelDetailed(args: CoolingArgs): { value: num
       baseCooling,
       rawCoolingWithClamp: cooling,
       clampOffset,
-      clampForceReference: clampRow ? { clampForce_ton: toNumberSafe(clampRow.clampForce_ton), timeAdd_s: clampOffset } : null,
+      clampForceReference: clampRow ? { clampForce_ton: toNumber(clampRow.clampForce_ton), timeAdd_s: clampOffset } : null,
       minCoolingTime,
       appliedMinCooling: cooling < minCoolingTime,
       gradeMatched: true,
