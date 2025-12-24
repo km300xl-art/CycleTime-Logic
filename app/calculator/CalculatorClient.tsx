@@ -440,6 +440,7 @@ export default function CalculatorClient() {
             input={appliedInput}
             options={appliedOptions}
             hasCalculated={snapshot.hasCalculated}
+            tables={tables}
           />
         </div>
       </div>
