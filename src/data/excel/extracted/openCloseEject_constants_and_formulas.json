@@ -1,6 +1,6 @@
 {
   "openCloseMaxSpeed_mm_s": 450.0,
-  "ejectorMaxSpeed_mm_s": 600.0,
+  "ejectorMaxSpeed_mm_s": 500.0,
   "openTime_formula": "=N44 + F63",
   "ejectTime_formula": "=N22+H63",
   "closeTime_formula": "=N32 + G63",
