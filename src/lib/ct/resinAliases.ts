@@ -1,5 +1,6 @@
 export const resinKeyAliases: Record<string, string> = {
   "PET GF30": "PET",
+  "PET GF40": "PET",
 };
 
 /**

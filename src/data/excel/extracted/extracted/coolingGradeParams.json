@@ -252,7 +252,7 @@
     "extra_s": 0.0
   },
   {
-    "resin": "PET",
+    "resin": "PET GF40",
     "grade": "3401NX",
     "Tm": 280.0,
     "Tw": 80.0,
@@ -261,7 +261,7 @@
     "extra_s": 9.0
   },
   {
-    "resin": "PET",
+    "resin": "PET GF30",
     "grade": "8300SE",
     "Tm": 280.0,
     "Tw": 120.0,
@@ -270,7 +270,7 @@
     "extra_s": 9.0
   },
   {
-    "resin": "PET",
+    "resin": "PET GF30",
     "grade": "LV2550GN30",
     "Tm": 280.0,
     "Tw": 120.0,
