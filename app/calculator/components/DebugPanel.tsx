@@ -34,6 +34,21 @@ const formatPercent = (value?: number) => {
   return `${(value * 100).toFixed(1)}%`;
 };
 
+const summarizeStageDeltas = (stageDeltas?: Partial<Record<StageName, number>>) => {
+  if (!stageDeltas) return null;
+  const entries = stageOrder
+    .map((stage) => {
+      const delta = stageDeltas[stage];
+      return typeof delta === 'number' && Number.isFinite(delta) && Math.abs(delta) > 0 ? { stage, delta } : null;
+    })
+    .filter(Boolean) as { stage: StageName; delta: number }[];
+
+  if (entries.length === 0) return null;
+  return entries
+    .map(({ stage, delta }) => `${stageLabels[stage]} ${delta >= 0 ? '+' : ''}${formatNumber(delta, 2)}s`)
+    .join(', ');
+};
+
 const renderList = (rows: { label: string; value: string | number }[]) => (
   <dl className={styles.debugList}>
     {rows.map((row) => (
@@ -66,6 +81,33 @@ export function DebugPanel({ visible, isOpen, onToggle, debug, input, options, h
           { key: 'runnerWeight_N8', label: 'Runner Weight (Fill_Pack!N8)', value: debug.fillPack.runnerWeight_N8 },
           { key: 'totalWeight_N9', label: 'Total Weight (Fill_Pack!N9)', value: debug.fillPack.totalWeight_N9 },
           { key: 'allVolume_N10', label: 'ALL Volume (Fill_Pack!N10)', value: debug.fillPack.allVolume_N10 },
+        ]
+      : [];
+
+  const moldTypeStageSummary = summarizeStageDeltas(debug?.moldTypeAdjustments?.stageDeltas);
+
+  const coolingRows =
+    debug?.cooling && debug.cooling
+      ? [
+          { label: 'Option', value: debug.cooling.option },
+          { label: 'Effective thickness', value: formatNumber(debug.cooling.effectiveThickness, 3) },
+          { label: 'Base (no grade extra)', value: formatNumber(debug.cooling.baseWithoutGradeExtra, 4) },
+          { label: 'Grade extra (s)', value: formatNumber(debug.cooling.gradeExtra_s, 4) },
+          { label: 'Base + grade', value: formatNumber(debug.cooling.baseCooling, 4) },
+          { label: 'Clamp offset', value: formatNumber(debug.cooling.clampOffset, 4) },
+          {
+            label: 'Clamp bin',
+            value: debug.cooling.clampForceReference
+              ? `${debug.cooling.clampForceReference.clampForce_ton} ton → ${formatNumber(debug.cooling.clampForceReference.timeAdd_s, 3)}s`
+              : '—',
+          },
+          { label: 'Mold type add', value: formatNumber(debug.cooling.moldTypeAdd_s ?? 0, 4) },
+          { label: 'Raw cooling (pre-mold type)', value: formatNumber(debug.cooling.rawCoolingWithClamp, 4) },
+          { label: 'Final cooling', value: formatNumber(debug.cooling.finalCooling, 4) },
+          {
+            label: 'Min clamp applied',
+            value: debug.cooling.appliedMinCooling ? `Yes (min ${formatNumber(debug.cooling.minCoolingTime, 2)}s)` : 'No',
+          },
         ]
       : [];
 
@@ -185,40 +227,28 @@ export function DebugPanel({ visible, isOpen, onToggle, debug, input, options, h
                     {
                       label: 'Mold type adjustment',
                       value: debug?.moldTypeAdjustments
-                        ? `${debug.moldTypeAdjustments.timeAdd_s}s to [${debug.moldTypeAdjustments.affectedStages.join(
-                            ', ',
-                          ) || 'none'}]`
+                        ? moldTypeStageSummary ??
+                          `${debug.moldTypeAdjustments.timeAdd_s}s to [${debug.moldTypeAdjustments.affectedStages.join(', ') || 'none'}]`
                         : 'None',
                     },
                   ])}
-                  {debug?.moldTypeAdjustments?.fillAdd_s && (
-                    <p className={styles.debugNote}>Fill add override: {debug.moldTypeAdjustments.fillAdd_s}s</p>
+                  {(debug?.moldTypeAdjustments?.fillAdd_s || moldTypeStageSummary) && (
+                    <p className={styles.debugNote}>
+                      {moldTypeStageSummary ? `Stage deltas: ${moldTypeStageSummary}` : null}
+                      {debug?.moldTypeAdjustments?.fillAdd_s
+                        ? `${moldTypeStageSummary ? ' • ' : ''}Fill add override: ${debug.moldTypeAdjustments.fillAdd_s}s`
+                        : null}
+                    </p>
                   )}
                 </div>
 
                 <div className={styles.debugCard}>
-                  <h3 className={styles.debugTitle}>Cooling bins</h3>
-                  {debug?.cooling ? (
-                    renderList([
-                      { label: 'Option', value: debug.cooling.option },
-                      { label: 'Effective thickness', value: formatNumber(debug.cooling.effectiveThickness, 3) },
-                      { label: 'Base cooling (no clamp)', value: formatNumber(debug.cooling.baseCooling, 4) },
-                      { label: 'Clamp offset', value: formatNumber(debug.cooling.clampOffset, 4) },
-                      {
-                        label: 'Clamp bin',
-                        value: debug.cooling.clampForceReference
-                          ? `${debug.cooling.clampForceReference.clampForce_ton} ton → ${formatNumber(
-                              debug.cooling.clampForceReference.timeAdd_s,
-                              3,
-                            )}s`
-                          : '—',
-                      },
-                      { label: 'Raw cooling', value: formatNumber(debug.cooling.rawCoolingWithClamp, 4) },
-                      {
-                        label: 'Min clamp applied',
-                        value: debug.cooling.appliedMinCooling ? `Yes (min ${formatNumber(debug.cooling.minCoolingTime, 2)}s)` : 'No',
-                      },
-                    ])
+                  <h3 className={styles.debugTitle}>Cooling</h3>
+                  {coolingRows.length > 0 ? (
+                    <>
+                      {renderList(coolingRows)}
+                      <p className={styles.muted}>cool_base, grade extras, clamp offset, mold-type add, and final cooling bins.</p>
+                    </>
                   ) : (
                     <p className={styles.muted}>Enable debug to view cooling lookups.</p>
                   )}

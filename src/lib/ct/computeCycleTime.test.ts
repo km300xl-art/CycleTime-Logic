@@ -11,7 +11,7 @@ import {
   maybeApplyAutoEjectStroke,
   resetEjectStrokeToAuto,
 } from './excel/ctFinalDefaults';
-import { InputData, Options, Outputs } from './types';
+import { InputData, Options, Outputs, StageName } from './types';
 
 type Example = {
   id?: string;
@@ -215,6 +215,30 @@ describe('computeCycleTime edge cases', () => {
     assert.equal(stages.fill.toFixed(2), '0.01');
     assert.equal(total.toFixed(2), '0.04', 'raw total should be rounded after summing raw stages');
     assert.equal(stageSumRounded.toFixed(2), '0.07', 'stage rounding should not drive the total calculation');
+  });
+
+  test('Gas INJ matches Excel rules (pack=0, cool +1.16s, others unchanged)', () => {
+    const base = (examples as Example[]).find((ex) => ex.id === 'excel_case_01');
+    assert.ok(base, 'expected excel_case_01 example');
+
+    const baseInput: InputData = { ...(base.input as InputData), moldType: 'General INJ.' };
+    const gasInput: InputData = { ...baseInput, moldType: 'Gas INJ.' };
+    const options: Options = { ...(base.options as Options) };
+
+    const general = computeCycleTimeWithDebug(baseInput, options, tables);
+    const gas = computeCycleTimeWithDebug(gasInput, options, tables);
+
+    const generalStages = general.debug.stages.afterMold;
+    const gasStages = gas.debug.stages.afterMold;
+
+    assert.ok(Math.abs(gasStages.pack) < 1e-9, 'Gas INJ should zero out pack');
+    const coolDelta = gasStages.cool - generalStages.cool;
+    assert.equal(coolDelta.toFixed(2), '1.16', 'Gas INJ should add exactly 1.16s to cooling');
+
+    (['fill', 'open', 'eject', 'robot', 'close'] as StageName[]).forEach((stage) => {
+      const delta = gasStages[stage] - generalStages[stage];
+      assert.ok(Math.abs(delta) < 1e-9, `Gas INJ should not change ${stage}`);
+    });
   });
 });
 

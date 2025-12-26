@@ -65,11 +65,13 @@ export type MoldTypeRule = {
   moldType: string;
   timeAdd_s: number;
   fillAdd_s?: number;
+  coolAdd_s?: number;
   packZero: boolean;
   coolPlus: boolean;
   openPlus: boolean;
   closePlus: boolean;
   packPlus: boolean;
+  adds_s?: Partial<Record<StageName, number>>;
 };
 
 export type CycleTimeTables = {
@@ -85,6 +87,8 @@ export type CycleTimeTables = {
 export type CoolingDebugInfo = {
   option: Options["coolingOption"];
   effectiveThickness: number;
+  baseWithoutGradeExtra: number;
+  gradeExtra_s: number;
   baseCooling: number;
   rawCoolingWithClamp: number;
   clampOffset: number;
@@ -95,6 +99,8 @@ export type CoolingDebugInfo = {
   minCoolingTime: number;
   appliedMinCooling: boolean;
   gradeMatched: boolean;
+  moldTypeAdd_s?: number;
+  finalCooling: number;
 };
 
 export type OpenCloseEjectDebugInfo = {
@@ -128,6 +134,7 @@ export type MoldTypeAdjustmentDebug = {
   timeAdd_s: number;
   fillAdd_s?: number;
   affectedStages: StageName[];
+  stageDeltas?: Partial<StageMap>;
 };
 
 export type CycleTimeDebug = {

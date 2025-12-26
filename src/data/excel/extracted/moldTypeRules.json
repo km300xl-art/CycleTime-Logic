@@ -15,7 +15,10 @@
     "coolPlus": true,
     "openPlus": false,
     "closePlus": false,
-    "packPlus": false
+    "packPlus": false,
+    "adds_s": {
+      "cool": 1.16
+    }
   },
   {
     "moldType": "High TEMP. INJ.",
