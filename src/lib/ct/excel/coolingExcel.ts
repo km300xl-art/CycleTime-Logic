@@ -1,6 +1,7 @@
 import gradeParamsJson from "../../../data/excel/extracted/coolingGradeParams.json";
 import clampForceReferenceJson from "../../../data/excel/extracted/coolingClampForceReference.json";
 import coolingMinTimeJson from "../../../data/excel/extracted/coolingMinTime_s.json";
+import { addResinAliasesToEntries } from "../resinAliases";
 import type { CoolingDebugInfo } from "../types";
 
 type CoolingArgs = {
@@ -31,7 +32,7 @@ type ThicknessReferenceRow = {
   effectiveThickness: number;
 };
 
-const gradeParams = new Map(
+const gradeParams = addResinAliasesToEntries(
   (gradeParamsJson as CoolingGradeParams[]).map((row) => [`${row.resin}||${row.grade}`, row])
 );
 
