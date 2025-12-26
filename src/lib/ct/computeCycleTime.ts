@@ -82,6 +82,15 @@ function computeCycleTimeInternal(
   const base = buildBaseStages(input, options, tables, withDebug);
   const assembled = applyCtFinalAssembly(base.stages, input, options, tables);
 
+  const moldTypeCoolingDelta = assembled.debug.afterMold.cool - base.stages.cool;
+  const coolingDebug = base.debug.cooling
+    ? {
+        ...base.debug.cooling,
+        moldTypeAdd_s: Math.abs(moldTypeCoolingDelta) < 1e-9 ? 0 : moldTypeCoolingDelta,
+        finalCooling: assembled.debug.afterMold.cool,
+      }
+    : undefined;
+
   const rawStages: StageMap = { ...assembled.debug.afterSafety };
   const displayStages: StageMap = { ...assembled.stages };
 
@@ -113,7 +122,7 @@ function computeCycleTimeInternal(
       overrideReason: assembled.debug.robotOverrideReason,
     },
     robotEnabled: assembled.debug.robotEnabled,
-    cooling: base.debug.cooling,
+    cooling: coolingDebug,
     openCloseEject: base.debug.openCloseEject,
     fillPack: base.debug.fillPack,
   };

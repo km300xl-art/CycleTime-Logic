@@ -111,8 +111,11 @@ export function computeCoolingTimeExcelDetailed(args: CoolingArgs): { value: num
       debug: {
         option: coolingOption,
         effectiveThickness: getEffectiveThickness(toNumber(thickness_mm), coolingOption),
+        baseWithoutGradeExtra: 0,
+        gradeExtra_s: 0,
         baseCooling: 0,
         rawCoolingWithClamp: 0,
+        finalCooling: minCoolingTime,
         clampOffset: 0,
         clampForceReference: null,
         minCoolingTime,
@@ -132,7 +135,8 @@ export function computeCoolingTimeExcelDetailed(args: CoolingArgs): { value: num
 
   const logInput = (4 / Math.PI) * ((Tm - Tw) / (Te - Tw));
   const conduction = logInput > 0 && alpha > 0 ? (numerator / denominator) * Math.log(logInput) : 0;
-  const baseCooling = conduction + toNumber(params.extra_s);
+  const gradeExtra = coolingOption === "LOGIC" ? 0 : toNumber(params.extra_s);
+  const baseCooling = conduction + gradeExtra;
 
   const clampRow = approximateLookup(clampForceReference, toNumber(clampForce_ton), (r) =>
     toNumber(r.clampForce_ton)
@@ -147,8 +151,11 @@ export function computeCoolingTimeExcelDetailed(args: CoolingArgs): { value: num
     debug: {
       option: coolingOption,
       effectiveThickness,
+      baseWithoutGradeExtra: conduction,
+      gradeExtra_s: gradeExtra,
       baseCooling,
       rawCoolingWithClamp: cooling,
+      finalCooling: final,
       clampOffset,
       clampForceReference: clampRow ? { clampForce_ton: toNumber(clampRow.clampForce_ton), timeAdd_s: clampOffset } : null,
       minCoolingTime,

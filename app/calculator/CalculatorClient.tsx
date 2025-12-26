@@ -396,22 +396,6 @@ export default function CalculatorClient() {
             onRobotToggle={handleRobotToggle}
           />
 
-          <OptionsSection
-            values={optionValues}
-            errors={errors}
-            onChange={handleOptionTextChange}
-            onNumberChange={(field, value) => handleNumberChange(field, value, setOptionValues)}
-            clampControlOptions={[...clampControlOptionsList]}
-            openCloseSpeedOptions={[...openCloseSpeedOptionsList]}
-            ejectingSpeedOptions={[...ejectingSpeedOptionsList]}
-            isPinRunnerLocked={isPinRunnerLocked}
-            isSprueLocked={isSprueLocked}
-            coolingOptions={[...coolingOptionsList]}
-            ejectStrokeIsManual={optionValues.ejectStrokeIsManual}
-            onEjectStrokeChange={handleEjectStrokeNumberChange}
-            onResetEjectStroke={handleResetEjectStroke}
-          />
-
           <div className={`${styles.formSection} ${styles.actionsCard}`}>
             <div className={styles.actions}>
               <button type="button" className={`${styles.button} ${styles.primary}`} onClick={handleCalculate}>
@@ -427,6 +411,22 @@ export default function CalculatorClient() {
               </p>
             )}
           </div>
+
+          <OptionsSection
+            values={optionValues}
+            errors={errors}
+            onChange={handleOptionTextChange}
+            onNumberChange={(field, value) => handleNumberChange(field, value, setOptionValues)}
+            clampControlOptions={[...clampControlOptionsList]}
+            openCloseSpeedOptions={[...openCloseSpeedOptionsList]}
+            ejectingSpeedOptions={[...ejectingSpeedOptionsList]}
+            isPinRunnerLocked={isPinRunnerLocked}
+            isSprueLocked={isSprueLocked}
+            coolingOptions={[...coolingOptionsList]}
+            ejectStrokeIsManual={optionValues.ejectStrokeIsManual}
+            onEjectStrokeChange={handleEjectStrokeNumberChange}
+            onResetEjectStroke={handleResetEjectStroke}
+          />
         </div>
 
         <div className={styles.columnStack}>

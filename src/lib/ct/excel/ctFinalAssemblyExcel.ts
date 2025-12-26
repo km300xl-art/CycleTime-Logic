@@ -53,15 +53,47 @@ function applyMoldTypeAdjustments(
 
   const add = toNumberSafe(rule.timeAdd_s);
   const updated: StageMap = { ...base };
+  const stageDeltas: Partial<StageMap> = {};
 
-  if (rule.packZero) updated.pack = 0;
-  if (rule.packPlus) updated.pack += add;
-  if (rule.coolPlus) updated.cool += add;
-  if (rule.openPlus) updated.open += add;
-  if (rule.closePlus) updated.close += add;
+  const addToStage = (stage: StageName, delta: number) => {
+    if (!Number.isFinite(delta) || delta === 0) return;
+    updated[stage] += delta;
+    stageDeltas[stage] = (stageDeltas[stage] ?? 0) + delta;
+  };
 
-  // Fill time should not receive the generic mold-type adders.
-  if (isFiniteNumber(rule.fillAdd_s)) updated.fill += toNumberSafe(rule.fillAdd_s);
+  if (rule.packZero) {
+    stageDeltas.pack = (stageDeltas.pack ?? 0) + (0 - updated.pack);
+    updated.pack = 0;
+  }
+
+  const stageAdds: Partial<StageMap> = { ...(rule.adds_s as Partial<StageMap> | undefined) };
+
+  if (Number.isFinite(rule.coolAdd_s)) {
+    stageAdds.cool = toNumberSafe(stageAdds.cool) + toNumberSafe(rule.coolAdd_s);
+  }
+
+  const stageFlagAdds: { flag: boolean; stage: StageName }[] = [
+    { flag: rule.packPlus, stage: "pack" },
+    { flag: rule.coolPlus, stage: "cool" },
+    { flag: rule.openPlus, stage: "open" },
+    { flag: rule.closePlus, stage: "close" },
+  ];
+
+  stageFlagAdds.forEach(({ flag, stage }) => {
+    if (!flag) return;
+    stageAdds[stage] = toNumberSafe(stageAdds[stage]) + add;
+  });
+
+  // Fill time should not receive the generic mold-type adders unless explicitly defined.
+  if (isFiniteNumber(rule.fillAdd_s)) {
+    stageAdds.fill = toNumberSafe(stageAdds.fill) + toNumberSafe(rule.fillAdd_s);
+  }
+
+  const stageAddEntries = Object.entries(stageAdds) as [keyof StageMap, number][];
+  stageAddEntries.forEach(([stage, delta]) => {
+    if (!STAGES.includes(stage)) return;
+    addToStage(stage, toNumberSafe(delta));
+  });
 
   const affectedStages: StageName[] = [];
   for (const stage of STAGES) {
@@ -76,6 +108,7 @@ function applyMoldTypeAdjustments(
       timeAdd_s: add,
       fillAdd_s: isFiniteNumber(rule.fillAdd_s) ? toNumberSafe(rule.fillAdd_s) : undefined,
       affectedStages,
+      stageDeltas,
     },
   };
 }
