@@ -24,6 +24,7 @@ import plateTypeOptions from '../../src/data/excel/extracted/extracted/plateType
 import resinGrades from '../../src/data/excel/extracted/extracted/resinGrades.json';
 import resinOptions from '../../src/data/excel/extracted/extracted/resinOptions.json';
 import sprueLengthByWeight from '../../src/data/excel/extracted/extracted/sprueLengthByWeight.json';
+import { addResinAliasesToRecord } from '../../src/lib/ct/resinAliases';
 
 import {
   derivePinRunner,
@@ -36,7 +37,7 @@ import {
 // 이 3줄이 반드시 필요
 const moldTypeOptions = moldTypes as string[];
 const resinOptionsList = resinOptions as string[];
-const resinGradesMap = resinGrades as Record<string, string[]>;
+const resinGradesMap = addResinAliasesToRecord(resinGrades as Record<string, string[]>);
 const cavityOptionsList = cavityOptions as string[];
 const plateTypeOptionsList = plateTypeOptions as InputData['plateType'][];
 const coolingOptionsList = coolingOptionOptions as Options['coolingOption'][];
