@@ -209,6 +209,24 @@ export default function CalculatorClient() {
   }, [inputValues.resin]);
 
   useEffect(() => {
+    setInputValues((prev) => {
+      if (!prev.resin) {
+        return prev.grade === '' ? prev : { ...prev, grade: '' };
+      }
+
+      if (gradeOptions.length === 0) {
+        return prev.grade === '' ? prev : { ...prev, grade: '' };
+      }
+
+      if (!gradeOptions.includes(prev.grade)) {
+        return { ...prev, grade: gradeOptions[0] ?? '' };
+      }
+
+      return prev;
+    });
+  }, [gradeOptions]);
+
+  useEffect(() => {
     const readDebugFlag = () => {
       if (typeof window === 'undefined') return;
       const sp = new URLSearchParams(window.location.search);
