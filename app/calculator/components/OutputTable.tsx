@@ -26,7 +26,7 @@ export function OutputTable({ outputs }: OutputTableProps) {
     <section className={styles.outputSection} aria-labelledby="output-title">
       <div className={styles.sectionHeader}>
         <h2 id="output-title">Output</h2>
-        <p className={styles.muted}>Dummy cycle time results (seconds).</p>
+        <p className={styles.muted}>Cycle time results (seconds).</p>
       </div>
       <div className={styles.tableWrapper}>
         <table className={styles.outputTable}>
